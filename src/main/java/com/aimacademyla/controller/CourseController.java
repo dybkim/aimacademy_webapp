@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,13 +83,22 @@ public class CourseController {
     }
 
     @RequestMapping(value = "/addCourse", method = RequestMethod.POST)
-    public String addCourse(@Valid @ModelAttribute("course") Course course, BindingResult result){
-        if(result.hasErrors())
+    public String addCourse(@Valid @ModelAttribute("course") Course course, BindingResult result, Model model){
+        if(result.hasErrors()) {
+            List<FieldError> errors = result.getFieldErrors();
+            for (FieldError error : errors ) {
+                if(error.getField().equals("courseStartDate"))
+                    model.addAttribute("startDateErrorMsg", "Date must be in MM/DD/YYYY format");
+
+                else if(error.getField().equals("courseEndDate"))
+                    model.addAttribute("endDateErrorMsg", "Date must be in MM/DD/YYYY format");
+            }
             return "/course/addCourse";
+        }
 
         courseService.addCourse(course);
 
-        return "redirect:/course/courseList";
+        return "redirect:/admin/courseList";
     }
 
     @RequestMapping("/editCourse/{courseID}")
@@ -99,13 +109,23 @@ public class CourseController {
         return "/course/editCourse";
     }
 
-    @RequestMapping(value="/editCourse/{courseID}", method = RequestMethod.POST)
-    public String editCourse(@Valid @ModelAttribute("course") Course course, BindingResult result){
-        if(result.hasErrors())
+    @RequestMapping(value="/editCourse", method = RequestMethod.POST)
+    public String editCourse(@Valid @ModelAttribute("course") Course course, BindingResult result, Model model){
+        if(result.hasErrors()) {
+            List<FieldError> errors = result.getFieldErrors();
+            for (FieldError error : errors ) {
+                if(error.getField().equals("courseStartDate"))
+                    model.addAttribute("startDateErrorMsg", "Date must be in MM/DD/YYYY format");
+
+                else if(error.getField().equals("courseEndDate"))
+                    model.addAttribute("endDateErrorMsg", "Date must be in MM/DD/YYYY format");
+            }
             return "/course/editCourse";
+        }
+
 
         courseService.editCourse(course);
 
-        return "redirect:/course/courseList";
+        return "redirect:/admin/courseList";
     }
 }

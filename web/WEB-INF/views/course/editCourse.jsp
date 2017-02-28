@@ -19,30 +19,30 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header">Add new student</h1>
+            <h1 class="page-header">Edit Course: ${course.courseName}</h1>
 
             <form:form action="${pageContext.request.contextPath}/admin/courseList/editCourse" method="post" modelAttribute="course">
-                <div class="form-group">
-                    <label for="courseTitle">Course Title</label><form:errors path="courseName" cssStyle="color: #FF0000"/>
+                <div class="form-group"><form:errors path="courseName" cssStyle="color: #FF0000"/>
+                    <label for="courseTitle">Course Title</label>
                     <form:input path="courseName" id="courseTitle" class="form-Control" value="${course.courseName}"/>
                 </div>
 
-                <div class="form-group">
-                    <label for="courseType">Course Type</label><form:errors path="courseType" cssStyle="color: #FF0000"/>
+                <div class="form-group"><form:errors path="courseType" cssStyle="color: #FF0000"/>
+                    <label for="courseType">Course Type</label>
                     <form:input path="courseType" id="courseType" class="form-Control" value="${course.courseType}"/>
                 </div>
 
-                <div class="form-group">
-                    <label for="startDate">Start Date</label>
+                <div class="form-group"><span style=":color #FF0000">${startDateErrorMsg}</span>
+                    <label for="startDate">Start Date (MM/DD/YYYY)</label>
                     <form:input path="courseStartDate" id="startDate" class="date" value="${course.courseStartDate}"/>
                 </div>
 
-                <div class="form-group">
-                    <label for="endDate">End Date</label>
+                <div class="form-group"><span style=":color #FF0000">${endDateErrorMsg}</span>
+                    <label for="endDate">End Date (MM/DD/YYYY)</label>
                     <form:input path="courseEndDate" id="endDate" class="date" value="${course.courseEndDate}"/>
                 </div>
 
-                <form:hidden path="courseIsActive" value="${course.courseIsActive}"/>
+                <form:hidden path="isActive" value="${course.isActive}"/>
 
                 <form:hidden path="numEnrolled" value="${course.numEnrolled}"/>
 

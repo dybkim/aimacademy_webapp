@@ -78,14 +78,6 @@ public class Course implements Serializable{
         this.courseEndDate = courseEndDate;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
     public String getCourseType() {
         return courseType;
     }
@@ -100,5 +92,13 @@ public class Course implements Serializable{
 
     public void setNumEnrolled(int numEnrolled) {
         this.numEnrolled = numEnrolled;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean active) {
+        isActive = active;
     }
 }

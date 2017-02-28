@@ -67,7 +67,7 @@
                                         <form:hidden path="memberList[${i.index}].memberState" value="${member.memberState}"/>
                                         <fmt:formatDate value="${member.memberEntryDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>
                                         <form:hidden path="memberList[${i.index}].memberEntryDate" id="entryDate" class="form-Control" value="${dateString}"/>
-                                        <td>${member.memberID}</td>
+                                        <td><a href="<spring:url value ="/admin/studentList/editStudent/${member.memberID}"/>">${member.memberID}</a></td>
                                         <td>${member.memberFirstName} ${member.memberLastName}</td>
                                         <td><form:checkbox path="memberList[${i.index}].memberIsActive" value="${member.memberIsActive}"/></td>
                                         <td><a href="<spring:url value="/admin/studentHistory/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>

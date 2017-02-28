@@ -56,7 +56,7 @@
                             <td>${student.memberID}</td>
                             <td>${student.memberFirstName} ${student.memberLastName}</td>
                             <td>TBA</td>
-                            <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                            <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>
                             <td><a href=""><span class="glyphicon glyphicon-remove-sign"></span></a></td>
                         </tr>
                     </c:forEach>
