@@ -2,7 +2,9 @@ package controller;
 
 import com.aimacademyla.controller.CourseController;
 import com.aimacademyla.model.Course;
+import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.Member;
+import com.aimacademyla.service.AttendanceService;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberService;
 import com.aimacademyla.service.StudentRegistrationService;
@@ -37,6 +39,9 @@ public class CourseControllerTest {
 
     @Mock
     private StudentRegistrationService studentRegistrationServiceMock;
+
+    @Mock
+    private AttendanceService attendanceServiceMock;
 
     @InjectMocks
     private CourseController courseController;
@@ -85,6 +90,19 @@ public class CourseControllerTest {
     @Test
     public void testAddStudentToCourse() throws Exception{
 
+    }
+
+    @Test
+    public void testFetchAttendanceForCourseSession() throws Exception{
+        int courseSessionID = 1;
+        int courseID = 2;
+
+        CourseSession courseSession = new CourseSession();
+
+        courseSession.setCourseID(courseID);
+        courseSession.setCourseSessionID(1);
+
+        //TODO: Add mockMvc.perform();
     }
 
 }

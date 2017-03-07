@@ -80,7 +80,8 @@ public class MemberDAOImpl implements MemberDAO {
     @Override
     public List<Member> getMembersByCourse(Course course){
         Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("FROM Member WHERE memberID IN (SELECT studentMemberID FROM Student_Registration WHERE courseID = 0)");
+        Query query = session.createQuery("FROM Member WHERE memberID IN (SELECT studentMemberID FROM Student_Registration WHERE courseID = :courseID)");
+        query.setParameter("courseID", course.getCourseID());
         List<Member> memberList = query.getResultList();
         session.flush();
 

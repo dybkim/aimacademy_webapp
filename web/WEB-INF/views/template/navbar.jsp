@@ -23,11 +23,17 @@
     <!-- Angular JS -->
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
 
-    <!-- JQuery -->
+    <!-- JQuery 3-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <!-- Data Table -->
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+
+    <!--Data Table Bootstrap -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/dataTables.bootstrap.min.js"></script>
 
     <!-- Bootstrap core CSS -->
     <link href="<spring:url value="/resources/css/bootstrap.min.css"/>" rel="stylesheet">
@@ -37,6 +43,9 @@
 
     <!-- CSS DataTables Link -->
     <link href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <!-- CSS DataTables Bootstrap -->
+    <link href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css" rel="stylesheet">
 
     <![endif]-->
 <html>
@@ -75,3 +84,8 @@
 </nav>
 </body>
 </html>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>

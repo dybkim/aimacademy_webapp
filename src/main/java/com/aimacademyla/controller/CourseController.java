@@ -1,11 +1,7 @@
 package com.aimacademyla.controller;
 
-import com.aimacademyla.model.Course;
-import com.aimacademyla.model.Member;
-import com.aimacademyla.model.StudentRegistration;
-import com.aimacademyla.service.CourseService;
-import com.aimacademyla.service.MemberService;
-import com.aimacademyla.service.StudentRegistrationService;
+import com.aimacademyla.model.*;
+import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,15 +26,18 @@ public class CourseController {
 
     private CourseService courseService;
 
-    private StudentRegistrationService studentRegistrationService;
+    private AttendanceService attendanceService;
 
     private MemberService memberService;
 
+    private CourseSessionService courseSessionService;
+
     @Autowired
-    public CourseController(CourseService courseService, StudentRegistrationService studentRegistrationService, MemberService memberService){
+    public CourseController(CourseService courseService, AttendanceService attendanceService, MemberService memberService, CourseSessionService courseSessionService){
         this.courseService = courseService;
-        this.studentRegistrationService = studentRegistrationService;
+        this.attendanceService = attendanceService;
         this.memberService = memberService;
+        this.courseSessionService = courseSessionService;
     }
 
     @RequestMapping
@@ -52,9 +51,19 @@ public class CourseController {
     public String viewEnrollment(@PathVariable ("courseID") int courseID, Model model){
         Course course = courseService.getCourseByID(courseID);
         List<Member> studentList = memberService.getMembersByCourse(course);
+        List<CourseSession> courseSessionList = courseSessionService.getCourseSessionsForCourse(course);
+        List<List<Attendance>> attendanceListList = attendanceService.getAttendanceListForCourseSessionList(courseSessionList);
+        List<List<Member>> memberListFromAttendanceList = new ArrayList<>();
+
+        for(List<Attendance> attendanceList : attendanceListList)
+            memberListFromAttendanceList.add(memberService.getPresentMemberListFromAttendanceList(attendanceList));
 
         model.addAttribute("studentList", studentList);
         model.addAttribute(course);
+        model.addAttribute("courseSessionList", courseSessionList);
+        model.addAttribute("attendanceListList", attendanceListList);
+        model.addAttribute("memberListFromAttendanceList", memberListFromAttendanceList);
+
         return "/course/viewEnrollment";
     }
 
@@ -122,7 +131,6 @@ public class CourseController {
             }
             return "/course/editCourse";
         }
-
 
         courseService.editCourse(course);
 

@@ -47,18 +47,18 @@
                         <th>Course Type</th>
                         <th>Students Enrolled</th>
                         <th>Finances</th>
-                        <th>Attendance</th>
+                        <th>Edit Course Info</th>
                     </tr>
                     </thead>
                     <tbody>
                     <c:forEach items="${courseList}" var="course">
                         <tr>
                             <td>${course.courseID}</td>
-                            <td><a href="<spring:url value="/admin/courseList/editCourse/${course.courseID}"/>">${course.courseName}</a></td>
+                            <td><a href="<spring:url value="/admin/courseList/viewEnrollment/${course.courseID}"/>">${course.courseName}</a></td>
                             <td>${course.courseType}</td>
-                            <td><a href="<spring:url value="/admin/courseList/viewEnrollment/${course.courseID}"/>">${course.numEnrolled}</a></td>
+                            <td>${course.numEnrolled}</td>
                             <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>
-                            <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                            <td><a href="<spring:url value="/admin/courseList/editCourse/${course.courseID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                         </tr>
                     </c:forEach>
                     </tbody>

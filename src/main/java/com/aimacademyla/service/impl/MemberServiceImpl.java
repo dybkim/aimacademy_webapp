@@ -1,12 +1,14 @@
 package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.MemberDAO;
+import com.aimacademyla.model.Attendance;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +37,29 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<Member> getMembersByCourse(Course course){
         return memberDAO.getMembersByCourse(course);
+    }
+
+    @Override
+    public List<Member> getMemberListFromAttendanceList(List<Attendance> attendanceList){
+
+        List<Member> memberList = new ArrayList<>();
+
+        for(Attendance attendance : attendanceList)
+            memberList.add(memberDAO.getMemberByID(attendance.getMemberID()));
+
+        return memberList;
+    }
+
+    @Override
+    public List<Member> getPresentMemberListFromAttendanceList(List<Attendance> attendanceList){
+        List<Member> memberList = new ArrayList<>();
+
+        for(Attendance attendance : attendanceList){
+            if(attendance.getWasPresent())
+                memberList.add(memberDAO.getMemberByID(attendance.getMemberID()));
+        }
+
+        return memberList;
     }
 
     @Override
