@@ -6,6 +6,11 @@
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="webportal" />
+          <element id="library" level="application" name="angular" />
+          <element id="library" level="application" name="bootstrap" />
+          <element id="library" level="application" name="dataTables.bootstrap" />
+          <element id="library" level="application" name="jquery-3.1.1" />
+          <element id="library" level="application" name="jquery.dataTables" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: antlr:antlr:2.7.7" />
@@ -51,6 +56,9 @@
           <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:3.0.1" />
           <element id="library" level="project" name="Maven: org.hamcrest:hamcrest-core:1.3" />
           <element id="library" level="project" name="Maven: org.hamcrest:hamcrest-library:1.3" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-api:2.8.1" />
+          <element id="library" level="project" name="Maven: org.apache.logging.log4j:log4j-core:2.8.1" />
+          <element id="library" level="project" name="Maven: log4j:log4j:1.2.17" />
         </element>
       </element>
     </root>

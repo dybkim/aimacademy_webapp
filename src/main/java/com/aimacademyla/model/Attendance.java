@@ -23,10 +23,10 @@ public class Attendance implements Serializable{
     @Column(name="MemberID")
     private int memberID;
 
-    @Column(name="SessionID")
-    private Integer sessionID;
+    @Column(name="CourseSessionID")
+    private int courseSessionID;
 
-    @Column(name="attendanceDate")
+    @Column(name="AttendanceDate")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="MM/dd/yyyy")
     private Date attendanceDate;
@@ -50,24 +50,26 @@ public class Attendance implements Serializable{
         this.memberID = memberID;
     }
 
-    public int getSessionID() {
-        return sessionID;
+    public int getCourseSessionID() {
+        return courseSessionID;
     }
 
-    public void setSessionID(int sessionID) {
-        this.sessionID = sessionID;
+    public void setCourseSessionID(int courseSessionID) {
+        this.courseSessionID = courseSessionID;
     }
 
-    public Date getDateAttended() {
+    public Date getAttendanceDate() {
         return attendanceDate;
     }
 
-    public void setDateAttended(Date attendanceDate) {
+    public void setAttendanceDate(Date attendanceDate) {
         this.attendanceDate = attendanceDate;
     }
 
-    public void setWasPresent(boolean wasPresent){this.wasPresent = wasPresent;}
+    public boolean isWasPresent() {
+        return wasPresent;
+    }
 
-    public boolean getWasPresent(){return this.wasPresent;}
+    public void setWasPresent(boolean wasPresent){this.wasPresent = wasPresent;}
 
 }

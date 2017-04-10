@@ -21,9 +21,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header">Add Course Session</h1>
+            <h1 class="page-header">Edit Course Session</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/viewEnrollment/${courseSessionAttendanceListWrapper.courseSession.courseID}/addCourseSession" method="post" modelAttribute="courseSessionAttendanceListWrapper">
+            <form:form action="${pageContext.request.contextPath}/admin/courseList/viewEnrollment/${courseSessionAttendanceListWrapper.courseSession.courseID}/editCourseSession/${courseSessionAttendanceListWrapper.courseSession.courseSessionID}" method="post" modelAttribute="courseSessionAttendanceListWrapper">
 
                 <form:hidden path="courseSession.courseSessionID" value="${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>
 
@@ -33,16 +33,17 @@
                     <span style="color: #FF0000">${courseSessionDateErrorMsg}</span>
                     <br>
                     <label for="courseSessionDate">Class Session Date (MM/DD/YYYY)</label>
-                    <form:input path="courseSession.courseSessionDate" id="courseSessionDate" class="date"/>
+                    <fmt:formatDate value="${courseSessionAttendanceListWrapper.courseSession.courseSessionDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>
+                    <form:input path="courseSession.courseSessionDate" id="courseSessionDate" class="date" value="${dateString}"/>
                 </div>
 
                 <table class="table table-striped">
                     <thead>
-                        <tr>
-                            <th>Student ID#</th>
-                            <th>Student Name</th>
-                            <th>Attendance</tH>
-                        </tr>
+                    <tr>
+                        <th>Student ID#</th>
+                        <th>Student Name</th>
+                        <th>Attendance</tH>
+                    </tr>
                     </thead>
                     <tbody>
                     <div class="form-group">
@@ -52,7 +53,7 @@
                                 <form:hidden path="attendanceMap[${member.memberID}].courseSessionID" value="${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>
                                 <td>${member.memberID}</td>
                                 <td>${member.memberFirstName} ${member.memberLastName}</td>
-                                <td><form:checkbox path="attendanceMap[${member.memberID}].wasPresent"/></td>
+                                <td><form:checkbox path="attendanceMap[${member.memberID}].wasPresent" value="${courseSessionAttendanceListWrapper.attendanceMap.get(member.memberID).wasPresent}"/></td>
                             </tr>
                         </c:forEach>
                     </div>
@@ -61,7 +62,7 @@
 
                 <input type="submit" value="submit" class="btn btn=default">
 
-                <a href="<spring:url value="/admin/courseList/viewEnrollment/${courseSessionAttendanceListWrapper.courseSession.courseID}/cancelAddCourseSession/${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>" class="btn btn-default">Cancel</a>
+                <a href="<spring:url value="/admin/courseList/viewEnrollment/${courseSessionAttendanceListWrapper.courseSession.courseID}"/>" class="btn btn-default">Cancel</a>
 
             </form:form>
         </div>

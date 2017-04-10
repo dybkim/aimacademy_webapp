@@ -4,7 +4,6 @@ import com.aimacademyla.dao.StudentRegistrationDAO;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.StudentRegistration;
 import com.aimacademyla.service.StudentRegistrationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,8 +1,6 @@
 package controller;
 
-import com.aimacademyla.controller.CourseController;
 import com.aimacademyla.controller.StudentListController;
-import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberService;
@@ -14,9 +12,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;

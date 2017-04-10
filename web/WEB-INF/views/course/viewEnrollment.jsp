@@ -15,40 +15,6 @@
 <%@include file="../template/sidebar.jsp" %>
 
 <script>
-    <%--function formatStudentAttendanceList ( d ) {--%>
-        <%--// `d` is the original data object for the row--%>
-        <%--return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+--%>
-                <%--&lt;%&ndash;'<c:forEach items='d' var="attendance">'+&ndash;%&gt;--%>
-                <%--&lt;%&ndash;'<tr>'+&ndash;%&gt;--%>
-                    <%--&lt;%&ndash;'<td>Session:</td>'+&ndash;%&gt;--%>
-                    <%--&lt;%&ndash;'<td><fmt:formatDate value="${attendance.dateAttended}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>${dateString}</td>'+&ndash;%&gt;--%>
-                    <%--&lt;%&ndash;'<td><c:when test="${attendance.wasPresent}">Attended</c:when>'+&ndash;%&gt;--%>
-                        <%--&lt;%&ndash;'<c:otherwise>Absent</c:otherwise></td>'+&ndash;%&gt;--%>
-                <%--&lt;%&ndash;'</tr>'+&ndash;%&gt;--%>
-
-
-        <%--&lt;%&ndash;'</c:forEach>';&ndash;%&gt;--%>
-
-            <%--'<tr>'+--%>
-            <%--'<td>Name:</td>'+--%>
-            <%--'</tr>'+--%>
-            <%--'</table>';--%>
-    <%--}--%>
-
-    <%--function formatCourseSessionList ( d ) {--%>
-        <%--// `d` is the original data object for the row--%>
-        <%--return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+--%>
-            <%--&lt;%&ndash;'<c:forEach items='d' var="member">'+&ndash;%&gt;--%>
-                    <%--&lt;%&ndash;'<tr>'+&ndash;%&gt;--%>
-                        <%--&lt;%&ndash;'<td>Name:</td>'+&ndash;%&gt;--%>
-                        <%--&lt;%&ndash;'<td>${member.memberFirstName} ${member.memberLastName}</td>'+&ndash;%&gt;--%>
-                    <%--&lt;%&ndash;'</tr>'+&ndash;%&gt;--%>
-            <%--&lt;%&ndash;'</c:forEach>';&ndash;%&gt;--%>
-            <%--'<tr>'+--%>
-            <%--'<td>Name:</td>'+--%>
-            <%--'</tr>'+--%>
-        <%--'</table>';--%>
-    <%--}--%>
 
     $(document).ready(function(){
 
@@ -60,40 +26,17 @@
             "lengthMenu": [[25,50,-1], [25,50, "All"]],
         });
 
-//        $('#studentListTable').find('tbody').on('click', 'td.details-control', function(){
-//            var tr = $(this).closest('tr');
-//            var row = studentListTable.row(tr);
-//
-//            if (row.child.isShown()){
-//                row.child.hide();
-//                tr.removeClass('shown');
-//            }
-//
-//            else{
-//                row.child(formatStudentAttendanceList(row.data())).show();
-//                tr.addClass('shown');
-//            }
-//        });
-
         var courseSessionTable = $('#courseSessionListTable').DataTable({
             "lengthMenu": [[25,50,-1], [25,50, "All"]],
-            "order": [[1, "asc"]]
+            "order": [[4, "asc"]],
+            "columnDefs": [
+                {
+                    "targets": [4],
+                    "visible": false,
+                    "searchable": false
+                }
+            ]
         });
-
-//        $('#courseSessionListTable').find('tbody').on('click', 'td.details-control', function(){
-//            var tr = $(this).closest('tr');
-//            var row = courseSessionTable.row(tr);
-//
-//            if (row.child.isShown()){
-//                row.child.hide();
-//                tr.removeClass('shown');
-//            }
-//
-//            else{
-//                row.child(formatCourseSessionList(row.data())).show();
-//                tr.addClass('shown');
-//            }
-//        });
 
         courseSessionTable.on('order.dt search.dt', function(){
             courseSessionTable.column(0, {search:'applied', order:'applied'}).nodes().each(function (cell, i){
@@ -107,7 +50,6 @@
 
 <html>
     <body>
-
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -116,7 +58,13 @@
 
                     <br>
 
-                    <a href="<spring:url value="/admin/viewEnrollment/${course.courseID}/addStudentToCourse"/>" class="btn btn-primary">Add Student</a>
+                    <a href="<spring:url value="/admin/courseList/viewEnrollment/${course.courseID}/addStudentToCourse"/>" class="btn btn-primary">Add Student</a>
+
+                    <br>
+
+                    <br>
+
+                    <a href="<spring:url value="/admin/courseList/viewEnrollment/${course.courseID}/addCourseSession"/>" class="btn btn-primary">Add Course Session</a>
 
                     <br>
 
@@ -163,21 +111,24 @@
                                         <th>Date</th>
                                         <th>Attendance</th>
                                         <th>Edit Info</th>
+                                        <th>Hidden Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <c:forEach items="${courseSessionList}" var="courseSession">
                                         <tr>
                                             <td></td>
-                                            <td><fmt:formatDate value="${courseSession.sessionDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>${dateString}</td>
-                                            <td>TBA</td>
-                                            <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                                            <td><fmt:formatDate value="${courseSession.courseSessionDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>${dateString}</td>
+                                            <td>${courseSession.numMembersAttended} / ${numEnrolled} Students</td>
+                                            <td><a href="<spring:url value="/admin/courseList/viewEnrollment/${course.courseID}/editCourseSession/${courseSession.courseSessionID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                                            <td><fmt:formatDate value="${courseSession.courseSessionDate}" var="dateStringHidden" pattern="yyyy/MM/dd" timeZone="GMT"/>${dateStringHidden}</td>
                                         </tr>
                                     </c:forEach>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    <a href="<spring:url value="/admin/courseList"/>" class="btn btn-primary">Back</a>
                 </div>
             </div>
         </div>

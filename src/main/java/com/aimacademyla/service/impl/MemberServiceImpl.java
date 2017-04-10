@@ -5,7 +5,6 @@ import com.aimacademyla.model.Attendance;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class MemberServiceImpl implements MemberService {
         List<Member> memberList = new ArrayList<>();
 
         for(Attendance attendance : attendanceList){
-            if(attendance.getWasPresent())
+            if(attendance.isWasPresent())
                 memberList.add(memberDAO.getMemberByID(attendance.getMemberID()));
         }
 

@@ -38,6 +38,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public int getNumEnrolled(int courseID){
+        return courseDAO.getNumEnrolled(courseID);
+    }
+
+    @Override
     public void addCourse(Course course) {
         courseDAO.addCourse(course);
     }

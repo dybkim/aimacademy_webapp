@@ -76,16 +76,30 @@ public class AttendanceDAOImpl implements AttendanceDAO{
 
     @Override
     public void addAttendance(Attendance attendance) {
+        Session session = sessionFactory.getCurrentSession();
+        session.saveOrUpdate(attendance);
+        session.flush();
+    }
 
+    @Override
+    public void addOrUpdateAttendanceList(List<Attendance> attendanceList){
+        Session session = sessionFactory.getCurrentSession();
+        for(Attendance attendance : attendanceList)
+            session.saveOrUpdate(attendance);
+        session.flush();
     }
 
     @Override
     public void editAttendance(Attendance attendance) {
-
+        Session session = sessionFactory.getCurrentSession();
+        session.saveOrUpdate(attendance);
+        session.flush();
     }
 
     @Override
     public void deleteAttendance(Attendance attendance) {
-
+        Session session = sessionFactory.getCurrentSession();
+        session.remove(attendance);
+        session.flush();
     }
 }

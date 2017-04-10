@@ -1,8 +1,11 @@
 package com.aimacademyla.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -23,10 +26,13 @@ public class CourseSession implements Serializable{
     @Column(name="CourseID")
     private int courseID;
 
-    @Column(name="SessionDate")
+    @Column(name="CourseSessionDate")
     @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern="MM/DD/YYYY")
-    private Date sessionDate;
+    @DateTimeFormat(pattern="MM/dd/yyyy")
+    private Date courseSessionDate;
+
+    @Column(name="NumMembersAttended")
+    private int numMembersAttended;
 
     public int getCourseSessionID() {
         return courseSessionID;
@@ -44,11 +50,19 @@ public class CourseSession implements Serializable{
         this.courseID = courseID;
     }
 
-    public Date getSessionDate() {
-        return sessionDate;
+    public Date getCourseSessionDate() {
+        return courseSessionDate;
     }
 
-    public void setSessionDate(Date sessionDate) {
-        this.sessionDate = sessionDate;
+    public void setCourseSessionDate(Date courseSessionDate) {
+        this.courseSessionDate = courseSessionDate;
+    }
+
+    public int getNumMembersAttended() {
+        return numMembersAttended;
+    }
+
+    public void setNumMembersAttended(int numMembersAttended) {
+        this.numMembersAttended = numMembersAttended;
     }
 }

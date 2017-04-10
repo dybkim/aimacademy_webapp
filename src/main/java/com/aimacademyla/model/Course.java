@@ -46,6 +46,18 @@ public class Course implements Serializable{
     @Column(name="NumEnrolled")
     private int numEnrolled;
 
+    @Column(name="TotalNumSessions")
+    private int totalNumSessions;
+
+    @Column(name="SeasonID")
+    private int seasonID;
+
+    @Column(name="PricePerHour")
+    private double pricePerHour;
+
+    @Column(name="ClassSessionLengthHours")
+    private double classSessionLengthHours;
+
     public int getCourseID() {
         return courseID;
     }
@@ -100,5 +112,49 @@ public class Course implements Serializable{
 
     public void setIsActive(boolean active) {
         isActive = active;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public int getTotalNumSessions() {
+        return totalNumSessions;
+    }
+
+    public void setTotalNumSessions(int totalNumSessions) {
+        this.totalNumSessions = totalNumSessions;
+    }
+
+    public double getPricePerHour() {
+        return pricePerHour;
+    }
+
+    public void setPricePerHour(double pricePerHour) {
+        this.pricePerHour = pricePerHour;
+    }
+
+    public double getClassSessionLengthHours() {
+        return classSessionLengthHours;
+    }
+
+    public void setClassSessionLengthHours(double classSessionLengthHours) {
+        this.classSessionLengthHours = classSessionLengthHours;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public int getSeasonID() {
+        return seasonID;
+    }
+
+    public void setSeasonID(int seasonID) {
+        this.seasonID = seasonID;
     }
 }

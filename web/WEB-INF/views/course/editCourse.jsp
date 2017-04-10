@@ -32,12 +32,12 @@
                     <form:input path="courseType" id="courseType" class="form-Control" value="${course.courseType}"/>
                 </div>
 
-                <div class="form-group"><span style=":color #FF0000">${startDateErrorMsg}</span>
+                <div class="form-group"><span style="color: #FF0000">${startDateErrorMsg}</span>
                     <label for="startDate">Start Date (MM/DD/YYYY)</label>
                     <form:input path="courseStartDate" id="startDate" class="date" value="${course.courseStartDate}"/>
                 </div>
 
-                <div class="form-group"><span style=":color #FF0000">${endDateErrorMsg}</span>
+                <div class="form-group"><span style="color: #FF0000">${endDateErrorMsg}</span>
                     <label for="endDate">End Date (MM/DD/YYYY)</label>
                     <form:input path="courseEndDate" id="endDate" class="date" value="${course.courseEndDate}"/>
                 </div>

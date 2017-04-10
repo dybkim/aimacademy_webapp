@@ -43,7 +43,7 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Override
-    public List<List<Attendance>> getAttendanceListForCourseSessionList(List<CourseSession> courseSessionList){
+    public List<List<Attendance>> getAttendanceListsForCourseSessionList(List<CourseSession> courseSessionList){
         List<List<Attendance>> attendanceListList = new ArrayList<>();
         for(CourseSession courseSession : courseSessionList){
             attendanceListList.add(getAttendanceForCourseSession(courseSession));
@@ -71,6 +71,9 @@ public class AttendanceServiceImpl implements AttendanceService{
     public void addAttendance(Attendance attendance) {
         attendanceDAO.addAttendance(attendance);
     }
+
+    @Override
+    public void addOrUpdateAttendanceList(List<Attendance> attendanceList){attendanceDAO.addOrUpdateAttendanceList(attendanceList);}
 
     @Override
     public void editAttendance(Attendance attendance) {

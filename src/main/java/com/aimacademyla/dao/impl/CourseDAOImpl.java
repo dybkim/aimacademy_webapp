@@ -55,6 +55,17 @@ public class CourseDAOImpl implements CourseDAO {
     }
 
     @Override
+    public int getNumEnrolled(int courseID){
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("SELECT COUNT(*) FROM Student_Registration WHERE CourseID = :courseID");
+        query.setParameter("courseID", courseID);
+        int numEnrolled = ((Long)query.getSingleResult()).intValue();
+        session.flush();
+
+        return numEnrolled;
+    }
+
+    @Override
     public void addCourse(Course course) {
         Session session = sessionFactory.getCurrentSession();
         session.saveOrUpdate(course);

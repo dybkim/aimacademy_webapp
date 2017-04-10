@@ -15,6 +15,8 @@ public interface CourseService {
 
     Course getCourseByID(int courseID);
 
+    int getNumEnrolled(int courseID);
+
     void addCourse(Course course);
 
     void editCourse(Course course);

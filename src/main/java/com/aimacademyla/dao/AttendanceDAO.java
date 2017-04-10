@@ -24,6 +24,8 @@ public interface AttendanceDAO {
 
     void addAttendance(Attendance attendance);
 
+    void addOrUpdateAttendanceList(List<Attendance> attendanceList);
+
     void editAttendance(Attendance attendance);
 
     void deleteAttendance(Attendance attendance);

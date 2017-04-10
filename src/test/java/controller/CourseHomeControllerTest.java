@@ -1,6 +1,6 @@
 package controller;
 
-import com.aimacademyla.controller.CourseController;
+import com.aimacademyla.controller.course.CourseHomeController;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.Member;
@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.*;
  * Created by davidkim on 2/14/17.
  */
 
-public class CourseControllerTest {
+public class CourseHomeControllerTest {
 
     @Mock
     private CourseService courseServiceMock;
@@ -44,14 +44,14 @@ public class CourseControllerTest {
     private AttendanceService attendanceServiceMock;
 
     @InjectMocks
-    private CourseController courseController;
+    private CourseHomeController courseHomeController;
 
     private MockMvc mockMvc;
 
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(courseController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(courseHomeController).build();
     }
 
     @Test

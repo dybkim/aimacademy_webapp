@@ -23,6 +23,7 @@
             <h1 class="page-header">Add new student</h1>
 
             <form:form action="${pageContext.request.contextPath}/admin/studentList/addStudent" method="post" modelAttribute="member">
+
                 <div class="form-group">
                     <label for="firstName">First Name</label><form:errors path="memberFirstName" cssStyle="color: #FF0000"/>
                     <form:input path="memberFirstName" id="firstName" class="form-Control"/>
@@ -68,7 +69,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="entryDate">Date Joined</label>
+                    <label for="entryDate">Date Joined (MM/dd/yyyy)</label>
                     <form:input path="memberEntryDate" id="entryDate" class="form-Control"/>
                 </div>
 
