@@ -1,19 +1,19 @@
-package com.aimacademyla.controller.course.session;
+package com.aimacademyla.controller.course.courseSession;
 
 import com.aimacademyla.model.*;
+import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.model.wrapper.CourseSessionAttendanceListWrapper;
 import com.aimacademyla.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
@@ -36,23 +36,31 @@ public class CourseController {
 
     private ChargeLineService chargeLineService;
 
+    private MemberCourseRegistrationService memberCourseRegistrationService;
+
     private static Logger logger = LogManager.getLogger(CourseController.class);
 
     @Autowired
-    public CourseController(CourseService courseService, MemberService memberService, CourseSessionService courseSessionService, AttendanceService attendanceService, ChargeLineService chargeLineService){
+    public CourseController(CourseService courseService,
+                            MemberService memberService,
+                            CourseSessionService courseSessionService,
+                            AttendanceService attendanceService,
+                            ChargeLineService chargeLineService,
+                            MemberCourseRegistrationService memberCourseRegistrationService){
         this.courseService = courseService;
         this.memberService = memberService;
         this.courseSessionService = courseSessionService;
         this.attendanceService = attendanceService;
         this.chargeLineService = chargeLineService;
+        this.memberCourseRegistrationService = memberCourseRegistrationService;
     }
 
     @RequestMapping("/{courseID}")
     public String viewEnrollment(@PathVariable("courseID") int courseID, Model model){
-        Course course = courseService.getCourseByID(courseID);
+        Course course = courseService.get(courseID);
         List<Member> studentList = memberService.getMembersByCourse(course);
         List<CourseSession> courseSessionList = courseSessionService.getCourseSessionsForCourse(course);
-        int numEnrolled = courseService.getNumEnrolled(courseID);
+        int numEnrolled = courseService.get(courseID).getNumEnrolled();
 
         model.addAttribute("studentList", studentList);
         model.addAttribute("course", course);
@@ -62,24 +70,15 @@ public class CourseController {
         return "/course/viewEnrollment";
     }
 
-    @RequestMapping("/{courseID}/addStudentToCourse")
-    public String addStudentToCourse(@PathVariable("courseID") int courseID, Model model){
 
-        List<Member> memberList = memberService.getMemberList();
-        Course course = courseService.getCourseByID(courseID);
-        model.addAttribute(memberList);
-        model.addAttribute(course);
-
-        return "/course/addStudentToCourse";
-    }
 
     /**
      * NOTE: When adding a CourseSession, a CourseSession is preemptively instantiated in the RDB. In the case that the query is cancelled,
      * the CourseSession instance is deleted.
      */
     @RequestMapping(value="/{courseID}/addCourseSession")
-    public String addCourseSession(@PathVariable("courseID") int courseID, Model model){
-        Course course = courseService.getCourseByID(courseID);
+    public String addCourseSession(@PathVariable("courseID") int courseID, Model model, final RedirectAttributes redirectAttributes){
+        Course course = courseService.get(courseID);
         CourseSession courseSession = new CourseSession();
         courseSession.setCourseID(course.getCourseID());
         courseSession.setCourseSessionID(courseSessionService.generateCourseSessionIDAfterSave(courseSession));
@@ -107,21 +106,17 @@ public class CourseController {
             for (FieldError error : errors ) {
                 logger.error(error.getDefaultMessage());
                 if(error.getField().equals("courseSession.courseSessionDate"))
-                    redirectAttributes.addFlashAttribute("courseSessionDateErrorMsg", "Date must be in MM/DD/YYYY format");
+                    redirectAttributes.addFlashAttribute("courseSessionDateErrorMessage", "Date must be in MM/DD/YYYY format");
             }
-
-            courseSessionService.deleteCourseSession(courseSessionAttendanceListWrapper.getCourseSession().getCourseSessionID());
+            courseSessionService.remove(courseSessionAttendanceListWrapper.getCourseSession());
             return "redirect:/admin/courseList/viewEnrollment/" + courseID + "/addCourseSession";
         }
 
         List<Attendance> attendanceList = new ArrayList<>(courseSessionAttendanceListWrapper.getAttendanceMap().values());
-
         CourseSession courseSession = courseSessionAttendanceListWrapper.getCourseSession();
+        Course course = courseService.get(courseID);
 
-        Course course = courseService.getCourseByID(courseID);
-
-        double totalCharge = course.getPricePerHour() * course.getClassSessionLengthHours();
-
+        double totalCharge = course.getPricePerHour(); //* course.getClassSessionLengthHours();
         int numAttended = 0;
 
         for(Attendance attendance : attendanceList) {
@@ -132,29 +127,29 @@ public class CourseController {
                 ChargeLine chargeLine = new ChargeLine();
                 chargeLine.setAttendanceID(attendance.getAttendanceID());
                 chargeLine.setTotalCharge(totalCharge);
-                chargeLineService.addChargeLine(chargeLine);
+                chargeLineService.add(chargeLine);
             }
         }
 
         courseSession.setNumMembersAttended(numAttended);
 
-        courseSessionService.addCourseSession(courseSession);
+        courseSessionService.add(courseSession);
         attendanceService.addOrUpdateAttendanceList(attendanceList);
 
         return "redirect:/admin/courseList/viewEnrollment/" + courseID;
     }
-
-    @RequestMapping(value="/viewEnrollment/{courseID}/cancelAddCourseSession/{courseSessionID}")
+    @RequestMapping(value="/{courseID}/cancelAddCourseSession/{courseSessionID}")
     public String cancelAddCourseSession(@PathVariable("courseID") int courseID, @PathVariable("courseSessionID") int courseSessionID, @ModelAttribute("courseSessionAttendanceListWrapper") CourseSessionAttendanceListWrapper courseSessionAttendanceListWrapper, Model model){
-        courseSessionService.deleteCourseSession(courseSessionID);
+        CourseSession courseSession = courseSessionService.get(courseSessionID);
+        courseSessionService.remove(courseSession);
 
         return "redirect:/admin/courseList/viewEnrollment/" + courseID;
     }
 
     @RequestMapping(value="/{courseID}/editCourseSession/{courseSessionID}")
     public String editCourseSession(@PathVariable("courseID") int courseID, @PathVariable("courseSessionID") int courseSessionID, Model model){
-        Course course = courseService.getCourseByID(courseID);
-        CourseSession courseSession = courseSessionService.getCourseSessionByID(courseSessionID);
+        Course course = courseService.get(courseID);
+        CourseSession courseSession = courseSessionService.get(courseSessionID);
         List<Attendance> attendanceList = attendanceService.getAttendanceForCourseSession(courseSession);
         List<Member> memberList = memberService.getMembersByCourse(course);
         HashMap<Integer, Attendance> attendanceHashMap = new HashMap<>();
@@ -192,35 +187,43 @@ public class CourseController {
         }
 
         List<Attendance> attendanceList = new ArrayList<>(courseSessionAttendanceListWrapper.getAttendanceMap().values());
-
         CourseSession courseSession = courseSessionAttendanceListWrapper.getCourseSession();
+        Course course = courseService.get(courseSession.getCourseID());
+        double totalCharge = course.getPricePerHour();// * course.getClassSessionLengthHours();
 
         int numAttended = 0;
 
         for(Attendance attendance : attendanceList) {
             attendance.setAttendanceDate(courseSession.getCourseSessionDate());
 
-            if(attendance.isWasPresent()){
+            if(attendance.isWasPresent()) {
                 numAttended++;
+                ChargeLine chargeLine = chargeLineService.getChargeLineByAttendanceID(attendance.getAttendanceID());
+                /**
+                 * If no chargeline currently exists
+                 * create new chargeline with the corresponding attendance instance
+                 */
+                if(chargeLine == null){
+                    chargeLine = new ChargeLine();
+                    chargeLine.setAttendanceID(attendance.getAttendanceID());
+                    chargeLine.setTotalCharge(totalCharge);
+                    chargeLineService.add(chargeLine);
+                }
             }
 
             else{
                 ChargeLine chargeLine = chargeLineService.getChargeLineByAttendanceID(attendance.getAttendanceID());
                 if(chargeLine != null)
-                    chargeLineService.deleteChargeLine(chargeLine);
+                    chargeLineService.remove(chargeLine);
             }
         }
 
         courseSession.setNumMembersAttended(numAttended);
 
-        courseSessionService.editCourseSession(courseSession);
+        courseSessionService.update(courseSession);
         attendanceService.addOrUpdateAttendanceList(attendanceList);
 
         return "redirect:/admin/courseList/viewEnrollment/" + courseID;
     }
 
-    @RequestMapping(value = "/{courseID}/addStudentToCourse", method = RequestMethod.POST)
-    public String addStudentToCourse(@PathVariable("courseID") int courseID, @ModelAttribute("studentMember") Member studentMember){
-        return null;
-    }
 }

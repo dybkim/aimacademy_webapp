@@ -40,7 +40,7 @@ public class StudentListController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String getStudentList(@ModelAttribute("memberListWrapper") MemberListWrapper memberListWrapper, Model model){
-        memberService.editMembers(memberListWrapper.getMemberList());
+        memberService.updateMemberList(memberListWrapper.getMemberList());
         model.addAttribute(memberListWrapper);
         return "/student/studentList";
     }
@@ -57,13 +57,13 @@ public class StudentListController {
         if(result.hasErrors())
             return "/student/addStudent";
 
-        memberService.addMember(member);
+        memberService.add(member);
         return "redirect:/admin/studentList";
     }
 
     @RequestMapping(value="/editStudent/{id}", method=RequestMethod.GET)
     public String editStudent(@PathVariable("id") int id, Model model){
-        Member member = memberService.getMemberByID(id);
+        Member member = memberService.get(id);
         model.addAttribute(member);
         return "/student/editStudent";
     }
@@ -73,13 +73,13 @@ public class StudentListController {
         if(result.hasErrors())
             return "/student/editStudent";
 
-        memberService.editMember(member);
+        memberService.update(member);
         return "redirect:/admin/studentList";
     }
 
     @RequestMapping("/{id}")
     public String getStudentHistory(@PathVariable("id") int id, Model model){
-        Member member = memberService.getMemberByID(id);
+        Member member = memberService.get(id);
         model.addAttribute(member);
         return "/student/studentHistory";
     }

@@ -34,6 +34,9 @@ public class CourseSession implements Serializable{
     @Column(name="NumMembersAttended")
     private int numMembersAttended;
 
+    @Column(name="CourseSessionDuration")
+    private double courseSessionDuration;
+
     public int getCourseSessionID() {
         return courseSessionID;
     }
@@ -60,6 +63,14 @@ public class CourseSession implements Serializable{
 
     public int getNumMembersAttended() {
         return numMembersAttended;
+    }
+
+    public double getCourseSessionDuration() {
+        return courseSessionDuration;
+    }
+
+    public void setCourseSessionDuration(double courseSessionDuration) {
+        this.courseSessionDuration = courseSessionDuration;
     }
 
     public void setNumMembersAttended(int numMembersAttended) {

@@ -8,19 +8,13 @@ import java.util.List;
 /**
  * Created by davidkim on 1/18/17.
  */
-public interface MemberDAO {
+public interface MemberDAO extends GenericDAO<Member, Integer>{
 
     List<Member> getMemberList();
 
-    Member getMemberByID(int id);
+    List<Member> getActiveMembers();
 
     List<Member> getMembersByCourse(Course course);
 
-    void addMember(Member member);
-
-    void editMember(Member member);
-
-    void deleteMember(Member member);
-
-    void editMembers(List<Member> memberList);
+    void updateMemberList(List<Member> memberList);
 }

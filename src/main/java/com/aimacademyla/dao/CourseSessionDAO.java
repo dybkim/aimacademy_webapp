@@ -8,18 +8,8 @@ import java.util.List;
 /**
  * Created by davidkim on 3/1/17.
  */
-public interface CourseSessionDAO {
+public interface CourseSessionDAO extends GenericDAO<CourseSession, Integer>{
     List<CourseSession> getCourseSessionsForCourse(Course course);
 
-    CourseSession getCourseSessionByID(int courseSessionID);
-
     int generateCourseSessionIDAfterSave(CourseSession courseSession);
-
-    void addCourseSession(CourseSession courseSession);
-
-    void deleteCourseSession(CourseSession courseSession);
-
-    void deleteCourseSession(int courseSessionID);
-
-    void editCourseSession(CourseSession courseSession);
 }

@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.Date;
 
 /**
+ * Course Entity represents one academic program held during a specific time period
+ *
  * Created by davidkim on 2/8/17.
  */
 
@@ -16,6 +18,8 @@ import java.util.Date;
 public class Course implements Serializable{
 
     private static final long serialVersionUID = 3942567537260692323L;
+
+    public static final int OPEN_STUDY_ID = 8;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,9 +58,6 @@ public class Course implements Serializable{
 
     @Column(name="PricePerHour")
     private double pricePerHour;
-
-    @Column(name="ClassSessionLengthHours")
-    private double classSessionLengthHours;
 
     public int getCourseID() {
         return courseID;
@@ -136,14 +137,6 @@ public class Course implements Serializable{
 
     public void setPricePerHour(double pricePerHour) {
         this.pricePerHour = pricePerHour;
-    }
-
-    public double getClassSessionLengthHours() {
-        return classSessionLengthHours;
-    }
-
-    public void setClassSessionLengthHours(double classSessionLengthHours) {
-        this.classSessionLengthHours = classSessionLengthHours;
     }
 
     public static long getSerialVersionUID() {

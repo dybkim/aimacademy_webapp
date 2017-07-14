@@ -40,8 +40,14 @@
             <br>
 
             <form:form action="${pageContext.request.contextPath}/admin/studentList" method="post" modelAttribute="memberListWrapper">
+
+                <input type="submit" value="Save Changes" class="btn btn=default">
+
+                <br>
+
+                <br>
+
                 <div class="table-responsive">
-                    <input type="submit" value="Save Changes" class="btn btn=default">
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -79,6 +85,24 @@
                 </div>
 
                 <br>
+
+                <h><b>Drop Enrollment Table</b></h>
+
+                <div class="table-responsive">
+                    <table class="table table-striped dt-responsive" id="dropListContainer">
+                        <thead>
+                        <tr>
+                            <th>Student ID#</th>
+                            <th>Student Name</th>
+                            <th>Cancel Drop</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        </tbody>
+
+                    </table>
+                </div>
 
                 <input type="submit" value="Save Changes" class="btn btn=default">
             </form:form>

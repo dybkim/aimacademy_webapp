@@ -9,9 +9,11 @@ import java.util.List;
 /**
  * Created by davidkim on 1/26/17.
  */
-public interface MemberService {
+public interface MemberService extends GenericService<Member, Integer>{
 
     List<Member> getMemberList();
+
+    List<Member> getActiveMembers();
 
     List<Member> getMembersByCourse(Course course);
 
@@ -19,13 +21,5 @@ public interface MemberService {
 
     List<Member> getPresentMemberListFromAttendanceList(List<Attendance> attendanceList);
 
-    Member getMemberByID(int memberID);
-
-    void addMember(Member member);
-
-    void editMember(Member member);
-
-    void deleteMember(Member member);
-
-    void editMembers(List<Member> memberList);
+    void updateMemberList(List<Member> memberList);
 }

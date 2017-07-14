@@ -21,20 +21,17 @@ import java.util.List;
 
 @Transactional
 @Repository("courseSessionDAO")
-public class CourseSessionDAOImpl implements CourseSessionDAO{
-
-    private SessionFactory sessionFactory;
+public class CourseSessionDAOImpl extends GenericDAOImpl<CourseSession, Integer> implements CourseSessionDAO{
 
     private static final Logger logger = LogManager.getLogger(CourseHomeController.class);
 
-    @Autowired
-    public CourseSessionDAOImpl(SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
+    public CourseSessionDAOImpl(){
+        super(CourseSession.class);
     }
 
     @Override
     public List<CourseSession> getCourseSessionsForCourse(Course course) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         Query query = session.createQuery("FROM Course_Session WHERE CourseID = :courseID");
         query.setParameter("courseID", course.getCourseID());
         List<CourseSession> courseSessionList = query.getResultList();
@@ -47,49 +44,10 @@ public class CourseSessionDAOImpl implements CourseSessionDAO{
     public int generateCourseSessionIDAfterSave(CourseSession courseSession){
         int id;
 
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         session.saveOrUpdate(courseSession);
         id = courseSession.getCourseSessionID();
 
         return id;
     }
-
-    @Override
-    public CourseSession getCourseSessionByID(int courseSessionID) {
-        Session session = sessionFactory.getCurrentSession();
-        CourseSession courseSession = session.get(CourseSession.class, courseSessionID);
-        session.flush();
-
-        return courseSession;
-    }
-
-    @Override
-    public void addCourseSession(CourseSession courseSession) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(courseSession);
-        session.flush();
-    }
-
-    @Override
-    public void editCourseSession(CourseSession courseSession) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(courseSession);
-        session.flush();
-    }
-
-    @Override
-    public void deleteCourseSession(CourseSession courseSession) {
-        Session session = sessionFactory.getCurrentSession();
-        session.remove(courseSession);
-        session.flush();
-    }
-
-    @Override
-    public void deleteCourseSession(int courseSessionID){
-        Session session = sessionFactory.getCurrentSession();
-        CourseSession courseSession = session.load(CourseSession.class, courseSessionID);
-        session.delete(courseSession);
-        session.flush();
-    }
-
 }

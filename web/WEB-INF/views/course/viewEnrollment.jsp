@@ -23,7 +23,7 @@
         } );
 
         var studentListTable = $('#studentListTable').DataTable({
-            "lengthMenu": [[25,50,-1], [25,50, "All"]],
+            "lengthMenu": [[25,50,-1], [25,50, "All"]]
         });
 
         var courseSessionTable = $('#courseSessionListTable').DataTable({
@@ -48,6 +48,26 @@
     });
 </script>
 
+
+<script>
+    var checkCourseMembers = function(){
+        $.ajax({
+            url: "/admin/courseList/rest/${course.courseID}/validateAddCourseSession",
+            type: "GET",
+            async: false,
+            dataType: "json",
+            success:function(){
+                $http.get('/admin/courseList/viewEnrollment/${course.courseID}/addCourseSession');
+            },
+            error:function(response){
+                var jsonResponse = JSON.parse(response.responseText);
+                var errorMessage = JSON.stringify(jsonResponse["errorMessage"]);
+                alert("Error: " + errorMessage);
+            }
+        });
+    }
+</script>
+
 <html>
     <body>
         <div class="container-fluid">
@@ -55,16 +75,17 @@
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
                     <h1 class="page-header">${course.courseName} - Course Info</h1>
-
-                    <br>
-
-                    <a href="<spring:url value="/admin/courseList/viewEnrollment/${course.courseID}/addStudentToCourse"/>" class="btn btn-primary">Add Student</a>
-
                     <br>
 
                     <br>
 
-                    <a href="<spring:url value="/admin/courseList/viewEnrollment/${course.courseID}/addCourseSession"/>" class="btn btn-primary">Add Course Session</a>
+                    <button type="button" class="btn btn-primary" onclick="checkCourseMembers()">Add Course Session</button>
+
+                    <br>
+
+                    <br>
+
+                    <a href="<spring:url value="/admin/courseList/editCourse/${course.courseID}"/>" class="btn btn-primary">Edit Course Information/Roster</a>
 
                     <br>
 
@@ -119,7 +140,7 @@
                                         <tr>
                                             <td></td>
                                             <td><fmt:formatDate value="${courseSession.courseSessionDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>${dateString}</td>
-                                            <td>${courseSession.numMembersAttended} / ${numEnrolled} Students</td>
+                                             <td>${courseSession.numMembersAttended} / ${numEnrolled} Students</td>
                                             <td><a href="<spring:url value="/admin/courseList/viewEnrollment/${course.courseID}/editCourseSession/${courseSession.courseSessionID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                             <td><fmt:formatDate value="${courseSession.courseSessionDate}" var="dateStringHidden" pattern="yyyy/MM/dd" timeZone="GMT"/>${dateStringHidden}</td>
                                         </tr>

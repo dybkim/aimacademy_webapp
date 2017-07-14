@@ -1,11 +1,14 @@
 package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.CourseDAO;
+import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,13 +16,14 @@ import java.util.List;
  */
 
 @Service
-public class CourseServiceImpl implements CourseService {
+public class CourseServiceImpl extends GenericServiceImpl<Course, Integer> implements CourseService {
 
     private CourseDAO courseDAO;
 
     @Autowired
-    public CourseServiceImpl(CourseDAO courseDAO){
-        this.courseDAO = courseDAO;
+    public CourseServiceImpl(@Qualifier("courseDAO") GenericDAO<Course, Integer> genericDAO){
+        super(genericDAO);
+        this.courseDAO = (CourseDAO) genericDAO;
     }
 
     @Override
@@ -33,27 +37,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course getCourseByID(int courseID){
-        return courseDAO.getCourseByID(courseID);
+    public List<Course> getCourseListBySeason(int seasonID){
+        return courseDAO.getCourseListBySeason(seasonID);
     }
 
     @Override
-    public int getNumEnrolled(int courseID){
-        return courseDAO.getNumEnrolled(courseID);
-    }
-
-    @Override
-    public void addCourse(Course course) {
-        courseDAO.addCourse(course);
-    }
-
-    @Override
-    public void editCourse(Course course) {
-        courseDAO.editCourse(course);
-    }
-
-    @Override
-    public void deleteCourse(Course course) {
-        courseDAO.deleteCourse(course);
+    public List<Course> getCourseListByDate(Date date){
+        return courseDAO.getCourseListByDate(date);
     }
 }

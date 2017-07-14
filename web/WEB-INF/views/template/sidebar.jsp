@@ -13,7 +13,7 @@
         <li><a href="<spring:url value="/admin/studentList"/>">Students</a></li>
         <li><a href="">Staff</a></li>
         <li><a href="<spring:url value="/admin/courseList"/>">Academics</a></li>
-        <li><a href="">Finances</a></li>
+        <li><a href="<spring:url value="/admin/finances"/>">Finances</a></li>
         <li><a href="">Forms</a></li>
     </ul>
 </div>

@@ -1,10 +1,12 @@
 package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.CourseSessionDAO;
+import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.service.CourseSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,13 +16,14 @@ import java.util.List;
  */
 
 @Service
-public class CourseSessionServiceImpl implements CourseSessionService{
+public class CourseSessionServiceImpl extends GenericServiceImpl<CourseSession, Integer> implements CourseSessionService{
 
     private CourseSessionDAO courseSessionDAO;
 
     @Autowired
-    public CourseSessionServiceImpl(CourseSessionDAO courseSessionDAO){
-        this.courseSessionDAO = courseSessionDAO;
+    public CourseSessionServiceImpl(@Qualifier("courseSessionDAO") GenericDAO<CourseSession, Integer> genericDAO){
+        super(genericDAO);
+        this.courseSessionDAO = (CourseSessionDAO) genericDAO;
     }
 
     @Override
@@ -29,34 +32,8 @@ public class CourseSessionServiceImpl implements CourseSessionService{
     }
 
     @Override
-    public CourseSession getCourseSessionByID(int courseSessionID){
-        return courseSessionDAO.getCourseSessionByID(courseSessionID);
-    }
-
-    @Override
     public int generateCourseSessionIDAfterSave(CourseSession courseSession){
         return courseSessionDAO.generateCourseSessionIDAfterSave(courseSession);
-    }
-
-    @Override
-    public void addCourseSession(CourseSession courseSession){
-        courseSessionDAO.addCourseSession(courseSession);
-    }
-
-
-    @Override
-    public void deleteCourseSession(CourseSession courseSession){
-        courseSessionDAO.deleteCourseSession(courseSession);
-    }
-
-    @Override
-    public void deleteCourseSession(int courseSessionID){
-        courseSessionDAO.deleteCourseSession(courseSessionID);
-    }
-
-    @Override
-    public void editCourseSession(CourseSession courseSession){
-        courseSessionDAO.editCourseSession(courseSession);
     }
 
 }

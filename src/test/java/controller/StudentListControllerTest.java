@@ -4,7 +4,7 @@ import com.aimacademyla.controller.StudentListController;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberService;
-import com.aimacademyla.service.StudentRegistrationService;
+import com.aimacademyla.service.MemberCourseRegistrationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -32,7 +32,7 @@ public class StudentListControllerTest {
     private MemberService memberServiceMock;
 
     @Mock
-    private StudentRegistrationService studentRegistrationServiceMock;
+    private MemberCourseRegistrationService memberCourseRegistrationServiceMock;
 
     @InjectMocks
     private StudentListController studentListControllerMock;

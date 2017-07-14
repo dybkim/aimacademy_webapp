@@ -1,12 +1,14 @@
 package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.AttendanceDAO;
+import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.model.Attendance;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,13 +20,14 @@ import java.util.List;
  */
 
 @Service
-public class AttendanceServiceImpl implements AttendanceService{
+public class AttendanceServiceImpl extends GenericServiceImpl<Attendance, Integer> implements AttendanceService{
 
     private AttendanceDAO attendanceDAO;
 
     @Autowired
-    public AttendanceServiceImpl(AttendanceDAO attendanceDAO){
-        this.attendanceDAO = attendanceDAO;
+    public AttendanceServiceImpl(@Qualifier("attendanceDAO") GenericDAO<Attendance, Integer> genericDAO){
+        super(genericDAO);
+        this.attendanceDAO = (AttendanceDAO)genericDAO;
     }
 
     @Override
@@ -68,20 +71,6 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Override
-    public void addAttendance(Attendance attendance) {
-        attendanceDAO.addAttendance(attendance);
-    }
-
-    @Override
     public void addOrUpdateAttendanceList(List<Attendance> attendanceList){attendanceDAO.addOrUpdateAttendanceList(attendanceList);}
 
-    @Override
-    public void editAttendance(Attendance attendance) {
-        attendanceDAO.editAttendance(attendance);
-    }
-
-    @Override
-    public void deleteAttendance(Attendance attendance) {
-        attendanceDAO.deleteAttendance(attendance);
-    }
 }

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,13 +21,12 @@ import java.util.List;
 
 @Repository("attendanceDAO")
 @Transactional
-public class AttendanceDAOImpl implements AttendanceDAO{
+public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implements AttendanceDAO{
 
     private SessionFactory sessionFactory;
 
-    @Autowired
-    public AttendanceDAOImpl(SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
+    public AttendanceDAOImpl(){
+        super(Attendance.class);
     }
 
     @Override
@@ -61,24 +59,32 @@ public class AttendanceDAOImpl implements AttendanceDAO{
 
     @Override
     public List<Attendance> getAttendanceForMember(Member member) {
-        return null;
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("FROM Attendance WHERE MemberID = :memberID");
+        query.setParameter("memberID", member.getMemberID());
+        List<Attendance> attendanceList = query.getResultList();
+
+        session.flush();
+
+        return attendanceList;
     }
 
     @Override
     public List<Attendance> getAttendanceForMember(Member member, Course course) {
-        return null;
+        Session session = sessionFactory.getCurrentSession();
+        Query query = session.createQuery("FROM Attendance WHERE MemberID = :memberID AND CourseID = :courseID");
+        query.setParameter("memberID", member.getMemberID());
+        query.setParameter("courseID", course.getCourseID());
+        List<Attendance> attendanceList = query.getResultList();
+
+        session.flush();
+
+        return attendanceList;
     }
 
     @Override
     public List<Attendance> getAttendanceForMember(Member member, Course course, Date date) {
         return null;
-    }
-
-    @Override
-    public void addAttendance(Attendance attendance) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(attendance);
-        session.flush();
     }
 
     @Override
@@ -89,17 +95,5 @@ public class AttendanceDAOImpl implements AttendanceDAO{
         session.flush();
     }
 
-    @Override
-    public void editAttendance(Attendance attendance) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(attendance);
-        session.flush();
-    }
 
-    @Override
-    public void deleteAttendance(Attendance attendance) {
-        Session session = sessionFactory.getCurrentSession();
-        session.remove(attendance);
-        session.flush();
-    }
 }

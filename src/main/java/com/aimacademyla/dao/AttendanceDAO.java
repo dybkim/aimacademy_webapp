@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by davidkim on 3/2/17.
  */
-public interface AttendanceDAO {
+public interface AttendanceDAO extends GenericDAO<Attendance, Integer>{
 
     List<Attendance> getAttendanceForCourse(Course course);
     List<Attendance> getAttendanceForCourse(Course course, Date date);
@@ -22,11 +22,6 @@ public interface AttendanceDAO {
     List<Attendance> getAttendanceForMember(Member member, Course course);
     List<Attendance> getAttendanceForMember(Member member, Course course, Date date);
 
-    void addAttendance(Attendance attendance);
-
     void addOrUpdateAttendanceList(List<Attendance> attendanceList);
 
-    void editAttendance(Attendance attendance);
-
-    void deleteAttendance(Attendance attendance);
 }

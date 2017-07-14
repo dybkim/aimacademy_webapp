@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="entryDate">Date Joined (MM/dd/yyyy)</label>
+                    <label for="entryDate">Date Joined (MM/DD/YYYY)</label>
                     <fmt:formatDate value="${member.memberEntryDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>
                     <form:input path="memberEntryDate" id="entryDate" class="form-Control" value="${dateString}"/>
                 </div>

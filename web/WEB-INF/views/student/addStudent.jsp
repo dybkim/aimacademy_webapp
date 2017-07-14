@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="entryDate">Date Joined (MM/dd/yyyy)</label>
+                    <label for="entryDate">Date Joined (MM/DD/YYYY)</label>
                     <form:input path="memberEntryDate" id="entryDate" class="form-Control"/>
                 </div>
 

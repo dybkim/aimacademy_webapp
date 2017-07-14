@@ -15,18 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository("chargeLineDAO")
 @Transactional
-public class ChargeLineDAOImpl implements ChargeLineDAO {
+public class ChargeLineDAOImpl extends GenericDAOImpl<ChargeLine, Integer> implements ChargeLineDAO {
 
-    private SessionFactory sessionFactory;
-
-    @Autowired
-    public ChargeLineDAOImpl(SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
+    public ChargeLineDAOImpl(){
+        super(ChargeLine.class);
     }
 
     @Override
     public ChargeLine getChargeLineByID(int chargeLineID) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         ChargeLine chargeLine = session.get(ChargeLine.class, chargeLineID);
         session.flush();
         return chargeLine;
@@ -34,33 +31,12 @@ public class ChargeLineDAOImpl implements ChargeLineDAO {
 
     @Override
     public ChargeLine getChargeLineByAttendanceID(int attendanceID) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         Query query = session.createQuery("FROM Charge_Line WHERE AttendanceID = :attendanceID");
         query.setParameter("attendanceID", attendanceID);
         ChargeLine chargeLine = (ChargeLine) query.uniqueResult();
         session.flush();
 
         return chargeLine;
-    }
-
-    @Override
-    public void addChargeLine(ChargeLine chargeLine) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(chargeLine);
-        session.flush();
-    }
-
-    @Override
-    public void editChargeLine(ChargeLine chargeLine) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(chargeLine);
-        session.flush();
-    }
-
-    @Override
-    public void deleteChargeLine(ChargeLine chargeLine) {
-        Session session = sessionFactory.getCurrentSession();
-        session.remove(chargeLine);
-        session.flush();
     }
 }

@@ -23,14 +23,14 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Add Course Session</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/viewEnrollment/${courseSessionAttendanceListWrapper.courseSession.courseID}/addCourseSession" method="post" modelAttribute="courseSessionAttendanceListWrapper">
+            <form:form action="${pageContext.request.contextPath}/admin/courseList/viewEnrollment/${courseSessionAttendanceListWrapper.courseSession.courseID}/addCourseSession" method="POST" modelAttribute="courseSessionAttendanceListWrapper">
 
                 <form:hidden path="courseSession.courseSessionID" value="${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>
 
                 <form:hidden path="courseSession.courseID" value="${courseSessionAttendanceListWrapper.courseSession.courseID}"/>
 
                 <div class="form-group">
-                    <span style="color: #FF0000">${courseSessionDateErrorMsg}</span>
+                    <span style="color: #FF0000">${courseSessionDateErrorMessage}</span>
                     <br>
                     <label for="courseSessionDate">Class Session Date (MM/DD/YYYY)</label>
                     <form:input path="courseSession.courseSessionDate" id="courseSessionDate" class="date"/>

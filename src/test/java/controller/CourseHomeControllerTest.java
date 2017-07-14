@@ -6,8 +6,8 @@ import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.service.AttendanceService;
 import com.aimacademyla.service.CourseService;
+import com.aimacademyla.service.MemberCourseRegistrationService;
 import com.aimacademyla.service.MemberService;
-import com.aimacademyla.service.StudentRegistrationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -38,7 +38,7 @@ public class CourseHomeControllerTest {
     private MemberService memberServiceMock;
 
     @Mock
-    private StudentRegistrationService studentRegistrationServiceMock;
+    private MemberCourseRegistrationService memberCourseRegistrationServiceMock;
 
     @Mock
     private AttendanceService attendanceServiceMock;
@@ -63,7 +63,7 @@ public class CourseHomeControllerTest {
         memberList.add(new Member());
         memberList.add(new Member());
 
-        when(courseServiceMock.getCourseByID(courseID)).thenReturn(course);
+        when(courseServiceMock.get(courseID)).thenReturn(course);
         when(memberServiceMock.getMembersByCourse(course)).thenReturn(memberList);
 
         mockMvc.perform(get("/admin/courseList/viewEnrollment/1"))
@@ -100,7 +100,7 @@ public class CourseHomeControllerTest {
         CourseSession courseSession = new CourseSession();
 
         courseSession.setCourseID(courseID);
-        courseSession.setCourseSessionID(1);
+        courseSession.setCourseSessionID(courseSessionID);
 
         //TODO: Add mockMvc.perform();
     }

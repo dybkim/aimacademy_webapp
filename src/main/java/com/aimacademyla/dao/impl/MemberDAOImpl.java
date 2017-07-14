@@ -18,73 +18,47 @@ import java.util.List;
 
 @Repository("memberDAO")
 @Transactional
-public class MemberDAOImpl implements MemberDAO {
-
-    private SessionFactory sessionFactory;
-
-    @Autowired
-    public MemberDAOImpl(SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
+public class MemberDAOImpl extends GenericDAOImpl<Member,Integer> implements MemberDAO {
+    public MemberDAOImpl(){
+        super(Member.class);
     }
 
     @Override
-    public void addMember(Member member) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(member);
-        session.flush();
-    }
-
-    @Override
-    public void editMember(Member member) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(member);
-        session.flush();
-    }
-
-    @Override
-    public Member getMemberByID(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        Member member = session.get(Member.class, id);
-        session.flush();
-        return member;
-    }
-
-    /**
-     * Current Student list is derived from the Member table.
-     * TODO: In the future, change the database source table from Member to StudentMember
-     */
-    @Override
-    public List<Member> getMemberList() {
-        Session session = sessionFactory.getCurrentSession();
+    public List<Member> getMemberList(){
+        Session session = currentSession();
         Query query = session.createQuery("FROM Member");
         List<Member> memberList = query.getResultList();
         session.flush();
+
         return memberList;
     }
 
     @Override
-    public void deleteMember(Member member) {
-        Session session = sessionFactory.getCurrentSession();
-        session.delete(member);
+    public List<Member> getActiveMembers(){
+        Session session = currentSession();
+        Query query = session.createQuery("FROM Member WHERE MemberIsActive = 1");
+        List<Member> memberList = query.getResultList();
         session.flush();
-    }
 
-    @Override
-    public void editMembers(List<Member> memberList){
-        Session session = sessionFactory.getCurrentSession();
-        for(Member member : memberList)
-            session.saveOrUpdate(member);
-        session.flush();
+        return memberList;
     }
 
     @Override
     public List<Member> getMembersByCourse(Course course){
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("FROM Member WHERE memberID IN (SELECT studentMemberID FROM Student_Registration WHERE courseID = :courseID)");
+        Session session = currentSession();
+        Query query = session.createQuery("FROM Member WHERE memberID IN (SELECT memberID FROM Member_Course_Registration WHERE courseID = :courseID)");
         query.setParameter("courseID", course.getCourseID());
         List<Member> memberList = query.getResultList();
         session.flush();
 
         return memberList;
+    }
+
+    @Override
+    public void updateMemberList(List<Member> memberList){
+        Session session = currentSession();
+
+        for(Member member : memberList)
+            session.saveOrUpdate(member);
     }
 }

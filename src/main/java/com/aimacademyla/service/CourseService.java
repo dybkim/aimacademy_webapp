@@ -2,24 +2,19 @@ package com.aimacademyla.service;
 
 import com.aimacademyla.model.Course;
 
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by davidkim on 2/8/17.
  */
-public interface CourseService {
+public interface CourseService extends GenericService<Course, Integer>{
 
     List<Course> getActiveCourseList();
 
     Course getCourseByName(String courseName);
 
-    Course getCourseByID(int courseID);
+    List<Course> getCourseListBySeason(int seasonID);
 
-    int getNumEnrolled(int courseID);
-
-    void addCourse(Course course);
-
-    void editCourse(Course course);
-
-    void deleteCourse(Course course);
+    List<Course> getCourseListByDate(Date date);
 }

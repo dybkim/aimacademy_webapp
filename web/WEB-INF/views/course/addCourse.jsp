@@ -11,6 +11,30 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<link href="<c:url value="/WEB-INF/resources/css/suggestion.css" />" rel="stylesheet">
+
+<script>
+    $(document).ready(function() {
+
+        $('#w-input-search').autocomplete({
+            serviceUrl: '${pageContext.request.contextPath}/admin/courseList/addCourse/getMembers',
+            paramName: "memberTagName",
+            delimiter: ",",
+            transformResult: function(response) {
+
+                return {
+                    //must convert json to javascript object before process
+                    suggestions: $.map($.parseJSON(response), function(item) {
+
+                        return { value: item.tagName, data: item.id };
+                    })
+                };
+            }
+        });
+    });
+</script>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,30 +46,38 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Add Course</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/addCourse" method="post" modelAttribute="course">
-                <div class="form-group"><form:errors path="courseName" cssStyle="color: #FF0000"/>
+            <form:form action="${pageContext.request.contextPath}/admin/courseList/addCourse" method="post" modelAttribute="courseRegistrationWrapper">
+                <div class="form-group"><form:errors path="course.courseName" cssStyle="color: #FF0000"/>
                     <label for="courseTitle">Course Title</label>
-                    <form:input path="courseName" id="courseTitle" class="form-Control"/>
+                    <form:input path="course.courseName" id="courseTitle" class="form-Control"/>
                 </div>
 
-                <div class="form-group"><form:errors path="courseType" cssStyle="color: #FF0000"/>
+                <div class="form-group"><form:errors path="course.courseType" cssStyle="color: #FF0000"/>
                     <label for="courseType">Course Type</label>
-                    <form:input path="courseType" id="courseType" class="form-Control"/>
+                    <form:select path="course.courseType" id="courseType" class="form-Control">
+                        <form:option value="Supplement"/>
+                        <form:option value="Finals Prep"/>
+                        <form:option value="Test Prep"/>
+                        <form:option value="Office Hour"/>
+                        <form:option value="Other"/>
+                    </form:select>
                 </div>
 
-                <div class="form-group"><span style="color: #FF0000">${startDateErrorMsg}</span>
+                <div class="form-group"><span style="color: #FF0000">${startDateErrorMessage}</span>
                     <label for="startDate">Start Date (MM/DD/YYYY)</label>
-                    <form:input path="courseStartDate" id="startDate" class="date"/>
+                    <form:input path="course.courseStartDate" id="startDate" class="date"/>
                 </div>
 
-                <div class="form-group"><span style="color: #FF0000">${endDateErrorMsg}</span>
+                <div class="form-group"><span style="color: #FF0000">${endDateErrorMessage}</span>
                     <label for="endDate">End Date (MM/DD/YYYY)</label>
-                    <form:input path="courseEndDate" id="endDate" class="date"/>
+                    <form:input path="course.courseEndDate" id="endDate" class="date"/>
                 </div>
 
-                <form:hidden path="isActive" value="true"/>
 
-                <form:hidden path="numEnrolled" value="0"/>
+
+                <form:hidden path="course.isActive" value="true"/>
+
+                <form:hidden path="course.numEnrolled" value="0"/>
 
                 <br><br>
 

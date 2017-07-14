@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,18 +18,15 @@ import java.util.List;
 
 @Repository("courseDAO")
 @Transactional
-public class CourseDAOImpl implements CourseDAO {
+public class CourseDAOImpl extends GenericDAOImpl<Course, Integer> implements CourseDAO {
 
-    private SessionFactory sessionFactory;
-
-    @Autowired
-    public CourseDAOImpl(SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
+    public CourseDAOImpl(){
+        super(Course.class);
     }
 
     @Override
     public List<Course> getActiveCourseList() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         Query query = session.createQuery("FROM Course WHERE IsActive = 1");
         List<Course> courseList = query.getResultList();
         session.flush();
@@ -37,7 +35,7 @@ public class CourseDAOImpl implements CourseDAO {
 
     @Override
     public Course getCourseByName(String courseName) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         Query query = session.createQuery("FROM Course WHERE CourseName = :courseName");
         query.setParameter("courseName", courseName);
         session.flush();
@@ -46,43 +44,24 @@ public class CourseDAOImpl implements CourseDAO {
     }
 
     @Override
-    public Course getCourseByID(int courseID){
-        Session session = sessionFactory.getCurrentSession();
-        Course course = session.get(Course.class, courseID);
+    public List<Course> getCourseListBySeason(int seasonID) {
+        Session session = currentSession();
+        Query query = session.createQuery("FROM Course WHERE SeasonID = :seasonID");
+        query.setParameter("seasonID", seasonID);
+        List<Course> courseList = query.getResultList();
         session.flush();
 
-        return course;
+        return courseList;
     }
 
     @Override
-    public int getNumEnrolled(int courseID){
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("SELECT COUNT(*) FROM Student_Registration WHERE CourseID = :courseID");
-        query.setParameter("courseID", courseID);
-        int numEnrolled = ((Long)query.getSingleResult()).intValue();
+    public List<Course> getCourseListByDate(Date date){
+        Session session = currentSession();
+        Query query = session.createQuery("FROM Course WHERE CourseStartDate < :date AND CourseEndDate > :date").setParameter("date",date);
+        List<Course> courseList = query.getResultList();
         session.flush();
 
-        return numEnrolled;
+        return courseList;
     }
 
-    @Override
-    public void addCourse(Course course) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(course);
-        session.flush();
-    }
-
-    @Override
-    public void editCourse(Course course) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(course);
-        session.flush();
-    }
-
-    @Override
-    public void deleteCourse(Course course) {
-        Session session = sessionFactory.getCurrentSession();
-        session.remove(course);
-        session.flush();
-    }
 }
