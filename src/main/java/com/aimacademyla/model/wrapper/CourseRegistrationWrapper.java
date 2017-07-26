@@ -15,7 +15,7 @@ public class CourseRegistrationWrapper implements Serializable{
 
     private Course course;
 
-    private List<Member> memberList;
+    private List<CourseRegistrationWrapperObject> courseRegistrationWrapperObjectList;
 
     public Course getCourse() {
         return course;
@@ -25,11 +25,11 @@ public class CourseRegistrationWrapper implements Serializable{
         this.course = course;
     }
 
-    public List<Member> getMemberList() {
-        return memberList;
+    public List<CourseRegistrationWrapperObject> getCourseRegistrationWrapperObjectList() {
+        return courseRegistrationWrapperObjectList;
     }
 
-    public void setMemberList(List<Member> memberList) {
-        this.memberList = memberList;
+    public void setCourseRegistrationWrapperObjectList(List<CourseRegistrationWrapperObject> courseRegistrationWrapperObjectList) {
+        this.courseRegistrationWrapperObjectList = courseRegistrationWrapperObjectList;
     }
 }

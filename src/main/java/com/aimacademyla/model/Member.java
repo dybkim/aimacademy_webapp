@@ -151,7 +151,7 @@ public class Member implements Serializable{
         this.memberEmailAddress = memberEmailAddress;
     }
 
-    public boolean isMemberIsActive() {
+    public boolean getMemberIsActive() {
         return memberIsActive;
     }
 

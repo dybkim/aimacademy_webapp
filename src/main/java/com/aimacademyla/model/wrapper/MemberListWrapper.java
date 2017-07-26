@@ -17,12 +17,16 @@ public class MemberListWrapper implements Serializable{
 
     private List<Member> memberList;
 
+    private List<Member> inactiveList;
+
     public MemberListWrapper(){
         memberList = new ArrayList<>();
+        inactiveList = new ArrayList<>();
     }
 
-    public MemberListWrapper(List<Member> memberList){
+    public MemberListWrapper(List<Member> memberList, List<Member> inactiveList){
         this.memberList = memberList;
+        this.inactiveList = inactiveList;
     }
 
     public List<Member> getMemberList(){
@@ -31,5 +35,13 @@ public class MemberListWrapper implements Serializable{
 
     public void setMemberList(List<Member> memberList){
         this.memberList = memberList;
+    }
+
+    public List<Member> getInactiveList() {
+        return inactiveList;
+    }
+
+    public void setInactiveList(List<Member> inactiveList) {
+        this.inactiveList = inactiveList;
     }
 }

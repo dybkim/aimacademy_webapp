@@ -11,6 +11,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,58 +25,58 @@
 
             <form:form action="${pageContext.request.contextPath}/admin/studentList/editStudent" method="post" modelAttribute="member">
                 <div class="form-group">
-                    <label for="firstName">First Name</label><form:errors path="memberFirstName" cssStyle="color: #FF0000"/>
+                    <label for="firstName">First Name: </label><form:errors path="memberFirstName" cssStyle="color: #FF0000"/>
                     <form:input path="memberFirstName" id="firstName" class="form-Control" value="${member.memberFirstName}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="lastName">Last Name</label><form:errors path="memberLastName" cssStyle="color:#FF0000"/>
+                    <label for="lastName">Last Name: </label><form:errors path="memberLastName" cssStyle="color:#FF0000"/>
                     <form:input path="memberLastName" id="lastName" class="form-Control" value="${member.memberLastName}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="phoneNumber">Phone Number</label>
+                    <label for="phoneNumber">Phone Number: </label>
                     <form:input path="memberPhoneNumber" id="phoneNumber" class="form-Control" value="${member.memberPhoneNumber}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="emailAddress">Email Address</label>
+                    <label for="emailAddress">Email Address: </label>
                     <form:input path="memberEmailAddress" id="emailAddress" class="form-Control" value="${member.memberEmailAddress}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="streetAddress">Address</label>
+                    <label for="streetAddress">Address: </label>
                     <form:input path="memberStreetAddress" id="streetAddress" class="form-Control" value="${member.memberStreetAddress}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="apartment">Apartment Number</label>
+                    <label for="apartment">Apartment Number: </label>
                     <form:input path="memberAddressApartment" id="apartment" class="form-Control" value="${member.memberAddressApartment}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="city">City</label>
+                    <label for="city">City: </label>
                     <form:input path="memberCity" id="city" class="form-Control" value="${member.memberCity}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="state">State</label>
+                    <label for="state">State: </label>
                     <form:input path="memberState" id="state" class="form-Control" value="${member.memberState}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="zipCode">Zip Code</label>
+                    <label for="zipCode">Zip Code: </label>
                     <form:input path="memberZipCode" id="zipCode" class="form-Control" value="${member.memberZipCode}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="entryDate">Date Joined (MM/DD/YYYY)</label>
+                    <label for="entryDate">Date Joined (MM/DD/YYYY): </label>
                     <fmt:formatDate value="${member.memberEntryDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>
                     <form:input path="memberEntryDate" id="entryDate" class="form-Control" value="${dateString}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="membership">Membership Status</label>
+                    <label for="membership">Membership Status: </label>
                     <form:checkbox path="memberIsActive" id="membership" value="${member.memberIsActive}"/>
                 </div>
 

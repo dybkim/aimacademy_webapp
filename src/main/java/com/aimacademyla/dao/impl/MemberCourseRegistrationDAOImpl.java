@@ -26,27 +26,25 @@ public class MemberCourseRegistrationDAOImpl extends GenericDAOImpl<MemberCourse
     }
 
     @Override
+    public MemberCourseRegistration get(int memberID, int courseID){
+        Session session = currentSession();
+        Query query = session.createQuery("FROM Member_Course_Registration WHERE MemberID = :memberID AND CourseID = :courseID");
+        query.setParameter("memberID", memberID).setParameter("courseID", courseID);
+        MemberCourseRegistration memberCourseRegistration = (MemberCourseRegistration) query.uniqueResult();
+        session.flush();
+
+        return memberCourseRegistration;
+    }
+
+    @Override
     public List<MemberCourseRegistration> getMemberCourseRegistrationListForCourse(Course course){
         Session session = currentSession();
         Query query = session.createQuery("FROM Member_Course_Registration WHERE CourseID = :courseID");
         query.setParameter("courseID", course.getCourseID());
         List<MemberCourseRegistration> memberCourseRegistrationList = query.getResultList();
 
-        System.out.println("number of students enrolled: " + memberCourseRegistrationList.size());
-
         session.flush();
 
         return memberCourseRegistrationList;
-    }
-
-    @Override
-    public MemberCourseRegistration getMemberCourseRegistrationForCourse(int memberID, int courseID){
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Member_Course_Registration WHERE MemberID = :memberID AND CourseID = :courseID");
-        query.setParameter("memberID", memberID).setParameter("courseID", courseID);
-
-        MemberCourseRegistration memberCourseRegistration = (MemberCourseRegistration)query.uniqueResult();
-
-        return memberCourseRegistration;
     }
 }

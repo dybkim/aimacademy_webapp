@@ -11,7 +11,10 @@ import java.util.List;
  */
 public interface MemberCourseRegistrationService extends GenericService<MemberCourseRegistration, MemberCourseRegistrationPK>{
 
+    MemberCourseRegistration get(int memberID, int courseID);
+
     List<MemberCourseRegistration> getMemberCourseRegistrationsForCourse(Course course);
 
     void update(List<MemberCourseRegistration> memberCourseRegistrationList);
+
 }

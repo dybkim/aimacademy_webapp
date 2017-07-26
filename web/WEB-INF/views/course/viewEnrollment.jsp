@@ -38,6 +38,7 @@
             ]
         });
 
+        <!--Places an index column for the courseSessionTable-->
         courseSessionTable.on('order.dt search.dt', function(){
             courseSessionTable.column(0, {search:'applied', order:'applied'}).nodes().each(function (cell, i){
                 cell.innerHTML = i + 1;
@@ -46,10 +47,8 @@
 
         $('.nav-tabs a[href="#tab-students"]').tab('show');
     });
-</script>
 
 
-<script>
     var checkCourseMembers = function(){
         $.ajax({
             url: "/admin/courseList/rest/${course.courseID}/validateAddCourseSession",
@@ -57,7 +56,7 @@
             async: false,
             dataType: "json",
             success:function(){
-                $http.get('/admin/courseList/viewEnrollment/${course.courseID}/addCourseSession');
+                window.location.replace('/admin/courseList/viewEnrollment/${course.courseID}/addCourseSession');
             },
             error:function(response){
                 var jsonResponse = JSON.parse(response.responseText);
@@ -65,7 +64,7 @@
                 alert("Error: " + errorMessage);
             }
         });
-    }
+    };
 </script>
 
 <html>
@@ -75,11 +74,8 @@
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
                     <h1 class="page-header">${course.courseName} - Course Info</h1>
-                    <br>
 
-                    <br>
-
-                    <button type="button" class="btn btn-primary" onclick="checkCourseMembers()">Add Course Session</button>
+                    <button type="button" class="btn btn-primary" onclick="checkCourseMembers()" id="addCourseSessionButton">Add Course Session</button>
 
                     <br>
 
@@ -106,7 +102,6 @@
                                     <th>Student Name</th>
                                     <th>Attendance</th>
                                     <th>Finances</th>
-                                    <th>Drop student</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -117,7 +112,6 @@
                                         <td>${student.memberFirstName} ${student.memberLastName}</td>
                                         <td>TBA</td>
                                         <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>
-                                        <td><a href=""><span class="glyphicon glyphicon-remove-sign"></span></a></td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
@@ -153,5 +147,12 @@
                 </div>
             </div>
         </div>
-    </body>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
+
+</body>
 </html>
+

@@ -6,6 +6,7 @@ import com.aimacademyla.model.wrapper.CourseSessionAttendanceListWrapper;
 import com.aimacademyla.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,13 +72,12 @@ public class CourseController {
     }
 
 
-
     /**
      * NOTE: When adding a CourseSession, a CourseSession is preemptively instantiated in the RDB. In the case that the query is cancelled,
      * the CourseSession instance is deleted.
      */
     @RequestMapping(value="/{courseID}/addCourseSession")
-    public String addCourseSession(@PathVariable("courseID") int courseID, Model model, final RedirectAttributes redirectAttributes){
+    public String addCourseSession(@PathVariable("courseID") int courseID, Model model){
         Course course = courseService.get(courseID);
         CourseSession courseSession = new CourseSession();
         courseSession.setCourseID(course.getCourseID());
@@ -106,15 +106,22 @@ public class CourseController {
             for (FieldError error : errors ) {
                 logger.error(error.getDefaultMessage());
                 if(error.getField().equals("courseSession.courseSessionDate"))
-                    redirectAttributes.addFlashAttribute("courseSessionDateErrorMessage", "Date must be in MM/DD/YYYY format");
+                    redirectAttributes.addFlashAttribute("courseSessionDateErrorMessage", "Date must be in valid MM/DD/YYYY format");
             }
             courseSessionService.remove(courseSessionAttendanceListWrapper.getCourseSession());
             return "redirect:/admin/courseList/viewEnrollment/" + courseID + "/addCourseSession";
         }
 
-        List<Attendance> attendanceList = new ArrayList<>(courseSessionAttendanceListWrapper.getAttendanceMap().values());
+        List<Attendance> attendanceList = new ArrayList<>();
+        attendanceList.addAll(courseSessionAttendanceListWrapper.getAttendanceMap().values());
         CourseSession courseSession = courseSessionAttendanceListWrapper.getCourseSession();
         Course course = courseService.get(courseID);
+
+        if(courseSession.getCourseSessionDate() == null){
+            redirectAttributes.addFlashAttribute("courseSessionDateErrorMessage", "Date field cannot be empty!");
+            courseSessionService.remove(courseSessionAttendanceListWrapper.getCourseSession());
+            return "redirect:/admin/courseList/viewEnrollment/" + courseID + "/addCourseSession";
+        }
 
         double totalCharge = course.getPricePerHour(); //* course.getClassSessionLengthHours();
         int numAttended = 0;

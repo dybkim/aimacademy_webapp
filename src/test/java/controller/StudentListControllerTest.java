@@ -1,6 +1,6 @@
 package controller;
 
-import com.aimacademyla.controller.StudentListController;
+import com.aimacademyla.controller.student.StudentListController;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberService;

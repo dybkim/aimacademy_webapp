@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface MemberCourseRegistrationDAO extends GenericDAO<MemberCourseRegistration, MemberCourseRegistrationPK>{
 
-    List<MemberCourseRegistration> getMemberCourseRegistrationListForCourse(Course course);
+    MemberCourseRegistration get(int memberID, int courseID);
 
-    MemberCourseRegistration getMemberCourseRegistrationForCourse(int memberID, int courseID);
+    List<MemberCourseRegistration> getMemberCourseRegistrationListForCourse(Course course);
 }

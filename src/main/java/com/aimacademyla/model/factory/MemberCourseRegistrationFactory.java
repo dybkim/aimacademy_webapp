@@ -16,7 +16,7 @@ public class MemberCourseRegistrationFactory {
         memberCourseRegistration.setMemberID(memberID);
         memberCourseRegistration.setCourseID(courseID);
         memberCourseRegistration.setDateRegistered(new Date());
-        memberCourseRegistration.setEnrolled(true);
+        memberCourseRegistration.setIsEnrolled(true);
 
         return memberCourseRegistration;
     }

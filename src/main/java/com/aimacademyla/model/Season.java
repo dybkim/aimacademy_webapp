@@ -9,14 +9,20 @@ import java.util.Date;
 /**
  * Created by davidkim on 5/22/17.
  */
+@Entity
 public class Season implements Serializable {
 
     private static final long serialVersionUID = 681613110921037803L;
+
+    public static final int NO_SEASON_FOUND = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="SeasonID")
     private int seasonID;
+
+    @Column(name="SeasonTitle")
+    private String seasonTitle;
 
     @Column(name="StartDate")
     @Temporal(TemporalType.DATE)
@@ -34,6 +40,14 @@ public class Season implements Serializable {
 
     public void setSeasonID(int seasonID) {
         this.seasonID = seasonID;
+    }
+
+    public String getSeasonTitle() {
+        return seasonTitle;
+    }
+
+    public void setSeasonTitle(String seasonTitle) {
+        this.seasonTitle = seasonTitle;
     }
 
     public Date getStartDate() {

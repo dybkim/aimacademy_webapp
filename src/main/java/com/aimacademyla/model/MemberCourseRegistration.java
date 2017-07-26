@@ -20,14 +20,16 @@ public class MemberCourseRegistration implements Serializable{
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private MemberCourseRegistrationPK memberCourseRegistrationPK;
 
-    @Column(name="MemberID")
+    @MapsId("MemberID")
+    @Column(insertable=false, updatable=false)
     private Integer memberID;
+
+    @MapsId("CourseID")
+    @Column(insertable=false, updatable=false)
+    private int courseID;
 
     @Column(name="ReferMemberID")
     private Integer referMemberID;
-
-    @Column(name="CourseID")
-    private int courseID;
 
     @Column(name="DateRegistered")
     @Temporal(TemporalType.DATE)
@@ -69,11 +71,11 @@ public class MemberCourseRegistration implements Serializable{
 
     public void setDateRegistered(Date dateRegistered){this.dateRegistered = dateRegistered;}
 
-    public boolean isEnrolled() {
+    public boolean getIsEnrolled() {
         return isEnrolled;
     }
 
-    public void setEnrolled(boolean enrolled) {
+    public void setIsEnrolled(boolean enrolled) {
         isEnrolled = enrolled;
     }
 }

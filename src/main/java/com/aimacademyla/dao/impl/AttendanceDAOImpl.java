@@ -23,15 +23,13 @@ import java.util.List;
 @Transactional
 public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implements AttendanceDAO{
 
-    private SessionFactory sessionFactory;
-
     public AttendanceDAOImpl(){
         super(Attendance.class);
     }
 
     @Override
     public List<Attendance> getAttendanceForCourse(Course course) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         Query query = session.createQuery("FROM Attendance WHERE courseSessionID IN (SELECT courseSessionID FROM Course_Session WHERE courseID = :courseID)");
         query.setParameter("courseID", course.getCourseID());
         List<Attendance> attendanceList = query.getResultList();
@@ -47,7 +45,7 @@ public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implem
 
     @Override
     public List<Attendance> getAttendanceForCourseSession(CourseSession courseSession) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         Query query = session.createQuery("FROM Attendance WHERE courseSessionID = :courseSessionID");
         query.setParameter("courseSessionID", courseSession.getCourseSessionID());
         List<Attendance> attendanceList = query.getResultList();
@@ -59,7 +57,7 @@ public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implem
 
     @Override
     public List<Attendance> getAttendanceForMember(Member member) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         Query query = session.createQuery("FROM Attendance WHERE MemberID = :memberID");
         query.setParameter("memberID", member.getMemberID());
         List<Attendance> attendanceList = query.getResultList();
@@ -71,7 +69,7 @@ public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implem
 
     @Override
     public List<Attendance> getAttendanceForMember(Member member, Course course) {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         Query query = session.createQuery("FROM Attendance WHERE MemberID = :memberID AND CourseID = :courseID");
         query.setParameter("memberID", member.getMemberID());
         query.setParameter("courseID", course.getCourseID());
@@ -89,7 +87,7 @@ public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implem
 
     @Override
     public void addOrUpdateAttendanceList(List<Attendance> attendanceList){
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         for(Attendance attendance : attendanceList)
             session.saveOrUpdate(attendance);
         session.flush();

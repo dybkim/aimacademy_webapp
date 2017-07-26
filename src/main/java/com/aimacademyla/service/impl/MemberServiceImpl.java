@@ -44,7 +44,15 @@ public class MemberServiceImpl extends GenericServiceImpl<Member, Integer> imple
 
     @Override
     public List<Member> getMembersByCourse(Course course){
-        return memberDAO.getMembersByCourse(course);
+        List<Member> memberList = new ArrayList<>();
+
+        for(Member member : memberDAO.getMembersByCourse(course))
+        {
+            if(memberCourseRegistrationDAO.get(new MemberCourseRegistrationPK(member.getMemberID(), course.getCourseID())).getIsEnrolled())
+                memberList.add(member);
+        }
+
+        return memberList;
     }
 
     @Override
@@ -96,7 +104,7 @@ public class MemberServiceImpl extends GenericServiceImpl<Member, Integer> imple
         MemberCourseRegistrationPK memberCourseRegistrationPK = new MemberCourseRegistrationPK(member.getMemberID(), Course.OPEN_STUDY_ID);
         MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationDAO.get(memberCourseRegistrationPK);
 
-        if(!member.isMemberIsActive()){
+        if(!member.getMemberIsActive()){
             if(memberCourseRegistration != null)
                 memberCourseRegistrationDAO.remove(memberCourseRegistration);
         }
