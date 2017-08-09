@@ -2,6 +2,7 @@ package com.aimacademyla.dao;
 
 import com.aimacademyla.model.Course;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface CourseDAO extends GenericDAO<Course, Integer>{
 
     Course getCourseByName(String courseName);
 
-    List<Course> getCourseListByDate(Date date);
+    List<Course> getCourseListByDate(LocalDate date);
 
     List<Course> getCourseListBySeason(int seasonID);
 

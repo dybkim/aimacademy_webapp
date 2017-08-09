@@ -1,16 +1,13 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.converter.PacificTimeDateOffsetter;
+import com.aimacademyla.model.reference.TemporalReference;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Created by davidkim on 1/18/17.
@@ -50,9 +47,8 @@ public class Member implements Serializable{
     private String memberZipCode;
 
     @Column(name="MemberEntryDate")
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="MM/dd/yyyy")
-    private Date memberEntryDate;
+    private LocalDate memberEntryDate;
 
     @Column(name="MemberPhoneNumber")
     private String memberPhoneNumber;
@@ -127,11 +123,11 @@ public class Member implements Serializable{
         this.memberZipCode = memberZipCode;
     }
 
-    public Date getMemberEntryDate() throws ParseException{
+    public LocalDate getMemberEntryDate() throws ParseException{
         return this.memberEntryDate;
     }
 
-    public void setMemberEntryDate(Date memberEntryDate) {
+    public void setMemberEntryDate(LocalDate memberEntryDate) {
         this.memberEntryDate = memberEntryDate;
     }
 

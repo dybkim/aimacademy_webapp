@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,8 +37,8 @@ public class AttendanceServiceImpl extends GenericServiceImpl<Attendance, Intege
     }
 
     @Override
-    public List<Attendance> getAttendanceForCourse(Course course, Date date) {
-        return attendanceDAO.getAttendanceForCourse(course, date);
+    public List<Attendance> getAttendanceForCourseForDate(Course course, LocalDate date) {
+        return attendanceDAO.getAttendanceForCourseForDate(course, date);
     }
 
     @Override
@@ -61,13 +62,13 @@ public class AttendanceServiceImpl extends GenericServiceImpl<Attendance, Intege
     }
 
     @Override
-    public List<Attendance> getAttendanceForMember(Member member, Course course) {
-        return attendanceDAO.getAttendanceForMember(member, course);
+    public List<Attendance> getAttendanceForMemberForCourse(Member member, Course course) {
+        return attendanceDAO.getAttendanceForMemberForCourse(member, course);
     }
 
     @Override
-    public List<Attendance> getAttendanceForMember(Member member, Course course, Date date) {
-        return attendanceDAO.getAttendanceForMember(member, course, date);
+    public Attendance getAttendanceForMemberForCourseForDate(Member member, Course course, LocalDate date) {
+        return attendanceDAO.getAttendanceForMemberForCourseForDate(member, course, date);
     }
 
     @Override

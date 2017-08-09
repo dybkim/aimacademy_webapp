@@ -2,7 +2,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
 <%--
   Created by IntelliJ IDEA.
   User: davidkim
@@ -17,13 +16,14 @@
 
 <body>
 <%@include file="../template/navbar.jsp"%>
+<%@include file="../template/sidebar.jsp"%>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Edit student</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/studentList/editStudent" method="post" modelAttribute="member">
+            <form:form action="${pageContext.request.contextPath}/admin/studentList/editStudent" method="POST" modelAttribute="member">
                 <div class="form-group">
                     <label for="firstName">First Name: </label><form:errors path="memberFirstName" cssStyle="color: #FF0000"/>
                     <form:input path="memberFirstName" id="firstName" class="form-Control" value="${member.memberFirstName}"/>
@@ -71,8 +71,9 @@
 
                 <div class="form-group">
                     <label for="entryDate">Date Joined (MM/DD/YYYY): </label>
-                    <fmt:formatDate value="${member.memberEntryDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>
-                    <form:input path="memberEntryDate" id="entryDate" class="form-Control" value="${dateString}"/>
+                    <fmt:parseDate value="${member.memberEntryDate}" pattern="yyyy-MM-dd" var="parsedEntryDate" type="date" />
+                    <fmt:formatDate value="${parsedEntryDate}" var="formattedEntryDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT"/>
+                    <form:input path="memberEntryDate" id="entryDate" class="form-Control" value="${formattedEntryDate}"/>
                 </div>
 
                 <div class="form-group">

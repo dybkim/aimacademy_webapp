@@ -23,7 +23,7 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Add Course Session</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/viewEnrollment/${courseSessionAttendanceListWrapper.courseSession.courseID}/addCourseSession" method="POST" modelAttribute="courseSessionAttendanceListWrapper">
+            <form:form action="${pageContext.request.contextPath}/admin/courseList/courseInfo/${courseSessionAttendanceListWrapper.courseSession.courseID}/addCourseSession" method="POST" modelAttribute="courseSessionAttendanceListWrapper">
 
                 <form:hidden path="courseSession.courseSessionID" value="${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>
 
@@ -48,6 +48,7 @@
                     <div class="form-group">
                         <c:forEach items="${memberList}" var="member" varStatus="i" begin="0">
                             <tr>
+                                <form:hidden path="attendanceMap[${member.memberID}].attendanceID" value="${courseSessionAttendanceListWrapper.attendanceMap.get(member.memberID).attendanceID}"/>
                                 <form:hidden path="attendanceMap[${member.memberID}].memberID" value="${member.memberID}"/>
                                 <form:hidden path="attendanceMap[${member.memberID}].courseSessionID" value="${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>
                                 <td>${member.memberID}</td>
@@ -61,7 +62,7 @@
 
                 <input type="submit" value="submit" class="btn btn=default">
 
-                <a href="<spring:url value="/admin/courseList/viewEnrollment/${courseSessionAttendanceListWrapper.courseSession.courseID}/cancelAddCourseSession/${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>" class="btn btn-default">Cancel</a>
+                <a href="<spring:url value="/admin/courseList/courseInfo/${courseSessionAttendanceListWrapper.courseSession.courseID}/cancelAddCourseSession/${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>" class="btn btn-default">Cancel</a>
 
             </form:form>
         </div>

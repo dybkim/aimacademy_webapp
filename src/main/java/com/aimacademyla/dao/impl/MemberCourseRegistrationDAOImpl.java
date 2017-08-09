@@ -2,6 +2,7 @@ package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.MemberCourseRegistrationDAO;
 import com.aimacademyla.model.Course;
+import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import org.hibernate.Session;
@@ -37,9 +38,21 @@ public class MemberCourseRegistrationDAOImpl extends GenericDAOImpl<MemberCourse
     }
 
     @Override
+    public List<MemberCourseRegistration> getMemberCourseRegistrationListForMember(Member member){
+        Session session = currentSession();
+        Query query = session.createQuery("FROM Member_Course_Registration WHERE memberID =:memberID");
+        query.setParameter("memberID", member.getMemberID());
+        List<MemberCourseRegistration> memberCourseRegistrationList = query.getResultList();
+
+        session.flush();
+
+        return memberCourseRegistrationList;
+    }
+
+    @Override
     public List<MemberCourseRegistration> getMemberCourseRegistrationListForCourse(Course course){
         Session session = currentSession();
-        Query query = session.createQuery("FROM Member_Course_Registration WHERE CourseID = :courseID");
+        Query query = session.createQuery("FROM Member_Course_Registration WHERE courseID = :courseID");
         query.setParameter("courseID", course.getCourseID());
         List<MemberCourseRegistration> memberCourseRegistrationList = query.getResultList();
 

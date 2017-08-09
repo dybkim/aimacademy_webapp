@@ -48,6 +48,8 @@
                     <label for="streetAddress">Address</label>
                     <form:input path="memberStreetAddress" id="streetAddress" class="form-Control"/>
                 </div>
+
+
                 <div class="form-group">
                     <label for="apartment">Apartment Number</label>
                     <form:input path="memberAddressApartment" id="apartment" class="form-Control"/>

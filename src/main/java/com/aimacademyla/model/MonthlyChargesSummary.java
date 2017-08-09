@@ -1,10 +1,11 @@
 package com.aimacademyla.model;
 
+import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Created by davidkim on 4/10/17.
@@ -29,9 +30,8 @@ public class MonthlyChargesSummary implements Serializable{
     private int numChargesFulfilled;
 
     @Column(name="CycleStartDate")
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="MM/dd/yyyy")
-    private Date cycleStartDate;
+    private LocalDate cycleStartDate;
 
     @Column(name="NumMembers")
     private int numMembers;
@@ -67,11 +67,11 @@ public class MonthlyChargesSummary implements Serializable{
         this.numChargesFulfilled = numChargesFulfilled;
     }
 
-    public Date getCycleStartDate() {
+    public LocalDate getCycleStartDate() {
         return cycleStartDate;
     }
 
-    public void setCycleStartDate(Date cycleStartDate) {
+    public void setCycleStartDate(LocalDate cycleStartDate) {
         this.cycleStartDate = cycleStartDate;
     }
 

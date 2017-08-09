@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class MonthlyChargesSummaryDAOImpl extends GenericDAOImpl<MonthlyChargesS
     }
 
     @Override
-    public MonthlyChargesSummary getMonthlyChargesSummary(Date date) {
+    public MonthlyChargesSummary getMonthlyChargesSummary(LocalDate date) {
         Session session = currentSession();
         Query query = session.createQuery("FROM MonthlySummary WHERE MONTH(CycleStartDate) = MONTH(:date) AND YEAR(CycleStartDate) = YEAR(:date)")
                 .setParameter("date", date);
@@ -46,7 +47,7 @@ public class MonthlyChargesSummaryDAOImpl extends GenericDAOImpl<MonthlyChargesS
     }
 
     @Override
-    public List<MonthlyChargesSummary> getMonthlyChargesSummariesInDateRange(Date startDate, Date endDate) {
+    public List<MonthlyChargesSummary> getMonthlyChargesSummariesInDateRange(LocalDate startDate, LocalDate endDate) {
         Session session = currentSession();
         Query query = session.createQuery("FROM MonthlySummary BETWEEN :startDate AND :date")
                 .setParameter("startDate", startDate)

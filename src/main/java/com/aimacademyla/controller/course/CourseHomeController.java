@@ -2,7 +2,6 @@ package com.aimacademyla.controller.course;
 
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
-import com.aimacademyla.model.factory.MemberCourseRegistrationFactory;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapperObject;
 import com.aimacademyla.service.*;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -107,11 +107,11 @@ public class CourseHomeController {
     @RequestMapping("/editCourse/{courseID}")
     public String editCourse(@PathVariable("courseID") int courseID, Model model){
         Course course = courseService.get(courseID);
-        List<Member> memberList = memberService.getMembersByCourse(course);
+        List<Member> activeMemberList = memberService.getActiveMembersByCourse(course);
         CourseRegistrationWrapperObject courseRegistrationWrapperObject;
         List<CourseRegistrationWrapperObject> courseRegistrationWrapperObjectList = new ArrayList<>();
 
-        for (Member member : memberList) {
+        for (Member member : activeMemberList) {
             courseRegistrationWrapperObject = new CourseRegistrationWrapperObject();
             courseRegistrationWrapperObject.setMember(member);
             courseRegistrationWrapperObject.setIsDropped(false);
@@ -128,10 +128,11 @@ public class CourseHomeController {
     }
 
     @RequestMapping(value="/editCourse/{courseID}", method = RequestMethod.POST)
-    public String editCourse(@Valid @ModelAttribute("courseRegistrationWrapper") CourseRegistrationWrapper courseRegistrationWrapper, @PathVariable("courseID") int courseID, BindingResult result, Model model){
+    public String editCourse(@Valid @ModelAttribute("courseRegistrationWrapper") CourseRegistrationWrapper courseRegistrationWrapper, BindingResult result, @PathVariable("courseID") int courseID, Model model){
+
         if(result.hasErrors()) {
             List<FieldError> errors = result.getFieldErrors();
-            checkDateErrors(errors, model);
+            model = checkDateErrors(errors, model);
 
             model.addAttribute(courseRegistrationWrapper);
             return "/course/editCourse";
@@ -144,23 +145,13 @@ public class CourseHomeController {
 
         updateMemberCourseRegistrationList(courseRegistrationWrapper);
 
-        return "redirect:/admin/courseList/viewEnrollment/" + courseID;
-    }
-
-    private void checkDateErrors(List<FieldError> errorList, Model model){
-        for (FieldError error : errorList) {
-            if(error.getField().equals("courseStartDate"))
-                model.addAttribute("startDateErrorMessage", "Date must be in MM/DD/YYYY format");
-
-            else if(error.getField().equals("courseEndDate"))
-                model.addAttribute("endDateErrorMessage", "Date must be in MM/DD/YYYY format");
-        }
+        return "redirect:/admin/courseList/courseInfo/" + courseID;
     }
 
     @RequestMapping("/editCourse/{courseID}/addStudentToCourse")
     public String addStudentToCourse(@PathVariable("courseID") int courseID, Model model){
         Course course = courseService.get(courseID);
-        List<Member> enrolledMembers = memberService.getMembersByCourse(course);
+        List<Member> activeMembers = memberService.getActiveMembersByCourse(course);
         List<Member> allMembers = memberService.getMemberList();
         LinkedHashMap<Integer, String> unenrolledMembersMap = new LinkedHashMap<>();
         LinkedHashMap<Integer, String> allMembersMap = new LinkedHashMap<>();
@@ -182,7 +173,7 @@ public class CourseHomeController {
             }
         }
 
-        for(Member member : enrolledMembers){
+        for(Member member : activeMembers){
             unenrolledMembersMap.remove(member.getMemberID());
         }
 
@@ -218,6 +209,19 @@ public class CourseHomeController {
         return "redirect:/admin/courseList/editCourse/" + courseID;
     }
 
+    private Model checkDateErrors(List<FieldError> errorList, Model model){
+        for (FieldError error : errorList) {
+            if(error.getField().equals("course.courseStartDate"))
+                model.addAttribute("startDateErrorMessage", "Date must be in MM/DD/YYYY format");
+
+            else if(error.getField().equals("course.courseEndDate"))
+                model.addAttribute("endDateErrorMessage", "Date must be in MM/DD/YYYY format");
+        }
+
+        return model;
+    }
+
+
     private void addMemberCourseRegistrationList(CourseRegistrationWrapper courseRegistrationWrapper){
         List<MemberCourseRegistration> memberCourseRegistrationList = new ArrayList<>();
         int courseID = courseRegistrationWrapper.getCourse().getCourseID();
@@ -225,7 +229,12 @@ public class CourseHomeController {
 
         for(CourseRegistrationWrapperObject courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList()){
             member = courseRegistrationWrapperObject.getMember();
-            MemberCourseRegistration memberCourseRegistration = MemberCourseRegistrationFactory.generate(member.getMemberID(), courseID);
+            MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
+            memberCourseRegistration.setMemberID(member.getMemberID());
+            memberCourseRegistration.setCourseID(courseID);
+            memberCourseRegistration.setIsEnrolled(true);
+            memberCourseRegistration.setDateRegistered(LocalDate.now());
+            memberCourseRegistration.setMemberCourseRegistrationPK(new MemberCourseRegistrationPK(member.getMemberID(), courseID));
             memberCourseRegistrationList.add(memberCourseRegistration);
         }
 
@@ -241,12 +250,6 @@ public class CourseHomeController {
         for(CourseRegistrationWrapperObject courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList()){
             member = courseRegistrationWrapperObject.getMember();
             MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationService.get(member.getMemberID(), courseID);
-
-            if(memberCourseRegistration == null){
-                memberCourseRegistration = MemberCourseRegistrationFactory.generate(member.getMemberID(),courseID);
-                memberCourseRegistrationService.add(memberCourseRegistration);
-                continue;
-            }
 
             if(courseRegistrationWrapperObject.getIsDropped())
                 memberCourseRegistration.setIsEnrolled(false);

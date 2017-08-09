@@ -1,10 +1,11 @@
 package com.aimacademyla.model;
 
+import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Created by davidkim on 5/22/17.
@@ -25,14 +26,12 @@ public class Season implements Serializable {
     private String seasonTitle;
 
     @Column(name="StartDate")
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="MM/dd/yyyy")
-    private Date startDate;
+    private LocalDate startDate;
 
     @Column(name="EndDate")
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "MM/dd/yyyy")
-    private Date endDate;
+    private LocalDate endDate;
 
     public int getSeasonID() {
         return seasonID;
@@ -50,19 +49,19 @@ public class Season implements Serializable {
         this.seasonTitle = seasonTitle;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 }

@@ -14,5 +14,7 @@ public interface MemberCourseRegistrationDAO extends GenericDAO<MemberCourseRegi
 
     MemberCourseRegistration get(int memberID, int courseID);
 
+    List<MemberCourseRegistration> getMemberCourseRegistrationListForMember(Member member);
+
     List<MemberCourseRegistration> getMemberCourseRegistrationListForCourse(Course course);
 }

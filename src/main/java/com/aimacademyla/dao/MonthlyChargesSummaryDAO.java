@@ -2,6 +2,7 @@ package com.aimacademyla.dao;
 
 import com.aimacademyla.model.MonthlyChargesSummary;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public interface MonthlyChargesSummaryDAO extends GenericDAO<MonthlyChargesSummary, Integer>{
     List<MonthlyChargesSummary> getAllMonthlyChargesSummaries();
-    MonthlyChargesSummary getMonthlyChargesSummary(Date date);
-    List<MonthlyChargesSummary> getMonthlyChargesSummariesInDateRange(Date startDate, Date endDate);
+    MonthlyChargesSummary getMonthlyChargesSummary(LocalDate date);
+    List<MonthlyChargesSummary> getMonthlyChargesSummariesInDateRange(LocalDate startDate, LocalDate endDate);
     MonthlyChargesSummary getMonthlyChargesSummaryCurrent();
 }

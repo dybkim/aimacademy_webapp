@@ -1,10 +1,12 @@
 package com.aimacademyla.model;
 
+import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Charge Entity represents a cumulation of ChargeLine entities
@@ -29,12 +31,12 @@ public class Charge implements Serializable{
     private int courseID;
 
     @Column(name="ChargeAmount")
+    @Pattern(regexp="^(0|[1-9][0-9]*)$", message="Charge amount must be numeric")
     private double chargeAmount;
 
     @Column(name="CycleStartDate")
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="MM/dd/yyyy")
-    private Date cycleStartDate;
+    private LocalDate cycleStartDate;
 
     @Column(name="PaymentID")
     private Integer paymentID;
@@ -44,6 +46,9 @@ public class Charge implements Serializable{
 
     @Column(name="MonthlyChargesSummaryID")
     private Integer monthlyChargesSummaryID;
+
+    @Column(name="Description")
+    private String description;
 
     public int getChargeID() {
         return chargeID;
@@ -77,11 +82,11 @@ public class Charge implements Serializable{
         this.chargeAmount = chargeAmount;
     }
 
-    public Date getCycleStartDate() {
+    public LocalDate getCycleStartDate() {
         return cycleStartDate;
     }
 
-    public void setCycleStartDate(Date cycleStartDate) {
+    public void setCycleStartDate(LocalDate cycleStartDate) {
         this.cycleStartDate = cycleStartDate;
     }
 
@@ -107,5 +112,13 @@ public class Charge implements Serializable{
 
     public void setMonthlyChargesSummaryID(Integer monthlyChargesSummaryID) {
         this.monthlyChargesSummaryID = monthlyChargesSummaryID;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

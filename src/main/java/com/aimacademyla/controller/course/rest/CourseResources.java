@@ -44,7 +44,7 @@ public class CourseResources {
     @RequestMapping(value="/{courseID}/validateAddCourseSession")
     public @ResponseBody
     ResponseEntity<GenericResponse> validateAddCourseSession(@PathVariable("courseID") int courseID){
-        List<Member> memberList = memberService.getMembersByCourse(courseService.get(courseID));
+        List<Member> memberList = memberService.getActiveMembersByCourse(courseService.get(courseID));
         if(memberList.size() == 0)
             return new ResponseEntity<>(new GenericResponse("Unable to create course session", "Cannot add course sessions until members are registered to the course!",HttpStatus.INTERNAL_SERVER_ERROR.value()) {
             }, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -54,7 +54,6 @@ public class CourseResources {
 
     @RequestMapping(value="/{courseID}/addStudentToCourse/{memberID}", method=RequestMethod.POST)
     public void addMemberToCourse(@PathVariable("courseID") int courseID, @PathVariable("memberID") int memberID, Model model){
-
         List<Member> memberList = memberService.getMemberList();
         Course course = courseService.get(courseID);
         model.addAttribute(memberList);
@@ -64,7 +63,7 @@ public class CourseResources {
     @RequestMapping(value="/{courseID}/fetchNonEnrolledMembers", method=RequestMethod.GET)
     @ResponseBody
     public List<Member> fetchNonEnrolledMembers (@PathVariable("courseID") int courseID, @RequestParam String memberName) {
-        List<Member> memberList = memberService.getMembersByCourse(courseService.get(courseID));
+        List<Member> memberList = memberService.getActiveMembersByCourse(courseService.get(courseID));
         List<Member> resultList = new ArrayList<>();
         Iterator it = memberList.iterator();
 

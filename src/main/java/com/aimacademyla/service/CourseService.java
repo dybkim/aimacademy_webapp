@@ -2,6 +2,7 @@ package com.aimacademyla.service;
 
 import com.aimacademyla.model.Course;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -16,5 +17,5 @@ public interface CourseService extends GenericService<Course, Integer>{
 
     List<Course> getCourseListBySeason(int seasonID);
 
-    List<Course> getCourseListByDate(Date date);
+    List<Course> getCourseListByDate(LocalDate date);
 }

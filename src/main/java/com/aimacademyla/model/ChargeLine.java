@@ -1,6 +1,7 @@
 package com.aimacademyla.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 /**
@@ -21,9 +22,10 @@ public class ChargeLine implements Serializable{
     private int attendanceID;
 
     @Column(name="ChargeID")
-    private Integer chargeID;
+    private int chargeID;
 
     @Column(name="TotalCharge")
+    @Pattern(regexp="^(0|[1-9][0-9]*)$", message="Charge amount must be numeric")
     private double totalCharge;
 
     public int getChargeLineID() {
@@ -42,11 +44,11 @@ public class ChargeLine implements Serializable{
         this.attendanceID = attendanceID;
     }
 
-    public Integer getChargeID() {
+    public int getChargeID() {
         return chargeID;
     }
 
-    public void setChargeID(Integer chargeID) {
+    public void setChargeID(int chargeID) {
         this.chargeID = chargeID;
     }
 

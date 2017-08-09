@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -25,9 +26,8 @@ public class MemberMonthlyRegistrationDAOImpl extends GenericDAOImpl<MemberMonth
         super(MemberMonthlyRegistration.class);
     }
 
-
     @Override
-    public List<MemberMonthlyRegistration> getMemberMonthlyRegistrationList(Date date) {
+    public List<MemberMonthlyRegistration> getMemberMonthlyRegistrationList(LocalDate date) {
         Session session =  currentSession();
         Query query = session.createQuery("FROM Member_Monthly_Registration WHERE MONTH(CycleStartDate) = MONTH(:date)");
         query.setParameter("date", date);

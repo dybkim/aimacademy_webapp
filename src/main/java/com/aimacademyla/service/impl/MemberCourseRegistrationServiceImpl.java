@@ -4,12 +4,14 @@ import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.MemberCourseRegistrationDAO;
 import com.aimacademyla.model.Course;
+import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -27,6 +29,16 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
         super(genericDAO);
         this.memberCourseRegistrationDAO = (MemberCourseRegistrationDAO) genericDAO;
         this.courseDAO = courseDAO;
+    }
+
+    @Override
+    public MemberCourseRegistration get(MemberCourseRegistrationPK memberCourseRegistrationPK){
+        MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationDAO.get(memberCourseRegistrationPK);
+
+        if(memberCourseRegistration == null)
+            memberCourseRegistration = generateMemberCourseRegistration(memberCourseRegistrationPK.getMemberID(), memberCourseRegistrationPK.getCourseID());
+
+        return memberCourseRegistration;
     }
 
     @Override
@@ -63,11 +75,21 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
 
     @Override
     public MemberCourseRegistration get(int memberID, int courseID){
-        return memberCourseRegistrationDAO.get(memberID, courseID);
+        MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationDAO.get(memberID, courseID);
+
+        if(memberCourseRegistration == null)
+            memberCourseRegistration = generateMemberCourseRegistration(memberID, courseID);
+
+        return memberCourseRegistration;
     }
 
     @Override
-    public List<MemberCourseRegistration> getMemberCourseRegistrationsForCourse(Course course) {
+    public List<MemberCourseRegistration> getMemberCourseRegistrationListForMember(Member member){
+        return memberCourseRegistrationDAO.getMemberCourseRegistrationListForMember(member);
+    }
+
+    @Override
+    public List<MemberCourseRegistration> getMemberCourseRegistrationListForCourse(Course course) {
         return memberCourseRegistrationDAO.getMemberCourseRegistrationListForCourse(course);
     }
 
@@ -75,6 +97,17 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
     public void update(List<MemberCourseRegistration> memberCourseRegistrationList){
         for(MemberCourseRegistration memberCourseRegistration : memberCourseRegistrationList)
             memberCourseRegistrationDAO.update(memberCourseRegistration);
+    }
+
+    private MemberCourseRegistration generateMemberCourseRegistration(int memberID, int courseID){
+        MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
+        memberCourseRegistration.setMemberCourseRegistrationPK(new MemberCourseRegistrationPK(memberID, courseID));
+        memberCourseRegistration.setMemberID(memberID);
+        memberCourseRegistration.setCourseID(courseID);
+        memberCourseRegistration.setDateRegistered(LocalDate.now());
+        memberCourseRegistration.setIsEnrolled(true);
+
+        return memberCourseRegistration;
     }
 
 }

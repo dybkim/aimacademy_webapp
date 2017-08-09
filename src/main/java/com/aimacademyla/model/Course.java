@@ -1,12 +1,12 @@
 package com.aimacademyla.model;
 
+import com.aimacademyla.model.reference.TemporalReference;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * Course Entity represents one academic program held during a specific time period
@@ -31,14 +31,12 @@ public class Course implements Serializable{
     private String courseName;
 
     @Column(name="CourseStartDate")
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="MM/dd/yyyy")
-    private Date courseStartDate;
+    private LocalDate courseStartDate;
 
     @Column(name="CourseEndDate")
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="MM/dd/yyyy")
-    private Date courseEndDate;
+    private LocalDate courseEndDate;
 
     @Column(name="IsActive")
     private boolean isActive;
@@ -59,6 +57,9 @@ public class Course implements Serializable{
     @Column(name="PricePerHour")
     private double pricePerHour;
 
+    @Column(name="ClassDuration")
+    private double classDuration;
+
     public int getCourseID() {
         return courseID;
     }
@@ -75,19 +76,19 @@ public class Course implements Serializable{
         this.courseName = courseName;
     }
 
-    public Date getCourseStartDate() {
+    public LocalDate getCourseStartDate() {
         return courseStartDate;
     }
 
-    public void setCourseStartDate(Date courseStartDate) {
+    public void setCourseStartDate(LocalDate courseStartDate) {
         this.courseStartDate = courseStartDate;
     }
 
-    public Date getCourseEndDate() {
+    public LocalDate getCourseEndDate() {
         return courseEndDate;
     }
 
-    public void setCourseEndDate(Date courseEndDate) {
+    public void setCourseEndDate(LocalDate courseEndDate) {
         this.courseEndDate = courseEndDate;
     }
 
@@ -145,5 +146,13 @@ public class Course implements Serializable{
 
     public void setSeasonID(int seasonID) {
         this.seasonID = seasonID;
+    }
+
+    public double getClassDuration() {
+        return classDuration;
+    }
+
+    public void setClassDuration(double classDuration) {
+        this.classDuration = classDuration;
     }
 }

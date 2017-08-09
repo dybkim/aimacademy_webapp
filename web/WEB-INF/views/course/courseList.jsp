@@ -54,7 +54,7 @@
                     <c:forEach items="${courseList}" var="course">
                         <tr>
                             <td>${course.courseID}</td>
-                            <td><a href="<spring:url value="/admin/courseList/viewEnrollment/${course.courseID}"/>">${course.courseName}</a></td>
+                            <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}"/>">${course.courseName}</a></td>
                             <td>${course.courseType}</td>
                             <td>${course.numEnrolled}</td>
                             <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>

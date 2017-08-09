@@ -23,18 +23,21 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Edit Course Session</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/viewEnrollment/${courseSessionAttendanceListWrapper.courseSession.courseID}/editCourseSession/${courseSessionAttendanceListWrapper.courseSession.courseSessionID}" method="post" modelAttribute="courseSessionAttendanceListWrapper">
+            <form:form action="${pageContext.request.contextPath}/admin/courseList/courseInfo/${courseSessionAttendanceListWrapper.courseSession.courseID}/editCourseSession/${courseSessionAttendanceListWrapper.courseSession.courseSessionID}" method="post" modelAttribute="courseSessionAttendanceListWrapper">
 
                 <form:hidden path="courseSession.courseSessionID" value="${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>
 
                 <form:hidden path="courseSession.courseID" value="${courseSessionAttendanceListWrapper.courseSession.courseID}"/>
 
+                <a href="<spring:url value="/admin/courseList/courseInfo/${courseSessionAttendanceListWrapper.courseSession.courseID}/removeCourseSession/${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>" class="btn btn-primary">Delete Session</a>
+
                 <div class="form-group">
                     <span style="color: #FF0000">${courseSessionDateErrorMsg}</span>
                     <br>
                     <label for="courseSessionDate">Class Session Date (MM/DD/YYYY)</label>
-                    <fmt:formatDate value="${courseSessionAttendanceListWrapper.courseSession.courseSessionDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>
-                    <form:input path="courseSession.courseSessionDate" id="courseSessionDate" class="date" value="${dateString}"/>
+                    <fmt:parseDate value="${courseSessionAttendanceListWrapper.courseSession.courseSessionDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                    <fmt:formatDate value="${parsedDate}" var="formattedDate" type="date" pattern="MM/dd/yyyy" />
+                    <form:input path="courseSession.courseSessionDate" id="courseSessionDate" class="date" value="${formattedDate}"/>
                 </div>
 
                 <table class="table table-striped">
@@ -49,7 +52,8 @@
                     <div class="form-group">
                         <c:forEach items="${memberList}" var="member" varStatus="i" begin="0">
                             <tr>
-                                <form:hidden path="attendanceMap[${member.memberID}].memberID" value="${member.memberID}"/>
+                                <form:hidden path="attendanceMap[${member.memberID}].attendanceID" value="${courseSessionAttendanceListWrapper.attendanceMap.get(member.memberID).attendanceID}"/>
+                                <form:hidden path="attendanceMap[${member.memberID}].memberID" value="${courseSessionAttendanceListWrapper.attendanceMap.get(member.memberID).memberID}"/>
                                 <form:hidden path="attendanceMap[${member.memberID}].courseSessionID" value="${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>
                                 <td>${member.memberID}</td>
                                 <td>${member.memberFirstName} ${member.memberLastName}</td>
@@ -62,7 +66,7 @@
 
                 <input type="submit" value="submit" class="btn btn=default">
 
-                <a href="<spring:url value="/admin/courseList/viewEnrollment/${courseSessionAttendanceListWrapper.courseSession.courseID}"/>" class="btn btn-default">Cancel</a>
+                <a href="<spring:url value="/admin/courseList/courseInfo/${courseSessionAttendanceListWrapper.courseSession.courseID}"/>" class="btn btn-default">Cancel</a>
 
             </form:form>
         </div>

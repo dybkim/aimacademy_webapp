@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -26,8 +27,8 @@ public class SeasonServiceImpl extends GenericServiceImpl<Season, Integer> imple
     }
 
     @Override
-    public Season getSeason(Date date) {
-        return seasonDAO.getSeason(date);
+    public Season getSeason(LocalDate date) {
+        return seasonDAO.getSeasonByDate(date);
     }
 
 }

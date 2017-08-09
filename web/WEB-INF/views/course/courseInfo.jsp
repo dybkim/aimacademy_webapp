@@ -2,6 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <%--
   Created by IntelliJ IDEA.
   User: davidkim
@@ -22,7 +23,11 @@
             $.fn.dataTable.tables(true).columns.adjust();
         } );
 
-        var studentListTable = $('#studentListTable').DataTable({
+        var memberListTable = $('#memberListTable').DataTable({
+            "lengthMenu": [[25,50,-1], [25,50, "All"]]
+        });
+        
+        var inactiveMemberListTable = $('#inactiveMemberListTable').DataTable({
             "lengthMenu": [[25,50,-1], [25,50, "All"]]
         });
 
@@ -45,7 +50,7 @@
             });
         }).draw();
 
-        $('.nav-tabs a[href="#tab-students"]').tab('show');
+        $('.nav-tabs a[href="#tab-members"]').tab('show');
     });
 
 
@@ -56,7 +61,7 @@
             async: false,
             dataType: "json",
             success:function(){
-                window.location.replace('/admin/courseList/viewEnrollment/${course.courseID}/addCourseSession');
+                window.location.replace('/admin/courseList/courseInfo/${course.courseID}/addCourseSession');
             },
             error:function(response){
                 var jsonResponse = JSON.parse(response.responseText);
@@ -88,13 +93,14 @@
                     <br>
 
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation"><a href="#tab-students" aria-controls="tab-students" role="tab" data-toggle="tab">Roster</a></li>
+                        <li role="presentation"><a href="#tab-members" aria-controls="tab-members" role="tab" data-toggle="tab">Active Roster</a></li>
+                        <li role="presentation"><a href="#tab-inactiveMembers" aria-controls="tab-inactiveMembers" role="tab" data-toggle="tab">Inactive Roster</a></li>
                         <li role="presentation"><a href="#tab-sessions" aria-controls="tab-sessions" role="tab" data-toggle="tab">Sessions</a></li>
                     </ul>
 
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade in active" id="tab-students">
-                            <table id="studentListTable" class="table table-striped dt-responsive">
+                        <div role="tabpanel" class="tab-pane fade in active" id="tab-members">
+                            <table id="memberListTable" class="table table-striped dt-responsive">
                                 <thead>
                                 <tr>
                                     <th></th>
@@ -105,12 +111,37 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <c:forEach items="${studentList}" var="student">
+                                <c:forEach items="${memberList}" var="member">
                                     <tr>
                                         <td></td>
-                                        <td>${student.memberID}</td>
-                                        <td>${student.memberFirstName} ${student.memberLastName}</td>
-                                        <td>TBA</td>
+                                        <td>${member.memberID}</td>
+                                        <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
+                                        <td>${memberAttendanceCountMap.get(member.memberID)}/${courseSessionList.size()}</td>
+                                        <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane fade in active" id="tab-inactiveMembers">
+                            <table id="inactiveMemberListTable" class="table table-striped dt-responsive">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Student ID#</th>
+                                    <th>Student Name</th>
+                                    <th>Attendance</th>
+                                    <th>Finances</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <c:forEach items="${inactiveMemberList}" var="member">
+                                    <tr>
+                                        <td></td>
+                                        <td>${member.memberID}</td>
+                                        <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
+                                        <td>${memberAttendanceCountMap.get(member.memberID)}/${courseSessionList.size()}</td>
                                         <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>
                                     </tr>
                                 </c:forEach>
@@ -133,10 +164,12 @@
                                     <c:forEach items="${courseSessionList}" var="courseSession">
                                         <tr>
                                             <td></td>
-                                            <td><fmt:formatDate value="${courseSession.courseSessionDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>${dateString}</td>
-                                             <td>${courseSession.numMembersAttended} / ${numEnrolled} Students</td>
-                                            <td><a href="<spring:url value="/admin/courseList/viewEnrollment/${course.courseID}/editCourseSession/${courseSession.courseSessionID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
-                                            <td><fmt:formatDate value="${courseSession.courseSessionDate}" var="dateStringHidden" pattern="yyyy/MM/dd" timeZone="GMT"/>${dateStringHidden}</td>
+                                            <td><fmt:parseDate value="${courseSession.courseSessionDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                                                <fmt:formatDate value="${parsedDate}" var="formattedDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT" />
+                                                    ${formattedDate}</td>
+                                            <td>${courseSession.numMembersAttended} / ${courseSessionMemberCountMap.get(courseSession.courseSessionID)} Students</td>
+                                            <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}/editCourseSession/${courseSession.courseSessionID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                                            <td><fmt:formatDate value="${parsedDate}" var="formattedHiddenDate" type="date" pattern="yyyy/MM/dd" timeZone="GMT" />${formattedHiddenDate}</td>
                                         </tr>
                                     </c:forEach>
                                 </tbody>

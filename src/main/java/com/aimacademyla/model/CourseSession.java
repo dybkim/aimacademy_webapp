@@ -1,13 +1,12 @@
 package com.aimacademyla.model;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Created by davidkim on 3/1/17.
@@ -27,15 +26,11 @@ public class CourseSession implements Serializable{
     private int courseID;
 
     @Column(name="CourseSessionDate")
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="MM/dd/yyyy")
-    private Date courseSessionDate;
+    private LocalDate courseSessionDate;
 
     @Column(name="NumMembersAttended")
     private int numMembersAttended;
-
-    @Column(name="CourseSessionDuration")
-    private double courseSessionDuration;
 
     public int getCourseSessionID() {
         return courseSessionID;
@@ -53,24 +48,16 @@ public class CourseSession implements Serializable{
         this.courseID = courseID;
     }
 
-    public Date getCourseSessionDate() {
+    public LocalDate getCourseSessionDate() {
         return courseSessionDate;
     }
 
-    public void setCourseSessionDate(Date courseSessionDate) {
+    public void setCourseSessionDate(LocalDate courseSessionDate) {
         this.courseSessionDate = courseSessionDate;
     }
 
     public int getNumMembersAttended() {
         return numMembersAttended;
-    }
-
-    public double getCourseSessionDuration() {
-        return courseSessionDuration;
-    }
-
-    public void setCourseSessionDuration(double courseSessionDuration) {
-        this.courseSessionDuration = courseSessionDuration;
     }
 
     public void setNumMembersAttended(int numMembersAttended) {

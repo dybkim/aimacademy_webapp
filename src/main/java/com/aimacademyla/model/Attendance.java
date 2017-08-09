@@ -1,10 +1,11 @@
 package com.aimacademyla.model;
 
+import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Created by davidkim on 3/2/17.
@@ -27,9 +28,8 @@ public class Attendance implements Serializable{
     private int courseSessionID;
 
     @Column(name="AttendanceDate")
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="MM/dd/yyyy")
-    private Date attendanceDate;
+    private LocalDate attendanceDate;
 
     @Column(name="wasPresent")
     private boolean wasPresent;
@@ -58,15 +58,15 @@ public class Attendance implements Serializable{
         this.courseSessionID = courseSessionID;
     }
 
-    public Date getAttendanceDate() {
+    public LocalDate getAttendanceDate() {
         return attendanceDate;
     }
 
-    public void setAttendanceDate(Date attendanceDate) {
+    public void setAttendanceDate(LocalDate attendanceDate) {
         this.attendanceDate = attendanceDate;
     }
 
-    public boolean isWasPresent() {
+    public boolean getWasPresent() {
         return wasPresent;
     }
 

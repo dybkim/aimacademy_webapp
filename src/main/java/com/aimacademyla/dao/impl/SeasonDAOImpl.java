@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -25,7 +26,7 @@ public class SeasonDAOImpl extends GenericDAOImpl<Season, Integer> implements Se
     }
 
     @Override
-    public Season getSeason(Date date) {
+    public Season getSeasonByDate(LocalDate date) {
         Session session = currentSession();
         Query query = session.createQuery("FROM Season WHERE StartDate < :date AND EndDate > :date").setParameter("date", date);
         Season season;
@@ -33,7 +34,7 @@ public class SeasonDAOImpl extends GenericDAOImpl<Season, Integer> implements Se
         try {
             season = (Season) query.getSingleResult();
         }catch(NoResultException e){
-            season = season = session.get(Season.class, Season.NO_SEASON_FOUND);
+            season = session.get(Season.class, Season.NO_SEASON_FOUND);
             return season;
         }
 

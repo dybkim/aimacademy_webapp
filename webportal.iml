@@ -97,5 +97,6 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.0.pr4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.9.0.pr4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.9.0.pr4" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-java8:5.2.10.Final" level="project" />
   </component>
 </module>

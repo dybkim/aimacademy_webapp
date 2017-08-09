@@ -1,11 +1,12 @@
 package com.aimacademyla.model;
 
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
+import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Created by davidkim on 2/9/17.
@@ -32,9 +33,8 @@ public class MemberCourseRegistration implements Serializable{
     private Integer referMemberID;
 
     @Column(name="DateRegistered")
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern="MM/dd/yyyy")
-    private Date dateRegistered;
+    private LocalDate dateRegistered;
 
     @Column(name="IsEnrolled")
     private boolean isEnrolled;
@@ -67,9 +67,9 @@ public class MemberCourseRegistration implements Serializable{
         this.courseID = courseID;
     }
 
-    public Date getDateRegistered(){return dateRegistered;}
+    public LocalDate getDateRegistered(){return dateRegistered;}
 
-    public void setDateRegistered(Date dateRegistered){this.dateRegistered = dateRegistered;}
+    public void setDateRegistered(LocalDate dateRegistered){this.dateRegistered = dateRegistered;}
 
     public boolean getIsEnrolled() {
         return isEnrolled;

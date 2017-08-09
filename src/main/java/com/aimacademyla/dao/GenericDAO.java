@@ -3,9 +3,9 @@ package com.aimacademyla.dao;
 /**
  * Created by davidkim on 6/23/17.
  */
-public interface GenericDAO <T,K> {
-    void add(T entity);
-    void update(T entity);
-    void remove(T entity);
-    T get(K key);
+public interface GenericDAO <E,K> {
+    void add(E entity);
+    void update(E entity);
+    void remove(E entity);
+    E get(K key);
 }

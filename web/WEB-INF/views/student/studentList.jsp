@@ -63,83 +63,87 @@
                 <li role="presentation"><a href="#tab-inactive" aria-controls="tab-inactive" role="tab" data-toggle="tab">Inactive</a></li>
             </ul>
 
-                <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane fade in active" id="tab-members">
-                            <table id="membershipTable" class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th>Student ID#</th>
-                                    <th>Student Name</th>
-                                    <th>Membership</th>
-                                    <th>Classes</th>
-                                    <th>Edit Profile</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <c:forEach items="${memberListWrapper.memberList}" var="member" varStatus="i" begin="0">
-                                    <tr>
-                                        <form:hidden path="memberList[${i.index}].memberID" value="${member.memberID}"/>
-                                        <form:hidden path="memberList[${i.index}].memberFirstName" value="${member.memberFirstName}"/>
-                                        <form:hidden path="memberList[${i.index}].memberLastName" value="${member.memberLastName}"/>
-                                        <form:hidden path="memberList[${i.index}].memberPhoneNumber" value="${member.memberPhoneNumber}"/>
-                                        <form:hidden path="memberList[${i.index}].memberEmailAddress" value="${member.memberEmailAddress}"/>
-                                        <form:hidden path="memberList[${i.index}].memberStreetAddress" value="${member.memberStreetAddress}"/>
-                                        <form:hidden path="memberList[${i.index}].memberAddressApartment" value="${member.memberAddressApartment}"/>
-                                        <form:hidden path="memberList[${i.index}].memberCity" value="${member.memberCity}"/>
-                                        <form:hidden path="memberList[${i.index}].memberZipCode" value="${member.memberZipCode}"/>
-                                        <form:hidden path="memberList[${i.index}].memberState" value="${member.memberState}"/>
-                                        <fmt:formatDate value="${member.memberEntryDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>
-                                        <form:hidden path="memberList[${i.index}].memberEntryDate" id="entryDate" class="form-Control" value="${dateString}"/>
-                                        <td><a href="<spring:url value ="/admin/student/studentList/editStudent/${member.memberID}"/>">${member.memberID}</a></td>
-                                        <td>${member.memberFirstName} ${member.memberLastName}</td>
-                                        <td><form:checkbox path="memberList[${i.index}].memberIsActive" value="${member.memberIsActive}" id="isActiveCheckbox"/></td>
-                                        <td><a href="<spring:url value="/admin/student/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
-                                        <td><a href="<spring:url value="/admin/student/studentList/editStudent/${member.memberID}"/>"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                                    </tr>
-                                </c:forEach>
-                                </tbody>
-                            </table>
-                        </div>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="tab-members">
+                    <table id="membershipTable" class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Student ID#</th>
+                            <th>Student Name</th>
+                            <th>Membership</th>
+                            <th>Classes</th>
+                            <th>Edit Profile</th>
+                        </tr>
+                        </thead>
 
-                    <div role="tabpanel" class="tab-pane fade in active" id="tab-inactive">
-                        <table id="inactiveTable" class="table table-striped">
-                            <thead>
+                        <tbody>
+                        <c:forEach items="${memberListWrapper.memberList}" var="member" varStatus="i" begin="0">
                             <tr>
-                                <th>Student ID#</th>
-                                <th>Student Name</th>
-                                <th>Membership</th>
-                                <th>History</th>
-                                <th>Edit Profile</th>
+                                <form:hidden path="memberList[${i.index}].memberID" value="${member.memberID}"/>
+                                <form:hidden path="memberList[${i.index}].memberFirstName" value="${member.memberFirstName}"/>
+                                <form:hidden path="memberList[${i.index}].memberLastName" value="${member.memberLastName}"/>
+                                <form:hidden path="memberList[${i.index}].memberPhoneNumber" value="${member.memberPhoneNumber}"/>
+                                <form:hidden path="memberList[${i.index}].memberEmailAddress" value="${member.memberEmailAddress}"/>
+                                <form:hidden path="memberList[${i.index}].memberStreetAddress" value="${member.memberStreetAddress}"/>
+                                <form:hidden path="memberList[${i.index}].memberAddressApartment" value="${member.memberAddressApartment}"/>
+                                <form:hidden path="memberList[${i.index}].memberCity" value="${member.memberCity}"/>
+                                <form:hidden path="memberList[${i.index}].memberZipCode" value="${member.memberZipCode}"/>
+                                <form:hidden path="memberList[${i.index}].memberState" value="${member.memberState}"/>
+                                <fmt:parseDate value="${member.memberEntryDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                                <fmt:formatDate value="${parsedDate}" var="formattedDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT" />
+                                <form:hidden path="memberList[${i.index}].memberEntryDate" id="entryDate" class="form-Control" value="${formattedDate}"/>
+                                <td><a href="<spring:url value ="/admin/student/studentList/editStudent/${member.memberID}"/>">${member.memberID}</a></td>
+                                <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
+                                <td><form:checkbox path="memberList[${i.index}].memberIsActive" value="${member.memberIsActive}" id="isActiveCheckbox"/></td>
+                                <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                                <td><a href="<spring:url value="/admin/student/studentList/editStudent/${member.memberID}"/>"><span class="glyphicon glyphicon-pencil"></span></a></td>
                             </tr>
-                            </thead>
-                            <tbody>
-                            <c:forEach items="${memberListWrapper.inactiveList}" var="member" varStatus="i" begin="0">
-                                <tr>
-                                    <form:hidden path="inactiveList[${i.index}].memberID" value="${member.memberID}"/>
-                                    <form:hidden path="inactiveList[${i.index}].memberFirstName" value="${member.memberFirstName}"/>
-                                    <form:hidden path="inactiveList[${i.index}].memberLastName" value="${member.memberLastName}"/>
-                                    <form:hidden path="inactiveList[${i.index}].memberPhoneNumber" value="${member.memberPhoneNumber}"/>
-                                    <form:hidden path="inactiveList[${i.index}].memberEmailAddress" value="${member.memberEmailAddress}"/>
-                                    <form:hidden path="inactiveList[${i.index}].memberStreetAddress" value="${member.memberStreetAddress}"/>
-                                    <form:hidden path="inactiveList[${i.index}].memberAddressApartment" value="${member.memberAddressApartment}"/>
-                                    <form:hidden path="inactiveList[${i.index}].memberCity" value="${member.memberCity}"/>
-                                    <form:hidden path="inactiveList[${i.index}].memberZipCode" value="${member.memberZipCode}"/>
-                                    <form:hidden path="inactiveList[${i.index}].memberState" value="${member.memberState}"/>
-                                    <fmt:formatDate value="${member.memberEntryDate}" var="dateString" pattern="MM/dd/yyyy" timeZone="GMT"/>
-                                    <form:hidden path="inactiveList[${i.index}].memberEntryDate" id="entryDate" class="form-Control" value="${dateString}"/>
-                                    <td><a href="<spring:url value ="/admin/studentList/editStudent/${member.memberID}"/>">${member.memberID}</a></td>
-                                    <td>${member.memberFirstName} ${member.memberLastName}</td>
-                                    <td><form:checkbox path="inactiveList[${i.index}].memberIsActive" value="${member.memberIsActive}" id="isActiveCheckbox"/></td>
-                                    <td><a href="<spring:url value="/admin/studentHistory/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
-                                    <td><a href="<spring:url value="/admin/studentList/editStudent/${member.memberID}"/>"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                                </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-                    <br>
+                        </c:forEach>
+                        </tbody>
+                    </table>
                 </div>
-                <input type="submit" value="Save Changes" class="btn btn=default">
+
+                <div role="tabpanel" class="tab-pane fade in active" id="tab-inactive">
+                    <table id="inactiveTable" class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Student ID#</th>
+                            <th>Student Name</th>
+                            <th>Membership</th>
+                            <th>History</th>
+                            <th>Edit Profile</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${memberListWrapper.inactiveList}" var="member" varStatus="i" begin="0">
+                            <tr>
+                                <form:hidden path="inactiveList[${i.index}].memberID" value="${member.memberID}"/>
+                                <form:hidden path="inactiveList[${i.index}].memberFirstName" value="${member.memberFirstName}"/>
+                                <form:hidden path="inactiveList[${i.index}].memberLastName" value="${member.memberLastName}"/>
+                                <form:hidden path="inactiveList[${i.index}].memberPhoneNumber" value="${member.memberPhoneNumber}"/>
+                                <form:hidden path="inactiveList[${i.index}].memberEmailAddress" value="${member.memberEmailAddress}"/>
+                                <form:hidden path="inactiveList[${i.index}].memberStreetAddress" value="${member.memberStreetAddress}"/>
+                                <form:hidden path="inactiveList[${i.index}].memberAddressApartment" value="${member.memberAddressApartment}"/>
+                                <form:hidden path="inactiveList[${i.index}].memberCity" value="${member.memberCity}"/>
+                                <form:hidden path="inactiveList[${i.index}].memberZipCode" value="${member.memberZipCode}"/>
+                                <form:hidden path="inactiveList[${i.index}].memberState" value="${member.memberState}"/>
+                                <fmt:parseDate value="${member.memberEntryDate}" pattern="yyyy-MM-dd" var="parsedInactiveDate" type="date" />
+                                <fmt:formatDate value="${parsedInactiveDate}" var="formattedInactiveDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT" />
+                                <form:hidden path="inactiveList[${i.index}].memberEntryDate" id="entryDate" class="form-Control" value="${formattedInactiveDate}"/>
+                                <td><a href="<spring:url value ="/admin/studentList/editStudent/${member.memberID}"/>">${member.memberID}</a></td>
+                                <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
+                                <td><form:checkbox path="inactiveList[${i.index}].memberIsActive" value="${member.memberIsActive}" id="isActiveCheckbox"/></td>
+                                <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                                <td><a href="<spring:url value="/admin/studentList/editStudent/${member.memberID}"/>"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+            </div>
+
+            <input type="submit" value="Save Changes" class="btn btn=default">
             </form:form>
         </div>
     </div>

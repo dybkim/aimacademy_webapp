@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implem
     }
 
     @Override
-    public List<Attendance> getAttendanceForCourse(Course course, Date date) {
+    public List<Attendance> getAttendanceForCourseForDate(Course course, LocalDate date) {
         return null;
     }
 
@@ -68,9 +69,9 @@ public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implem
     }
 
     @Override
-    public List<Attendance> getAttendanceForMember(Member member, Course course) {
+    public List<Attendance> getAttendanceForMemberForCourse(Member member, Course course) {
         Session session = currentSession();
-        Query query = session.createQuery("FROM Attendance WHERE MemberID = :memberID AND CourseID = :courseID");
+        Query query = session.createQuery("FROM Attendance WHERE memberID = :memberID AND courseSessionID IN (SELECT courseSessionID FROM Course_Session WHERE courseID = :courseID)");
         query.setParameter("memberID", member.getMemberID());
         query.setParameter("courseID", course.getCourseID());
         List<Attendance> attendanceList = query.getResultList();
@@ -81,7 +82,7 @@ public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implem
     }
 
     @Override
-    public List<Attendance> getAttendanceForMember(Member member, Course course, Date date) {
+    public Attendance getAttendanceForMemberForCourseForDate(Member member, Course course, LocalDate date) {
         return null;
     }
 

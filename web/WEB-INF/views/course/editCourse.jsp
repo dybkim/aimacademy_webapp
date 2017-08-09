@@ -62,7 +62,7 @@
 
 <body>
 
-<div class="container-fluid" ng-app="courseControllerApp">
+<div class="container-fluid">
     <div class="row">
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Edit Course: ${courseRegistrationWrapper.course.courseName}</h1>
@@ -88,16 +88,20 @@
                     </form:select>
                 </div>
 
-                <div class="form-group"><span style="color: #FF0000">${startDateErrorMessage}</span>
+                <span style="color: #FF0000">${startDateErrorMessage}</span>
+                <div class="form-group">
                     <label for="startDate">Start Date (MM/DD/YYYY)</label>
-                    <fmt:formatDate value="${courseRegistrationWrapper.course.courseStartDate}" var="startDateString" pattern="MM/dd/yyyy" timeZone="GMT"/>
-                    <form:input path="course.courseStartDate" id="startDate" class="form-Control" value="${startDateString}"/>
+                    <fmt:parseDate value="${courseRegistrationWrapper.course.courseStartDate}" pattern="yyyy-MM-dd" var="parsedStartDate" type="date" />
+                    <fmt:formatDate value="${parsedStartDate}" var="formattedStartDate" type="date" pattern="MM/dd/yyyy"/>
+                    <form:input path="course.courseStartDate" id="startDate" class="date" value="${formattedStartDate}"/>
                 </div>
 
-                <div class="form-group"><span style="color: #FF0000">${endDateErrorMessage}</span>
+                <span style="color: #FF0000">${endDateErrorMessage}</span>
+                <div class="form-group">
                     <label for="endDate">End Date (MM/DD/YYYY)</label>
-                    <fmt:formatDate value="${courseRegistrationWrapper.course.courseEndDate}" var="endDateString" pattern="MM/dd/yyyy" timeZone="GMT"/>
-                    <form:input path="course.courseEndDate" id="endDate" class="form-Control" value="${endDateString}"/>
+                    <fmt:parseDate value="${courseRegistrationWrapper.course.courseEndDate}" pattern="yyyy-MM-dd" var="parsedEndDate" type="date" />
+                    <fmt:formatDate value="${parsedEndDate}" var="formattedEndDate" type="date" pattern="MM/dd/yyyy"/>
+                    <form:input path="course.courseEndDate" id="endDate" class="date" value="${formattedEndDate}"/>
                 </div>
 
                 <br>
@@ -138,7 +142,7 @@
 
                 <input type="submit" value="submit" class="btn btn=default">
 
-                <input action="action" onclick="history.go(-1);" value="Cancel" class="btn btn-default">
+                <a href="<spring:url value="/admin/courseList/courseInfo/${courseRegistrationWrapper.course.courseID}"/>" class="btn btn-default">Back To Course Page</a>
 
             </form:form>
         </div>
@@ -149,7 +153,6 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
-<script src="<c:url value="/resources/js/courseController.js"/>"></script>
 </body>
 </html>
 
