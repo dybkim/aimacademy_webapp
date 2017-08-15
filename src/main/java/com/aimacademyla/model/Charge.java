@@ -31,7 +31,7 @@ public class Charge implements Serializable{
     private int courseID;
 
     @Column(name="ChargeAmount")
-    @Pattern(regexp="^(0|[1-9][0-9]*)$", message="Charge amount must be numeric")
+//    @Pattern(regexp="^(0|[1-9][0-9]*)$", message="Charge amount must be numeric")
     private double chargeAmount;
 
     @Column(name="CycleStartDate")
@@ -49,6 +49,12 @@ public class Charge implements Serializable{
 
     @Column(name="Description")
     private String description;
+
+    @Column(name="DiscountAmount")
+    private double discountAmount;
+
+    @Column(name="NumChargeLines")
+    private int numChargeLines;
 
     public int getChargeID() {
         return chargeID;
@@ -120,5 +126,21 @@ public class Charge implements Serializable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public int getNumChargeLines() {
+        return numChargeLines;
+    }
+
+    public void setNumChargeLines(int numChargeLines) {
+        this.numChargeLines = numChargeLines;
     }
 }

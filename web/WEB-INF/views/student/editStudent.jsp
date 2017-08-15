@@ -10,14 +10,13 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="../template/navbar.jsp"%>
+<%@include file="../template/sidebar.jsp"%>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <body>
-<%@include file="../template/navbar.jsp"%>
-<%@include file="../template/sidebar.jsp"%>
-
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

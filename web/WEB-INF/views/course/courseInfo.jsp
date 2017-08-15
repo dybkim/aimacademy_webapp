@@ -14,7 +14,6 @@
 
 <%@include file="../template/navbar.jsp"%>
 <%@include file="../template/sidebar.jsp" %>
-
 <script>
 
     $(document).ready(function(){

@@ -11,11 +11,18 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%@include file="../template/navbar.jsp"%>
+<%@include file="../template/sidebar.jsp" %>
+
+<script>
+
+</script>
 <!DOCTYPE html>
 <html lang="en">
 
 <body>
-<%@include file="../template/navbar.jsp"%>
+
 
 <div class="container-fluid">
     <div class="row">

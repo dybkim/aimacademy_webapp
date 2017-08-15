@@ -132,16 +132,17 @@
                             <tr>
                                 <td><fmt:parseDate value="${memberCourseFinancesWrapper.date}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
                                     <fmt:formatDate value="${parsedDate}" var="formattedHiddenDate" type="date" pattern="yyyy/MM/dd" timeZone="GMT" />${formattedHiddenDate}</td>
-                                <td style="text-align:center"><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesWrapper.date.monthValue}&year=${memberCourseFinancesWrapper.date.year}"/>">${memberCourseFinancesWrapper.date.month.toString()} ${memberCourseFinancesWrapper.date.year}</a></td>
 
                                 <c:choose>
                                     <c:when test="${memberCourseFinancesWrapper.chargeList.size() != 0}">
+                                        <td style="text-align:center"><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesWrapper.date.monthValue}&year=${memberCourseFinancesWrapper.date.year}"/>">${memberCourseFinancesWrapper.date.month.toString()} ${memberCourseFinancesWrapper.date.year}</a></td>
                                         <td style="text-align:center">${memberCourseFinancesWrapper.chargePaymentHashMap.size()}/${memberCourseFinancesWrapper.chargeList.size()}</td>
                                         <td style="text-align:center">${memberCourseFinancesWrapper.totalPaymentAmount}</td>
                                         <td style="text-align:center">${memberCourseFinancesWrapper.totalChargeAmount}</td>
                                     </c:when>
 
                                     <c:otherwise>
+                                        <td style="text-align:center"><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesWrapper.date.monthValue}&year=${memberCourseFinancesWrapper.date.year}"/>">${memberCourseFinancesWrapper.date.month.toString()} ${memberCourseFinancesWrapper.date.year}</a></td>
                                         <td style="text-align:center"></td>
                                         <td style="text-align:center"></td>
                                         <td style="text-align:center"></td>

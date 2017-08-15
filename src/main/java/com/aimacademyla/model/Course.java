@@ -20,6 +20,7 @@ public class Course implements Serializable{
     private static final long serialVersionUID = 3942567537260692323L;
 
     public static final int OPEN_STUDY_ID = 8;
+    public static final int OTHER_ID = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

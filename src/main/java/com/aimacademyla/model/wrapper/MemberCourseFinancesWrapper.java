@@ -58,47 +58,4 @@ public class MemberCourseFinancesWrapper implements Serializable{
     public void setChargePaymentHashMap(HashMap<Integer, Payment> chargePaymentHashMap) {
         this.chargePaymentHashMap = chargePaymentHashMap;
     }
-
-    public static class MemberCourseFinancesWrapperBuilder{
-        private List<Charge> chargeList;
-        private LocalDate date;
-        private double totalChargeAmount;
-        private double totalPaymentAmount;
-        private HashMap<Integer, Payment> chargePaymentHashMap;
-
-        public MemberCourseFinancesWrapperBuilder setChargeList(List<Charge> chargeList) {
-            this.chargeList = chargeList;
-            return this;
-        }
-
-        public MemberCourseFinancesWrapperBuilder setDate(LocalDate date) {
-            this.date = date;
-            return this;
-        }
-
-        public MemberCourseFinancesWrapperBuilder setTotalChargeAmount(double totalChargeAmount) {
-            this.totalChargeAmount = totalChargeAmount;
-            return this;
-        }
-
-        public MemberCourseFinancesWrapperBuilder setTotalPaymentAmount(double totalPaymentAmount) {
-            this.totalPaymentAmount = totalPaymentAmount;
-            return this;
-        }
-
-        public MemberCourseFinancesWrapperBuilder setChargePaymentHashMap(HashMap<Integer, Payment> chargePaymentHashMap) {
-            this.chargePaymentHashMap = chargePaymentHashMap;
-            return this;
-        }
-
-        public MemberCourseFinancesWrapper build(){
-            MemberCourseFinancesWrapper memberCourseFinancesWrapper = new MemberCourseFinancesWrapper();
-            memberCourseFinancesWrapper.setChargeList(chargeList);
-            memberCourseFinancesWrapper.setDate(date);
-            memberCourseFinancesWrapper.setTotalChargeAmount(totalChargeAmount);
-            memberCourseFinancesWrapper.setTotalPaymentAmount(totalPaymentAmount);
-            memberCourseFinancesWrapper.setChargePaymentHashMap(chargePaymentHashMap);
-            return memberCourseFinancesWrapper;
-        }
-    }
 }

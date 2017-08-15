@@ -1,6 +1,7 @@
 package com.aimacademyla.controller.finances;
 
 import com.aimacademyla.model.MonthlyChargesSummary;
+import com.aimacademyla.model.Season;
 import com.aimacademyla.service.ChargeLineService;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -37,9 +39,14 @@ public class FinanceHomeController {
     }
 
     @RequestMapping()
-    public String getFinancesListHome(Model model){
+    public String home(Model model){
         List<MonthlyChargesSummary> monthlyChargesSummaryList = monthlyChargesSummaryService.getAllMonthlyChargesSummaries();
-        model.addAttribute("monthlySummaryList", monthlyChargesSummaryList);
-        return "/finances/financesListHome";
+        HashMap<Integer, String> seasonDescriptionHashMap = new HashMap<>();
+        for(MonthlyChargesSummary monthlyChargesSummary : monthlyChargesSummaryList)
+            seasonDescriptionHashMap.put(monthlyChargesSummary.getMonthlyChargesSummaryID(), Season.SeasonDescription.toString(monthlyChargesSummary.getCycleStartDate()));
+
+        model.addAttribute("monthlyChargesSummaryList", monthlyChargesSummaryList);
+        model.addAttribute("seasonDescriptionHashMap", seasonDescriptionHashMap);
+        return "/finances/monthChargesFinances";
     }
 }

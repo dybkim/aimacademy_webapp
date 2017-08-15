@@ -1,6 +1,7 @@
 package com.aimacademyla.controller.student;
 
 import com.aimacademyla.model.*;
+import com.aimacademyla.model.builder.impl.MemberCourseFinancesWrapperBuilder;
 import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.model.wrapper.MemberCourseFinancesWrapper;
 import com.aimacademyla.model.wrapper.MemberListWrapper;
@@ -167,52 +168,13 @@ public class StudentListController {
 
     private List<MemberCourseFinancesWrapper> generateMemberCourseFinancesWrapperList(Member member){
         List<MemberCourseFinancesWrapper> memberCourseFinancesWrapperList= new ArrayList<>();
-        HashMap<Integer, Payment> chargePaymentHashMap = new HashMap<>();
+        List<LocalDate> monthsList = TemporalReference.getMonthList();
 
-        int numMonthsFromInception = TemporalReference.numMonthsFromInception();
-
-        for(int counter = 0; counter < numMonthsFromInception; counter++){
-
-            double totalChargeAmount = 0;
-            double totalPaymentAmount = 0;
-
-            int year = TemporalReference.START_DATE.getDate().getYear() + (counter / 12);
-            int month = TemporalReference.START_DATE.getDate().getMonthValue() + (counter % 12);
-
-            LocalDate localDate = LocalDate.of(year, month, 1);
-
-            List<Charge> chargeList = chargeService.getChargesByMemberByDate(member, localDate);
-            Iterator it = chargeList.iterator();
-
-            /**
-             * Remove charges from charge list that have an amount of 0 dollars
-             */
-            while(it.hasNext()){
-                Charge charge = (Charge) it.next();
-                if(charge.getChargeAmount() <= 0){
-                    it.remove();
-                    continue;
-                }
-
-                totalChargeAmount += charge.getChargeAmount();
-                Payment payment = paymentService.getPaymentForCharge(charge);
-
-                if(payment.getPaymentID() != Payment.NO_PAYMENT){
-                    totalPaymentAmount += payment.getPaymentAmount();
-                    chargePaymentHashMap.put(charge.getChargeID(), payment);
-                }
-            }
-
-            LocalDate date = LocalDate.of(year, month, 1);
-            MemberCourseFinancesWrapper.MemberCourseFinancesWrapperBuilder memberCourseFinancesWrapperBuilder = new MemberCourseFinancesWrapper.MemberCourseFinancesWrapperBuilder();
-
-            MemberCourseFinancesWrapper memberCourseFinancesWrapper = memberCourseFinancesWrapperBuilder.setChargeList(chargeList)
-                                                                                                        .setDate(date)
-                                                                                                        .setTotalChargeAmount(totalChargeAmount)
-                                                                                                        .setTotalPaymentAmount(totalPaymentAmount)
-                                                                                                        .setChargePaymentHashMap(chargePaymentHashMap)
+        for(LocalDate cycleStartDate : monthsList){
+            MemberCourseFinancesWrapperBuilder memberCourseFinancesWrapperBuilder = new MemberCourseFinancesWrapperBuilder(paymentService, chargeService);
+            MemberCourseFinancesWrapper memberCourseFinancesWrapper = memberCourseFinancesWrapperBuilder.setCycleStartDate(cycleStartDate)
+                                                                                                        .setMember(member)
                                                                                                         .build();
-
             memberCourseFinancesWrapperList.add(memberCourseFinancesWrapper);
         }
 

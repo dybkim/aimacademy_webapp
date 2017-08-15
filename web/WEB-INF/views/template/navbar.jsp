@@ -68,7 +68,7 @@
                 <c:if test="${pageContext.request.userPrincipal.name != null}">
                     <li><a>${pageContext.request.userPrincipal.name}</a></li>
                 </c:if>
-                <li><a href="<spring:url value="/"/>">Home</a></li>
+                <li><a href="<spring:url value="/home"/>">Home</a></li>
                 <li><a href="#">Settings</a></li>
                 <li><a href="#">Profile</a></li>
                 <li><a href="#">Help</a></li>

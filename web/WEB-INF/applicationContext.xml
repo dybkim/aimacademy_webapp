@@ -6,17 +6,23 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/security
-       http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${jdbc.driver}"/>
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
+    <bean id="c3p0DataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
         <property name="password" value="${jdbc.password}"/>
+        <property name="maxPoolSize" value="25" />
+        <property name="minPoolSize" value="10" />
+        <property name="maxStatements" value="100" />
+        <property name="testConnectionOnCheckout" value="true" />
     </bean>
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
+        <property name="dataSource" ref="c3p0DataSource"/>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
@@ -36,21 +42,36 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <set>
+                <bean class="com.aimacademyla.formatter.LocalDateFormatter"/>
+            </set>
+        </property>
+    </bean>
+
     <security:http auto-config="true">
         <security:intercept-url pattern="/" access="hasRole('ROLE_ADMIN')"/>
         <security:form-login
             login-page="/login"
-            default-target-url="/"
+            default-target-url="/home"
+            always-use-default-target="true"
             authentication-failure-url="/login?error"
             username-parameter="username"
             password-parameter="password"/>
         <security:logout
             logout-success-url="/login"/>
+        <!--<security:csrf token-repository-ref="csrfTokenRepository"/>-->
+        <security:csrf disabled="true"/>
     </security:http>
+
+    <!--<beans:bean id="csrfTokenRepository" class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository">-->
+        <!--<beans:property name="headerName" value="X-XSRF-TOKEN" />-->
+    <!--</beans:bean>-->
 
     <security:authentication-manager>
         <security:authentication-provider>
-            <security:jdbc-user-service data-source-ref="dataSource"
+            <security:jdbc-user-service data-source-ref="c3p0DataSource"
                                         authorities-by-username-query="SELECT username, authority FROM Authorities WHERE username = ?"
                                         users-by-username-query="SELECT username, password, enabled FROM Users WHERE username = ?"/>
         </security:authentication-provider>

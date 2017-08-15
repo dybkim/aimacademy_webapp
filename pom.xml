@@ -182,5 +182,11 @@
             <version>5.2.10.Final</version>
         </dependency>
 
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.1.2</version>
+        </dependency>
+
     </dependencies>
 </project>

@@ -10,6 +10,7 @@ import com.aimacademyla.service.SeasonService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -76,8 +77,10 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
     public void add(Charge charge) {
         if(charge.getMonthlyChargesSummaryID() == null){
             MonthlyChargesSummary monthlyChargesSummary = monthlyChargesSummaryService.getMonthlyChargesSummary(charge.getCycleStartDate());
-            charge.setMonthlyChargesSummaryID(monthlyChargesSummary.getMonthlyChargesSummaryID());
-            charge.setSeasonID(monthlyChargesSummary.getSeasonID());
+            if(monthlyChargesSummary != null) {
+                charge.setMonthlyChargesSummaryID(monthlyChargesSummary.getMonthlyChargesSummaryID());
+                charge.setSeasonID(monthlyChargesSummary.getSeasonID());
+            }
         }
 
         chargeDAO.add(charge);
@@ -87,11 +90,15 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
         Charge charge = new Charge();
         Season season = seasonService.getSeason(date);
 
+        if(course.getCourseID() != Course.OTHER_ID)
+            charge.setDescription(course.getCourseName() + " " + course.getCourseType());
+
         charge.setMemberID(member.getMemberID());
         charge.setCourseID(course.getCourseID());
         charge.setCycleStartDate(LocalDate.of(date.getYear(), date.getMonth(), 1));
         charge.setChargeAmount(0);
         charge.setSeasonID(season.getSeasonID());
+        charge.setNumChargeLines(0);
 
         chargeDAO.add(charge);
 

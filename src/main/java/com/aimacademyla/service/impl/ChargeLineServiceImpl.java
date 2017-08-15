@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by davidkim on 4/6/17.
  */
@@ -32,8 +34,12 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
     public void add(ChargeLine chargeLine){
         double chargeLineAmount = chargeLine.getTotalCharge();
         Charge charge = chargeService.get(chargeLine.getChargeID());
+
         double chargeAmount = charge.getChargeAmount() + chargeLineAmount;
         charge.setChargeAmount(chargeAmount);
+
+        int numChargeLines = charge.getNumChargeLines() + 1;
+        charge.setNumChargeLines(numChargeLines);
         chargeService.update(charge);
 
         chargeLineDAO.add(chargeLine);
@@ -56,8 +62,12 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
     public void remove(ChargeLine chargeLine){
         double chargeLineAmount = chargeLineDAO.get(chargeLine.getChargeID()).getTotalCharge();
         Charge charge = chargeService.get(chargeLine.getChargeID());
+
         double newChargeAmount = charge.getChargeAmount() - chargeLineAmount;
         charge.setChargeAmount(newChargeAmount);
+
+        int numChargeLines = charge.getNumChargeLines() - 1;
+        charge.setNumChargeLines(numChargeLines);
         chargeService.update(charge);
 
         chargeLineDAO.remove(chargeLine);
@@ -66,5 +76,10 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
     @Override
     public ChargeLine getChargeLineByAttendanceID(int attendanceID) {
         return chargeLineDAO.getChargeLineByAttendanceID(attendanceID);
+    }
+
+    @Override
+    public List<ChargeLine> getChargeLinesByCharge(Charge charge){
+        return chargeLineDAO.getChargeLinesByCharge(charge);
     }
 }
