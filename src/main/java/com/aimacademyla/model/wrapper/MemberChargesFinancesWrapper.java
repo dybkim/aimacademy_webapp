@@ -5,6 +5,7 @@ import com.aimacademyla.model.ChargeLine;
 import com.aimacademyla.model.Course;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,7 @@ public class MemberChargesFinancesWrapper implements Serializable{
 
     private HashMap<Integer, List<ChargeLine>> chargeLineListHashMap;
 
-    private HashMap<Integer, Double> hoursBilledHashMap;
+    private HashMap<Integer, BigDecimal> hoursBilledHashMap;
 
     private List<LocalDate> monthsList;
 
@@ -30,11 +31,11 @@ public class MemberChargesFinancesWrapper implements Serializable{
 
     private int monthSelectedIndex;
 
-    private double hoursBilledTotal;
+    private BigDecimal hoursBilledTotal;
 
-    private double totalChargesAmount;
+    private BigDecimal totalChargesAmount;
 
-    private double totalDiscountAmount;
+    private BigDecimal totalDiscountAmount;
 
     public HashMap<Integer, Charge> getChargeHashMap() {
         return chargeHashMap;
@@ -68,11 +69,11 @@ public class MemberChargesFinancesWrapper implements Serializable{
         this.chargeLineListHashMap = chargeLineListHashMap;
     }
 
-    public HashMap<Integer, Double> getHoursBilledHashMap() {
+    public HashMap<Integer, BigDecimal> getHoursBilledHashMap() {
         return hoursBilledHashMap;
     }
 
-    public void setHoursBilledHashMap(HashMap<Integer, Double> hoursBilledHashMap) {
+    public void setHoursBilledHashMap(HashMap<Integer, BigDecimal> hoursBilledHashMap) {
         this.hoursBilledHashMap = hoursBilledHashMap;
     }
 
@@ -92,27 +93,27 @@ public class MemberChargesFinancesWrapper implements Serializable{
         this.monthSelectedIndex = monthSelectedIndex;
     }
 
-    public double getHoursBilledTotal() {
+    public BigDecimal getHoursBilledTotal() {
         return hoursBilledTotal;
     }
 
-    public void setHoursBilledTotal(double hoursBilledTotal) {
+    public void setHoursBilledTotal(BigDecimal hoursBilledTotal) {
         this.hoursBilledTotal = hoursBilledTotal;
     }
 
-    public double getTotalChargesAmount() {
+    public BigDecimal getTotalChargesAmount() {
         return totalChargesAmount;
     }
 
-    public void setTotalChargesAmount(double totalChargesAmount) {
+    public void setTotalChargesAmount(BigDecimal totalChargesAmount) {
         this.totalChargesAmount = totalChargesAmount;
     }
 
-    public double getTotalDiscountAmount() {
+    public BigDecimal getTotalDiscountAmount() {
         return totalDiscountAmount;
     }
 
-    public void setTotalDiscountAmount(double totalDiscountAmount) {
+    public void setTotalDiscountAmount(BigDecimal totalDiscountAmount) {
         this.totalDiscountAmount = totalDiscountAmount;
     }
 

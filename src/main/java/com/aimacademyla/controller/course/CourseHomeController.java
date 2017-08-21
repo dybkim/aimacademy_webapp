@@ -1,6 +1,7 @@
 package com.aimacademyla.controller.course;
 
 import com.aimacademyla.model.*;
+import com.aimacademyla.model.builder.impl.CourseRegistrationWrapperBuilder;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapperObject;
@@ -28,16 +29,12 @@ import java.util.*;
 public class CourseHomeController {
 
     private CourseService courseService;
-
     private AttendanceService attendanceService;
-
     private MemberService memberService;
-
     private CourseSessionService courseSessionService;
-
     private MemberCourseRegistrationService memberCourseRegistrationService;
-
     private SeasonService seasonService;
+    private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
 
     private static final Logger logger = LogManager.getLogger(CourseHomeController.class);
 
@@ -47,23 +44,31 @@ public class CourseHomeController {
                                 MemberService memberService,
                                 CourseSessionService courseSessionService,
                                 MemberCourseRegistrationService memberCourseRegistrationService,
-                                SeasonService seasonService){
+                                SeasonService seasonService,
+                                MemberMonthlyRegistrationService memberMonthlyRegistrationService){
         this.courseService = courseService;
         this.attendanceService = attendanceService;
         this.memberService = memberService;
         this.courseSessionService = courseSessionService;
         this.memberCourseRegistrationService = memberCourseRegistrationService;
         this.seasonService = seasonService;
+        this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
     }
 
     @RequestMapping
     public String getCourseList(Model model){
-        List<Course> courseList = courseService.getActiveCourseList();
+        List<Course> courseList = courseService.getCourseList();
         List<Course> inactiveCourseList = new ArrayList<>();
         Iterator it = courseList.iterator();
 
         while(it.hasNext()){
             Course course = (Course)it.next();
+
+            if(course.getCourseID() == Course.OPEN_STUDY_ID || course.getCourseID() == Course.OTHER_ID){
+                it.remove();
+                continue;
+            }
+
             if(!course.getIsActive()) {
                 inactiveCourseList.add(course);
                 it.remove();
@@ -81,8 +86,6 @@ public class CourseHomeController {
         CourseRegistrationWrapper courseRegistrationWrapper = new CourseRegistrationWrapper();
         courseRegistrationWrapper.setCourse(course);
 
-        List<Member> activeMemberList = memberService.getActiveMembers();
-        model.addAttribute(activeMemberList);
         model.addAttribute(courseRegistrationWrapper);
 
         return "/course/addCourse";
@@ -99,29 +102,14 @@ public class CourseHomeController {
             return "/course/addCourse";
         }
 
-        addMemberCourseRegistrationList(courseRegistrationWrapper);
-
+//        addMemberCourseRegistrationList(courseRegistrationWrapper);
+        courseService.add(courseRegistrationWrapper.getCourse());
         return "redirect:/admin/courseList";
     }
 
     @RequestMapping("/editCourse/{courseID}")
     public String editCourse(@PathVariable("courseID") int courseID, Model model){
-        Course course = courseService.get(courseID);
-        List<Member> activeMemberList = memberService.getActiveMembersByCourse(course);
-        CourseRegistrationWrapperObject courseRegistrationWrapperObject;
-        List<CourseRegistrationWrapperObject> courseRegistrationWrapperObjectList = new ArrayList<>();
-
-        for (Member member : activeMemberList) {
-            courseRegistrationWrapperObject = new CourseRegistrationWrapperObject();
-            courseRegistrationWrapperObject.setMember(member);
-            courseRegistrationWrapperObject.setIsDropped(false);
-            courseRegistrationWrapperObjectList.add(courseRegistrationWrapperObject);
-        }
-
-        CourseRegistrationWrapper courseRegistrationWrapper = new CourseRegistrationWrapper();
-        courseRegistrationWrapper.setCourse(course);
-        courseRegistrationWrapper.setCourseRegistrationWrapperObjectList(courseRegistrationWrapperObjectList);
-
+        CourseRegistrationWrapper courseRegistrationWrapper = new CourseRegistrationWrapperBuilder(memberService, courseService).setCourseID(courseID).build();
         model.addAttribute(courseRegistrationWrapper);
 
         return "/course/editCourse";
@@ -139,11 +127,24 @@ public class CourseHomeController {
         }
 
         Course course = courseRegistrationWrapper.getCourse();
-        course.setSeasonID(seasonService.getSeason(course.getCourseStartDate()).getSeasonID());
-        course.setNumEnrolled(courseRegistrationWrapper.getCourseRegistrationWrapperObjectList().size());
-        courseService.update(course);
+        LocalDate startDate = course.getCourseStartDate();
 
-        updateMemberCourseRegistrationList(courseRegistrationWrapper);
+            if(startDate != null)
+                course.setSeasonID(seasonService.getSeason(course.getCourseStartDate()).getSeasonID());
+
+        int numEnrolled = 0;
+
+        /**
+         * Have to check for null list instead of empty list because JSP returns null list if list is empty
+         */
+        if(courseRegistrationWrapper.getCourseRegistrationWrapperObjectList() != null){
+            numEnrolled = courseRegistrationWrapper.getCourseRegistrationWrapperObjectList().size();
+            updateMemberCourseRegistrationList(courseRegistrationWrapper);
+        }
+
+
+        course.setNumEnrolled(numEnrolled);
+        courseService.update(course);
 
         return "redirect:/admin/courseList/courseInfo/" + courseID;
     }
@@ -167,10 +168,8 @@ public class CourseHomeController {
 
         for(Member member : allMembers) {
             String identifier = member.getMemberFirstName() + " " + member.getMemberLastName() + " " + member.getMemberID();
-            if(member.getMemberIsActive()){
-                allMembersMap.put(member.getMemberID(), identifier);
-                unenrolledMembersMap.put(member.getMemberID(), identifier);
-            }
+            allMembersMap.put(member.getMemberID(), identifier);
+            unenrolledMembersMap.put(member.getMemberID(), identifier);
         }
 
         for(Member member : activeMembers){
@@ -221,7 +220,6 @@ public class CourseHomeController {
         return model;
     }
 
-
     private void addMemberCourseRegistrationList(CourseRegistrationWrapper courseRegistrationWrapper){
         List<MemberCourseRegistration> memberCourseRegistrationList = new ArrayList<>();
         int courseID = courseRegistrationWrapper.getCourse().getCourseID();
@@ -237,8 +235,6 @@ public class CourseHomeController {
             memberCourseRegistration.setMemberCourseRegistrationPK(new MemberCourseRegistrationPK(member.getMemberID(), courseID));
             memberCourseRegistrationList.add(memberCourseRegistration);
         }
-
-        courseService.add(courseRegistrationWrapper.getCourse());
 
         memberCourseRegistrationService.update(memberCourseRegistrationList);
     }

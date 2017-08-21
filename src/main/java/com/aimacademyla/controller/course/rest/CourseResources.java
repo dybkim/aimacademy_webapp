@@ -52,8 +52,16 @@ public class CourseResources {
         return new ResponseEntity<>(new GenericResponse("OK", "NO_ERROR", HttpStatus.OK.value()){},HttpStatus.OK);
     }
 
-    @RequestMapping(value="/{courseID}/addStudentToCourse/{memberID}", method=RequestMethod.POST)
+    @RequestMapping(value="/{courseID}/addStudentToCourse/{memberID}", method=RequestMethod.PUT)
     public void addMemberToCourse(@PathVariable("courseID") int courseID, @PathVariable("memberID") int memberID, Model model){
+        List<Member> memberList = memberService.getMemberList();
+        Course course = courseService.get(courseID);
+        model.addAttribute(memberList);
+        model.addAttribute(course);
+    }
+
+    @RequestMapping(value="/{courseID}/removeStudentFromCourse/{memberID}", method=RequestMethod.DELETE)
+    public void removeStudentsFromCourse(@PathVariable("courseID") int courseID, @PathVariable("memberID") int memberID, Model model){
         List<Member> memberList = memberService.getMemberList();
         Course course = courseService.get(courseID);
         model.addAttribute(memberList);

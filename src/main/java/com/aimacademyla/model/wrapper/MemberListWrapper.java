@@ -2,9 +2,12 @@ package com.aimacademyla.model.wrapper;
 
 import com.aimacademyla.model.Member;
 import org.springframework.context.annotation.Bean;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -17,17 +20,9 @@ public class MemberListWrapper implements Serializable{
 
     private List<Member> memberList;
 
-    private List<Member> inactiveList;
+    private List<Member> inactiveMemberList;
 
-    public MemberListWrapper(){
-        memberList = new ArrayList<>();
-        inactiveList = new ArrayList<>();
-    }
-
-    public MemberListWrapper(List<Member> memberList, List<Member> inactiveList){
-        this.memberList = memberList;
-        this.inactiveList = inactiveList;
-    }
+    private HashMap<Integer, Boolean> membershipHashMap;
 
     public List<Member> getMemberList(){
         return this.memberList;
@@ -37,11 +32,19 @@ public class MemberListWrapper implements Serializable{
         this.memberList = memberList;
     }
 
-    public List<Member> getInactiveList() {
-        return inactiveList;
+    public List<Member> getInactiveMemberList() {
+        return inactiveMemberList;
     }
 
-    public void setInactiveList(List<Member> inactiveList) {
-        this.inactiveList = inactiveList;
+    public void setInactiveMemberList(List<Member> inactiveMemberList) {
+        this.inactiveMemberList = inactiveMemberList;
+    }
+
+    public HashMap<Integer, Boolean> getMembershipHashMap() {
+        return membershipHashMap;
+    }
+
+    public void setMembershipHashMap(HashMap<Integer, Boolean> membershipHashMap) {
+        this.membershipHashMap = membershipHashMap;
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface CourseService extends GenericService<Course, Integer>{
 
-    List<Course> getActiveCourseList();
+    List<Course> getCourseList();
 
     Course getCourseByName(String courseName);
 

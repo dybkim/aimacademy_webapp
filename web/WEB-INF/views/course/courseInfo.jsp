@@ -102,7 +102,6 @@
                             <table id="memberListTable" class="table table-striped dt-responsive">
                                 <thead>
                                 <tr>
-                                    <th></th>
                                     <th>Student ID#</th>
                                     <th>Student Name</th>
                                     <th>Attendance</th>
@@ -112,11 +111,10 @@
                                 <tbody>
                                 <c:forEach items="${memberList}" var="member">
                                     <tr>
-                                        <td></td>
                                         <td>${member.memberID}</td>
                                         <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                         <td>${memberAttendanceCountMap.get(member.memberID)}/${courseSessionList.size()}</td>
-                                        <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>
+                                        <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
@@ -127,7 +125,6 @@
                             <table id="inactiveMemberListTable" class="table table-striped dt-responsive">
                                 <thead>
                                 <tr>
-                                    <th></th>
                                     <th>Student ID#</th>
                                     <th>Student Name</th>
                                     <th>Attendance</th>
@@ -137,11 +134,10 @@
                                 <tbody>
                                 <c:forEach items="${inactiveMemberList}" var="member">
                                     <tr>
-                                        <td></td>
                                         <td>${member.memberID}</td>
                                         <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                         <td>${memberAttendanceCountMap.get(member.memberID)}/${courseSessionList.size()}</td>
-                                        <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>
+                                        <td><a href="<spring:url value="admin/student/studentFinances/${member.memberID}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>

@@ -27,9 +27,20 @@ public class MemberMonthlyRegistrationDAOImpl extends GenericDAOImpl<MemberMonth
     }
 
     @Override
+    public MemberMonthlyRegistration getMemberMonthlyRegistrationForMemberByDate(Member member, LocalDate date) {
+        Session session = currentSession();
+        Query query = session.createQuery("FROM Member_Monthly_Registration WHERE MONTH(CycleStartDate) = MONTH(:date) AND YEAR(CycleStartDate) = YEAR(:date) AND memberID = :memberID");
+        query.setParameter("date", date).setParameter("memberID", member.getMemberID());
+        MemberMonthlyRegistration memberMonthlyRegistration = (MemberMonthlyRegistration) query.uniqueResult();
+        session.flush();
+
+        return memberMonthlyRegistration;
+    }
+
+    @Override
     public List<MemberMonthlyRegistration> getMemberMonthlyRegistrationList(LocalDate date) {
         Session session =  currentSession();
-        Query query = session.createQuery("FROM Member_Monthly_Registration WHERE MONTH(CycleStartDate) = MONTH(:date)");
+        Query query = session.createQuery("FROM Member_Monthly_Registration WHERE MONTH(CycleStartDate) = MONTH(:date) AND YEAR(CycleStartDate) = YEAR(:date)");
         query.setParameter("date", date);
         List<MemberMonthlyRegistration> memberMonthlyRegistrations = query.getResultList();
         session.flush();

@@ -3,9 +3,11 @@ package com.aimacademyla.model;
 import com.aimacademyla.model.reference.TemporalReference;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -56,10 +58,11 @@ public class Course implements Serializable{
     private int seasonID;
 
     @Column(name="PricePerHour")
-    private double pricePerHour;
+    @NumberFormat(style= NumberFormat.Style.CURRENCY)
+    private BigDecimal pricePerHour;
 
     @Column(name="ClassDuration")
-    private double classDuration;
+    private BigDecimal classDuration;
 
     public int getCourseID() {
         return courseID;
@@ -129,11 +132,11 @@ public class Course implements Serializable{
         this.totalNumSessions = totalNumSessions;
     }
 
-    public double getPricePerHour() {
+    public BigDecimal getPricePerHour() {
         return pricePerHour;
     }
 
-    public void setPricePerHour(double pricePerHour) {
+    public void setPricePerHour(BigDecimal pricePerHour) {
         this.pricePerHour = pricePerHour;
     }
 
@@ -149,11 +152,11 @@ public class Course implements Serializable{
         this.seasonID = seasonID;
     }
 
-    public double getClassDuration() {
+    public BigDecimal getClassDuration() {
         return classDuration;
     }
 
-    public void setClassDuration(double classDuration) {
+    public void setClassDuration(BigDecimal classDuration) {
         this.classDuration = classDuration;
     }
 }

@@ -82,8 +82,6 @@
                     <form:input path="memberEntryDate" id="entryDate" class="form-Control"/>
                 </div>
 
-                <form:hidden path="memberIsActive" value="true"/>
-
                 <br><br>
 
                 <input type="submit" value="submit" class="btn btn=default">

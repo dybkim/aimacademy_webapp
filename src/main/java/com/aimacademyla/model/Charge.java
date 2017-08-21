@@ -2,10 +2,12 @@ package com.aimacademyla.model;
 
 import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -14,7 +16,7 @@ import java.time.LocalDate;
  * Created by davidkim on 3/9/17.
  */
 
-@Entity(name="Charge")
+@Entity(name="Charges")
 public class Charge implements Serializable{
 
     private static final long serialVersionUID = 1346555619431916040L;
@@ -31,8 +33,9 @@ public class Charge implements Serializable{
     private int courseID;
 
     @Column(name="ChargeAmount")
+    @NumberFormat(style= NumberFormat.Style.CURRENCY)
 //    @Pattern(regexp="^(0|[1-9][0-9]*)$", message="Charge amount must be numeric")
-    private double chargeAmount;
+    private BigDecimal chargeAmount;
 
     @Column(name="CycleStartDate")
     @DateTimeFormat(pattern="MM/dd/yyyy")
@@ -44,14 +47,15 @@ public class Charge implements Serializable{
     @Column(name="SeasonID")
     private Integer seasonID;
 
-    @Column(name="MonthlyChargesSummaryID")
-    private Integer monthlyChargesSummaryID;
+    @Column(name="MonthlyFinancesSummaryID")
+    private Integer monthlyFinancesSummaryID;
 
     @Column(name="Description")
     private String description;
 
     @Column(name="DiscountAmount")
-    private double discountAmount;
+    @NumberFormat(style= NumberFormat.Style.CURRENCY)
+    private BigDecimal discountAmount;
 
     @Column(name="NumChargeLines")
     private int numChargeLines;
@@ -80,11 +84,11 @@ public class Charge implements Serializable{
         this.courseID = courseID;
     }
 
-    public double getChargeAmount() {
+    public BigDecimal getChargeAmount() {
         return chargeAmount;
     }
 
-    public void setChargeAmount(double chargeAmount) {
+    public void setChargeAmount(BigDecimal chargeAmount) {
         this.chargeAmount = chargeAmount;
     }
 
@@ -112,12 +116,12 @@ public class Charge implements Serializable{
         this.seasonID = seasonID;
     }
 
-    public Integer getMonthlyChargesSummaryID() {
-        return monthlyChargesSummaryID;
+    public Integer getMonthlyFinancesSummaryID() {
+        return monthlyFinancesSummaryID;
     }
 
-    public void setMonthlyChargesSummaryID(Integer monthlyChargesSummaryID) {
-        this.monthlyChargesSummaryID = monthlyChargesSummaryID;
+    public void setMonthlyFinancesSummaryID(Integer monthlyFinancesSummaryID) {
+        this.monthlyFinancesSummaryID = monthlyFinancesSummaryID;
     }
 
     public String getDescription() {
@@ -128,11 +132,11 @@ public class Charge implements Serializable{
         this.description = description;
     }
 
-    public double getDiscountAmount() {
+    public BigDecimal getDiscountAmount() {
         return discountAmount;
     }
 
-    public void setDiscountAmount(double discountAmount) {
+    public void setDiscountAmount(BigDecimal discountAmount) {
         this.discountAmount = discountAmount;
     }
 

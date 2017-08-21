@@ -17,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -126,7 +127,6 @@ public class CourseController {
         Course course = courseService.get(courseID);
         CourseSession courseSession = new CourseSession();
         courseSession.setCourseID(course.getCourseID());
-        courseSession.setCourseSessionID(courseSessionService.generateCourseSessionIDAfterSave(courseSession));
         List<Member> activeMemberList = memberService.getActiveMembersByCourse(course);
         HashMap<Integer, Attendance> activeMemberAttendanceHashMap = new HashMap<>();
 
@@ -157,7 +157,6 @@ public class CourseController {
                 if(error.getField().equals("courseSession.courseSessionDate"))
                     redirectAttributes.addFlashAttribute("courseSessionDateErrorMessage", "Date must be in valid MM/DD/YYYY format");
             }
-            courseSessionService.remove(courseSessionAttendanceListWrapper.getCourseSession());
             return "redirect:/admin/courseList/courseInfo/" + courseID + "/addCourseSession";
         }
 
@@ -168,11 +167,10 @@ public class CourseController {
 
         if(courseSession.getCourseSessionDate() == null){
             redirectAttributes.addFlashAttribute("courseSessionDateErrorMessage", "Date field cannot be empty!");
-            courseSessionService.remove(courseSessionAttendanceListWrapper.getCourseSession());
             return "redirect:/admin/courseList/courseInfo/" + courseID + "/addCourseSession";
         }
 
-        double totalCharge = course.getPricePerHour() * course.getClassDuration();
+        BigDecimal totalCharge = course.getPricePerHour().multiply(course.getClassDuration());
         int numAttended = 0;
 
         /**
@@ -196,8 +194,7 @@ public class CourseController {
         }
 
         courseSession.setNumMembersAttended(numAttended);
-
-        courseSessionService.add(courseSession);
+        courseSessionService.update(courseSession);
 
         return "redirect:/admin/courseList/courseInfo/" + courseID;
     }
@@ -253,7 +250,7 @@ public class CourseController {
         List<Attendance> attendanceList = new ArrayList<>(courseSessionAttendanceListWrapper.getAttendanceMap().values());
         CourseSession courseSession = courseSessionAttendanceListWrapper.getCourseSession();
         Course course = courseService.get(courseSession.getCourseID());
-        double totalCharge = course.getPricePerHour() * course.getClassDuration();
+        BigDecimal totalCharge = course.getPricePerHour().multiply(course.getClassDuration());
 
         int numAttended = 0;
 
@@ -263,7 +260,6 @@ public class CourseController {
 
         for(Attendance attendance : attendanceList) {
             attendance.setAttendanceDate(courseSession.getCourseSessionDate());
-            attendanceService.update(attendance);
 
             if(attendance.getWasPresent()) {
                 numAttended++;
@@ -294,6 +290,7 @@ public class CourseController {
                     chargeLineService.remove(chargeLine);
                 }
 
+            attendanceService.update(attendance);
             }
         }
 

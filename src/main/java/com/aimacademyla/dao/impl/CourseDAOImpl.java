@@ -26,9 +26,9 @@ public class CourseDAOImpl extends GenericDAOImpl<Course, Integer> implements Co
     }
 
     @Override
-    public List<Course> getActiveCourseList() {
+    public List<Course> getCourseList() {
         Session session = currentSession();
-        Query query = session.createQuery("FROM Course WHERE IsActive = 1");
+        Query query = session.createQuery("FROM Course");
         List<Course> courseList = query.getResultList();
         session.flush();
         return courseList;

@@ -73,7 +73,15 @@
                     <form:input path="course.courseEndDate" id="endDate" class="date"/>
                 </div>
 
+                <div class="form-group">
+                    <label for="coursePrice">Price per hour</label>
+                    <form:input path="course.pricePerHour" id="coursePrice" class="form-control"/>
+                </div>
 
+                <div class="form-group">
+                    <label for="classDuration">Session length (hours)</label>
+                    <form:input path="course.classDuration" id="classDuration" class="form-control"/>
+                </div>
 
                 <form:hidden path="course.isActive" value="true"/>
 

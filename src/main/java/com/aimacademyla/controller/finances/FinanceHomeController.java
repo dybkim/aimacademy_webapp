@@ -1,11 +1,11 @@
 package com.aimacademyla.controller.finances;
 
-import com.aimacademyla.model.MonthlyChargesSummary;
+import com.aimacademyla.model.MonthlyFinancesSummary;
 import com.aimacademyla.model.Season;
 import com.aimacademyla.service.ChargeLineService;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberService;
-import com.aimacademyla.service.MonthlyChargesSummaryService;
+import com.aimacademyla.service.MonthlyFinancesSummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,25 +28,25 @@ public class FinanceHomeController {
 
     private ChargeLineService chargeLineService;
 
-    private MonthlyChargesSummaryService monthlyChargesSummaryService;
+    private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
 
     @Autowired
-    public FinanceHomeController(CourseService courseService, MemberService memberService, ChargeLineService chargeLineService, MonthlyChargesSummaryService monthlyChargesSummaryService){
+    public FinanceHomeController(CourseService courseService, MemberService memberService, ChargeLineService chargeLineService, MonthlyFinancesSummaryService monthlyFinancesSummaryService){
         this.courseService = courseService;
         this.memberService = memberService;
         this.chargeLineService = chargeLineService;
-        this.monthlyChargesSummaryService = monthlyChargesSummaryService;
+        this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
     }
 
     @RequestMapping()
     public String home(Model model){
-        List<MonthlyChargesSummary> monthlyChargesSummaryList = monthlyChargesSummaryService.getAllMonthlyChargesSummaries();
+        List<MonthlyFinancesSummary> monthlyFinancesSummaryList = monthlyFinancesSummaryService.getAllMonthlyFinancesSummaries();
         HashMap<Integer, String> seasonDescriptionHashMap = new HashMap<>();
-        for(MonthlyChargesSummary monthlyChargesSummary : monthlyChargesSummaryList)
-            seasonDescriptionHashMap.put(monthlyChargesSummary.getMonthlyChargesSummaryID(), Season.SeasonDescription.toString(monthlyChargesSummary.getCycleStartDate()));
+        for(MonthlyFinancesSummary monthlyFinancesSummary : monthlyFinancesSummaryList)
+            seasonDescriptionHashMap.put(monthlyFinancesSummary.getMonthlyFinancesSummaryID(), Season.SeasonDescription.toString(monthlyFinancesSummary.getCycleStartDate()));
 
-        model.addAttribute("monthlyChargesSummaryList", monthlyChargesSummaryList);
+        model.addAttribute("monthlyFinancesSummaryList", monthlyFinancesSummaryList);
         model.addAttribute("seasonDescriptionHashMap", seasonDescriptionHashMap);
-        return "/finances/monthChargesFinances";
+        return "/finances/monthlyFinances";
     }
 }

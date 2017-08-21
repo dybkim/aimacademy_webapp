@@ -1,0 +1,17 @@
+#chargeDescription{
+    width: 200px;
+    display:inline;
+    padding-right:20px;
+}
+
+#chargeAmount{
+    width: 100px;
+    display:inline;
+    padding-right:20px;
+}
+
+#chargeDiscount{
+    width: 100px;
+    display:inline;
+    padding-right:10px;
+}

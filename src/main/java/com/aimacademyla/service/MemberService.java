@@ -4,6 +4,7 @@ import com.aimacademyla.model.Attendance;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -12,8 +13,6 @@ import java.util.List;
 public interface MemberService extends GenericService<Member, Integer>{
 
     List<Member> getMemberList();
-
-    List<Member> getActiveMembers();
 
     List<Member> getMembersByCourse(Course course);
 

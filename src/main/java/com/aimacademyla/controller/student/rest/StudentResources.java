@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Controller
@@ -38,7 +39,7 @@ public class StudentResources{
 
     @RequestMapping("/studentFinances/{memberID}")
     public @ResponseBody
-    MemberChargesFinancesWrapper updateMemberCharges(@PathVariable("memberID") int memberID,
+    MemberChargesFinancesWrapper fetchMemberCharges(@PathVariable("memberID") int memberID,
                                                      @RequestParam(name = "month") int month,
                                                      @RequestParam(name = "year") int year){
         LocalDate selectedDate = LocalDate.of(year, month, 1);
@@ -54,8 +55,8 @@ public class StudentResources{
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addMiscCharge(@PathVariable("memberID") int memberID,
                                                 @RequestParam(name="chargeDescription") String chargeDescription,
-                                                @RequestParam(name="chargeAmount") double chargeAmount,
-                                                @RequestParam(name="chargeDiscount", required = false) double chargeDiscount,
+                                                @RequestParam(name="chargeAmount") BigDecimal chargeAmount,
+                                                @RequestParam(name="chargeDiscount", required = false) BigDecimal chargeDiscount,
                                                 @RequestParam(name="month") int month,
                                                 @RequestParam(name="year") int year){
         LocalDate selectedDate = LocalDate.of(year, month, 1);
@@ -80,7 +81,7 @@ public class StudentResources{
 
     @RequestMapping(value="/studentFinances/discountCharge/{chargeID}", method=RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void discountCharge(@PathVariable("chargeID") int chargeID, @RequestParam("discount") double discountAmount){
+    public void discountCharge(@PathVariable("chargeID") int chargeID, @RequestParam("discount") BigDecimal discountAmount){
         Charge charge = chargeService.get(chargeID);
         charge.setDiscountAmount(discountAmount);
         chargeService.update(charge);

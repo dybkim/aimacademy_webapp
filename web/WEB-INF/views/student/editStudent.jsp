@@ -75,11 +75,6 @@
                     <form:input path="memberEntryDate" id="entryDate" class="form-Control" value="${formattedEntryDate}"/>
                 </div>
 
-                <div class="form-group">
-                    <label for="membership">Membership Status: </label>
-                    <form:checkbox path="memberIsActive" id="membership" value="${member.memberIsActive}"/>
-                </div>
-
                 <form:hidden path="memberID" value="${member.memberID}"/>
 
                 <br><br>

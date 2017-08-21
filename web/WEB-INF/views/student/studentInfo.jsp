@@ -41,8 +41,7 @@
             ]
         });
 
-
-        $('.nav-tabs a[href="#tab-courses"]').tab('show');
+        $('.nav-tabs a[href="#tab-finances"]').tab('show');
 
     });
 </script>
@@ -53,7 +52,8 @@
     <div class="row">
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-            <h1 class="page-header">${member.memberFirstName} ${member.memberLastName}</h1>
+            <h1 class="page-header">Member Profile</h1>
+            <h2>${member.memberFirstName} ${member.memberLastName}</h2>
 
             <a href="<spring:url value="/admin/student/studentList/editStudent/${member.memberID}"/>" class="btn btn-primary">Edit Profile</a>
 
@@ -120,10 +120,10 @@
                         <thead>
                         <tr>
                             <th ></th>
-                            <th style="text-align:center">Month/Year</th>
-                            <th style="text-align:center">Charges Fulfilled / ChargesTotal</th>
-                            <th style="text-align:center">Amount Paid</th>
-                            <th style="text-align:center">Total Charges</th>
+                            <th>Month/Year</th>
+                            <th>Charges Fulfilled / ChargesTotal</th>
+                            <th>Amount Paid</th>
+                            <th>Total Charges</th>
                         </tr>
                         </thead>
 
@@ -135,17 +135,17 @@
 
                                 <c:choose>
                                     <c:when test="${memberCourseFinancesWrapper.chargeList.size() != 0}">
-                                        <td style="text-align:center"><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesWrapper.date.monthValue}&year=${memberCourseFinancesWrapper.date.year}"/>">${memberCourseFinancesWrapper.date.month.toString()} ${memberCourseFinancesWrapper.date.year}</a></td>
-                                        <td style="text-align:center">${memberCourseFinancesWrapper.chargePaymentHashMap.size()}/${memberCourseFinancesWrapper.chargeList.size()}</td>
-                                        <td style="text-align:center">${memberCourseFinancesWrapper.totalPaymentAmount}</td>
-                                        <td style="text-align:center">${memberCourseFinancesWrapper.totalChargeAmount}</td>
+                                        <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesWrapper.date.monthValue}&year=${memberCourseFinancesWrapper.date.year}"/>">${memberCourseFinancesWrapper.date.month.toString()} ${memberCourseFinancesWrapper.date.year}</a></td>
+                                        <td>${memberCourseFinancesWrapper.chargePaymentHashMap.size()}/${memberCourseFinancesWrapper.chargeList.size()}</td>
+                                        <td>${memberCourseFinancesWrapper.totalPaymentAmount}</td>
+                                        <td>${memberCourseFinancesWrapper.totalChargeAmount}</td>
                                     </c:when>
 
                                     <c:otherwise>
-                                        <td style="text-align:center"><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesWrapper.date.monthValue}&year=${memberCourseFinancesWrapper.date.year}"/>">${memberCourseFinancesWrapper.date.month.toString()} ${memberCourseFinancesWrapper.date.year}</a></td>
-                                        <td style="text-align:center"></td>
-                                        <td style="text-align:center"></td>
-                                        <td style="text-align:center"></td>
+                                        <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesWrapper.date.monthValue}&year=${memberCourseFinancesWrapper.date.year}"/>">${memberCourseFinancesWrapper.date.month.toString()} ${memberCourseFinancesWrapper.date.year}</a></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                     </c:otherwise>
                                 </c:choose>
                             </tr>

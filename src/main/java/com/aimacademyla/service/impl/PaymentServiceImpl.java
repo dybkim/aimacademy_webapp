@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -47,7 +48,7 @@ public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> imp
         Payment payment = new Payment();
         payment.setPaymentID(Payment.NO_PAYMENT);
         payment.setChargeID(charge.getChargeID());
-        payment.setPaymentAmount(0);
+        payment.setPaymentAmount(BigDecimal.valueOf(0));
         return payment;
     }
 }

@@ -33,7 +33,21 @@
 
         $('.nav-tabs a[href="#tab-members"]').tab('show');
 
+        $('#selectMonthBox').change(function(){
+            var json = json.parse($(this).val());
+            var month = json[0];
+            var year = json[1];
+            window.location.replace('/admin/home?month=' + month + '&year=' + year);
+        });
+
     });
+
+
+
+//    var changeMonth = function(date){
+//        alert(date);
+//        window.location.replace('/admin/home?month=' + date[0] + '&year=' + date[1]);
+//    };
 </script>
 
 <html>
@@ -44,12 +58,21 @@
 
                 <h1 class="page-header">Home</h1>
 
+                <h3>${cycleStartDate.month} ${cycleStartDate.year}</h3>
+
+                <form:select path="cycleStartDate" id="selectMonthBox">
+                    <form:option selected="true" value="">Select Month</form:option>
+                    <c:forEach items="${monthsList}" var="date">
+                        <form:option value="[${date.monthValue},${date.year}]">${date.month} ${date.year}</form:option>
+                    </c:forEach>
+                </form:select>
+
                 <br>
                 <br>
 
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation"><a href="#tab-members" aria-controls="tab-members" role="tab" data-toggle="tab">Active Members</a></li>
-                    <li role="presentation"><a href="#tab-inactiveMembers" aria-controls="tab-inactiveMembers" role="tab" data-toggle="tab">Inactive Members</a></li>
+                    <li role="presentation"><a href="#tab-members" aria-controls="tab-members" role="tab" data-toggle="tab">Outstanding Balances</a></li>
+                    <li role="presentation"><a href="#tab-inactiveMembers" aria-controls="tab-inactiveMembers" role="tab" data-toggle="tab">No Balances</a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -97,7 +120,7 @@
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                     <td>${inactiveOutstandingChargesHashMap.get(member.memberID)}</td>
-                                    <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.month}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
+                                    <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
                             </c:forEach>

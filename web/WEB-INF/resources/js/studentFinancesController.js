@@ -1,5 +1,5 @@
 /**
- * Created by davidkim on 2/2/17.
+ * Created by davidkim on 8/12/17.
  */
 
 var studentFinancesControllerApp = angular.module ("studentFinancesControllerApp",[]).config(function($httpProvider) {
@@ -15,6 +15,9 @@ studentFinancesControllerApp.controller("studentFinancesControl", function($scop
             $scope.monthsList = $scope.memberChargesFinancesWrapper.monthsList;
             $scope.monthSelected = $scope.memberChargesFinancesWrapper.monthSelectedIndex;
             $scope.selectedOptions = $scope.monthsList[$scope.monthSelected];
+            $scope.chargeDescription = "";
+            $scope.chargeAmount = 0;
+            $scope.chargeDiscount = 0;
         });
     };
 

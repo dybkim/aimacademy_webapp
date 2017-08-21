@@ -49,13 +49,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${monthlyChargesSummaryList}" var="monthlyChargesSummary">
+                    <c:forEach items="${monthlyFinancesSummaryList}" var="monthlyFinancesSummary">
                         <tr>
                             <jsp:useBean id="monthNames" class="java.text.DateFormatSymbols" />
-                            <c:set value="${monthlyChargesSummary.summaryMonth}" var="month" />
+                            <c:set value="${monthlyFinancesSummary.summaryMonth}" var="month" />
 
-                            <td>${month} ${monthlyChargesSummary.summaryYear}</td>
-                            <th>${monthlyChargesSummary.numChargesFulfilled} / ${monthlyChargesSummary.numChargesTotal}</th>
+                            <td>${month} ${monthlyFinancesSummary.summaryYear}</td>
+                            <th>${monthlyFinancesSummary.numChargesFulfilled} / ${monthlyFinancesSummary.numChargesTotal}</th>
                             <td><a href="">TBA</a></td>
                             <td><a href="">TBA</a></td>
                             <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>

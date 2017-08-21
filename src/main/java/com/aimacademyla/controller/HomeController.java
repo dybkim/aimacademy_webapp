@@ -2,98 +2,84 @@ package com.aimacademyla.controller;
 
 import com.aimacademyla.formatter.LocalDateFormatter;
 import com.aimacademyla.model.*;
+import com.aimacademyla.model.builder.impl.OutstandingChargesPaymentWrapperBuilder;
+import com.aimacademyla.model.reference.TemporalReference;
+import com.aimacademyla.model.wrapper.OutstandingChargesPaymentWrapper;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.MemberService;
-import com.aimacademyla.service.MonthlyChargesSummaryService;
+import com.aimacademyla.service.MonthlyFinancesSummaryService;
 import com.aimacademyla.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by davidkim on 1/17/17.
  */
 
 @Controller
+@RequestMapping("/admin")
 public class HomeController {
 
-    private MonthlyChargesSummaryService monthlyChargesSummaryService;
+    private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
     private MemberService memberService;
     private ChargeService chargeService;
     private PaymentService paymentService;
 
     @Autowired
-    public HomeController(MonthlyChargesSummaryService monthlyChargesSummaryService,
+    public HomeController(MonthlyFinancesSummaryService monthlyFinancesSummaryService,
                           MemberService memberService,
                           ChargeService chargeService,
                           PaymentService paymentService){
-        this.monthlyChargesSummaryService = monthlyChargesSummaryService;
+        this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
         this.memberService = memberService;
         this.chargeService = chargeService;
         this.paymentService = paymentService;
     }
 
     @RequestMapping("/home")
-    public String home(Model model){
-        List<Member> allMemberList = memberService.getMemberList();
-        List<Member> memberList = new ArrayList<>();
-        List<Member> inactiveMemberList = new ArrayList<>();
+    public String home(Model model,
+                       @RequestParam(name="month", required = false) Integer month,
+                       @RequestParam(name="year", required = false) Integer year){
+
         LocalDate cycleStartDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1);
-        HashMap<Integer, Double> allOutstandingChargesHashMap = generateOutstandingChargesHashMap(allMemberList, cycleStartDate);
-        HashMap<Integer, Double> outstandingChargesHashMap = new HashMap<>();
-        HashMap<Integer, Double> inactiveOutstandingChargesHashMap = new HashMap<>();
 
-        Iterator it = allMemberList.iterator();
+        if(month != null && year != null)
+            cycleStartDate = LocalDate.of(year, month, 1);
 
-        while(it.hasNext()){
-            Member member = (Member) it.next();
-            if(member.getMemberIsActive()) {
-                memberList.add(member);
-                outstandingChargesHashMap.put(member.getMemberID(), allOutstandingChargesHashMap.get(member.getMemberID()));
-                it.remove();
-                continue;
-            }
+        OutstandingChargesPaymentWrapperBuilder outstandingChargesPaymentWrapperBuilder = new OutstandingChargesPaymentWrapperBuilder(memberService, paymentService, chargeService);
+        OutstandingChargesPaymentWrapper outstandingChargesPaymentWrapper = outstandingChargesPaymentWrapperBuilder.setCycleStartDate(cycleStartDate).build();
 
-            inactiveMemberList.add(member);
-            inactiveOutstandingChargesHashMap.put(member.getMemberID(), allOutstandingChargesHashMap.get(member.getMemberID()));
-        }
+        List<Member> memberList = outstandingChargesPaymentWrapper.getMemberList();
+        List<Member> inactiveMemberList = outstandingChargesPaymentWrapper.getInactiveMemberList();
+        HashMap<Integer, BigDecimal> outstandingChargesHashMap = outstandingChargesPaymentWrapper.getOutstandingChargesHashMap();
+        HashMap<Integer, BigDecimal> inactiveOutstandingChargesHashMap = outstandingChargesPaymentWrapper.getInactiveOutstandingChargesHashMap();
 
+        List<LocalDate> monthsList = TemporalReference.getMonthList();
+        Collections.reverse(monthsList);
+
+        model.addAttribute("cycleStartDate", cycleStartDate);
+        model.addAttribute("monthsList", monthsList);
         model.addAttribute("memberList", memberList);
         model.addAttribute("inactiveMemberList", inactiveMemberList);
         model.addAttribute("outstandingChargesHashMap", outstandingChargesHashMap);
         model.addAttribute("inactiveOutstandingChargesHashMap", inactiveOutstandingChargesHashMap);
-        model.addAttribute("cycleStartDate", cycleStartDate);
-
         return "home";
     }
 
-    @RequestMapping("/admin")
-    public String adminPage(){
+    @RequestMapping("/")
+    public String adminPage(Model model){
+        LocalDate selectedDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1);
+        model.addAttribute("selectedDate", selectedDate);
         return "home";
     }
 
-    private HashMap<Integer, Double> generateOutstandingChargesHashMap(List<Member> memberList, LocalDate date){
-        HashMap<Integer, Double> outstandingChargesMap = new HashMap<>();
-
-        for(Member member : memberList){
-            double outstandingBalance = 0;
-            List<Charge> chargeList = chargeService.getChargesByMemberByDate(member, date);
-
-            for(Charge charge : chargeList){
-                Payment payment = paymentService.getPaymentForCharge(charge);
-                outstandingBalance += charge.getChargeAmount() - charge.getDiscountAmount() - payment.getPaymentAmount();
-            }
-
-            outstandingChargesMap.put(member.getMemberID(), outstandingBalance);
-        }
-
-        return outstandingChargesMap;
-    }
 }
+
+

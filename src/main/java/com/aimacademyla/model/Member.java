@@ -56,9 +56,6 @@ public class Member implements Serializable{
     @Column(name="MemberEmailAddress")
     private String memberEmailAddress;
 
-    @Column(name="MemberIsActive")
-    private boolean memberIsActive;
-
     public int getMemberID() {
         return memberID;
     }
@@ -145,14 +142,6 @@ public class Member implements Serializable{
 
     public void setMemberEmailAddress(String memberEmailAddress) {
         this.memberEmailAddress = memberEmailAddress;
-    }
-
-    public boolean getMemberIsActive() {
-        return memberIsActive;
-    }
-
-    public void setMemberIsActive(boolean memberIsActive) {
-        this.memberIsActive = memberIsActive;
     }
 
 }

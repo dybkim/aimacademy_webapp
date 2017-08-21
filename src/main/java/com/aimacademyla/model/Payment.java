@@ -2,9 +2,11 @@ package com.aimacademyla.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -26,7 +28,8 @@ public class Payment implements Serializable {
     private int chargeID;
 
     @Column(name="PaymentAmount")
-    private double paymentAmount;
+    @NumberFormat(style= NumberFormat.Style.CURRENCY)
+    private BigDecimal paymentAmount;
 
     @Column(name="DatePaymentReceived")
     @DateTimeFormat(pattern="MM/dd/yyyy")
@@ -56,11 +59,11 @@ public class Payment implements Serializable {
         this.chargeID = chargeID;
     }
 
-    public double getPaymentAmount() {
+    public BigDecimal getPaymentAmount() {
         return paymentAmount;
     }
 
-    public void setPaymentAmount(double paymentAmount) {
+    public void setPaymentAmount(BigDecimal paymentAmount) {
         this.paymentAmount = paymentAmount;
     }
 

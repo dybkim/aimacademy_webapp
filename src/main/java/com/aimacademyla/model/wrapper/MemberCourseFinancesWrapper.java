@@ -4,6 +4,7 @@ import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Payment;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,8 +16,8 @@ public class MemberCourseFinancesWrapper implements Serializable{
 
     private List<Charge> chargeList;
     private LocalDate date;
-    private double totalChargeAmount;
-    private double totalPaymentAmount;
+    private BigDecimal totalChargeAmount;
+    private BigDecimal totalPaymentAmount;
     private HashMap<Integer, Payment> chargePaymentHashMap;
 
     public List<Charge> getChargeList() {
@@ -35,19 +36,19 @@ public class MemberCourseFinancesWrapper implements Serializable{
         this.date = date;
     }
 
-    public double getTotalChargeAmount() {
+    public BigDecimal getTotalChargeAmount() {
         return totalChargeAmount;
     }
 
-    public void setTotalChargeAmount(double totalChargeAmount) {
+    public void setTotalChargeAmount(BigDecimal totalChargeAmount) {
         this.totalChargeAmount = totalChargeAmount;
     }
 
-    public double getTotalPaymentAmount() {
+    public BigDecimal getTotalPaymentAmount() {
         return totalPaymentAmount;
     }
 
-    public void setTotalPaymentAmount(double totalPaymentAmount) {
+    public void setTotalPaymentAmount(BigDecimal totalPaymentAmount) {
         this.totalPaymentAmount = totalPaymentAmount;
     }
 

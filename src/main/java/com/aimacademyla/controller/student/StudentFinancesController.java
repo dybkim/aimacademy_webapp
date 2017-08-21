@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,13 +40,13 @@ public class StudentFinancesController {
 
     @RequestMapping("/{memberID}")
     public String getStudentFinances(@PathVariable("memberID") int memberID,
-                                     @RequestParam(name = "month", required = false) int month,
-                                     @RequestParam(name = "year", required = false) int year,
+                                     @RequestParam(name = "month", required = false) Integer month,
+                                     @RequestParam(name = "year", required = false) Integer year,
                                      Model model){
 
-        LocalDate selectedDate = null;
+        LocalDate selectedDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1);
 
-        if(year != 0 && month != 0)
+        if(year != null && month != null)
             selectedDate = LocalDate.of(year, month, 1);
 
         Member member = memberService.get(memberID);
@@ -54,7 +55,7 @@ public class StudentFinancesController {
         List<Charge> allChargesList = chargeService.getChargesByMember(member);
 
         for(Charge charge : allChargesList) {
-            if(charge.getChargeAmount() > 0)
+            if(charge.getChargeAmount().compareTo(BigDecimal.ZERO) > 0)
                 monthsList.add(charge.getCycleStartDate());
         }
 

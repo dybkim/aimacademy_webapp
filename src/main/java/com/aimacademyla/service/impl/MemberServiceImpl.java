@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +39,6 @@ public class MemberServiceImpl extends GenericServiceImpl<Member, Integer> imple
     public List<Member> getMemberList() {
        return memberDAO.getMemberList();
     }
-
-    @Override
-    public List<Member> getActiveMembers() {return memberDAO.getActiveMembers();}
 
     @Override
     public List<Member> getMembersByCourse(Course course){return memberDAO.getMembersByCourse(course);}
@@ -81,60 +79,8 @@ public class MemberServiceImpl extends GenericServiceImpl<Member, Integer> imple
         return memberList;
     }
 
-    /**
-     * When a new member is added, add open study course registration
-     * @param member
-     */
-    @Override
-    public void add(Member member) {
-        memberDAO.add(member);
-        MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
-        memberCourseRegistration.setMemberCourseRegistrationPK(new MemberCourseRegistrationPK(member.getMemberID(),Course.OPEN_STUDY_ID));
-        memberCourseRegistration.setMemberID(member.getMemberID());
-        memberCourseRegistration.setCourseID(Course.OPEN_STUDY_ID);
-        memberCourseRegistrationDAO.add(memberCourseRegistration);
-    }
 
 
-    /**
-     * If member's membership status is deactivated, remove open study course registration
-     * If member's membership status is reactivated, add open study course registration
-     * @param member
-     */
-    @Override
-    public void update(Member member) {
-        memberDAO.update(member);
-        MemberCourseRegistrationPK memberCourseRegistrationPK = new MemberCourseRegistrationPK(member.getMemberID(), Course.OPEN_STUDY_ID);
-        MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationDAO.get(memberCourseRegistrationPK);
-
-        if(!member.getMemberIsActive()){
-            if(memberCourseRegistration != null)
-                memberCourseRegistrationDAO.remove(memberCourseRegistration);
-        }
-
-        else{
-            if(memberCourseRegistration == null){
-                memberCourseRegistration = new MemberCourseRegistration();
-                memberCourseRegistration.setMemberCourseRegistrationPK(memberCourseRegistrationPK);
-                memberCourseRegistration.setMemberID(member.getMemberID());
-                memberCourseRegistration.setCourseID(Course.OPEN_STUDY_ID);
-                memberCourseRegistrationDAO.add(memberCourseRegistration);
-            }
-        }
-    }
-
-    /**
-     * When a member is removed for whatever reason, remove the member's open study course registration
-     * @param member
-     */
-    @Override
-    public void remove(Member member){
-        MemberCourseRegistrationPK memberCourseRegistrationPK = new MemberCourseRegistrationPK(member.getMemberID(), Course.OPEN_STUDY_ID);
-        MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationDAO.get(memberCourseRegistrationPK);
-
-        memberCourseRegistrationDAO.remove(memberCourseRegistration);
-        memberDAO.remove(member);
-    }
 
     @Override
     public void updateMemberList(List<Member> memberList){

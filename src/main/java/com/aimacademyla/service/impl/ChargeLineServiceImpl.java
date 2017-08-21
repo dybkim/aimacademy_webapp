@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -32,10 +33,10 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
 
     @Override
     public void add(ChargeLine chargeLine){
-        double chargeLineAmount = chargeLine.getTotalCharge();
+        BigDecimal chargeLineAmount = chargeLine.getTotalCharge();
         Charge charge = chargeService.get(chargeLine.getChargeID());
 
-        double chargeAmount = charge.getChargeAmount() + chargeLineAmount;
+        BigDecimal chargeAmount = charge.getChargeAmount().add(chargeLineAmount);
         charge.setChargeAmount(chargeAmount);
 
         int numChargeLines = charge.getNumChargeLines() + 1;
@@ -48,10 +49,10 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
     @Override
     public void update(ChargeLine chargeLine){
         ChargeLine oldChargeLine = chargeLineDAO.get(chargeLine.getChargeLineID());
-        double oldChargeLineAmount = oldChargeLine.getTotalCharge();
+        BigDecimal oldChargeLineAmount = oldChargeLine.getTotalCharge();
 
         Charge charge = chargeService.get(chargeLine.getChargeID());
-        double chargeAmount = charge.getChargeAmount() - oldChargeLineAmount + chargeLine.getTotalCharge();
+        BigDecimal chargeAmount = charge.getChargeAmount().subtract(oldChargeLineAmount).add(chargeLine.getTotalCharge());
         charge.setChargeAmount(chargeAmount);
         chargeService.update(charge);
 
@@ -60,15 +61,20 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
 
     @Override
     public void remove(ChargeLine chargeLine){
-        double chargeLineAmount = chargeLineDAO.get(chargeLine.getChargeID()).getTotalCharge();
+        BigDecimal chargeLineAmount = chargeLineDAO.get(chargeLine.getChargeLineID()).getTotalCharge();
         Charge charge = chargeService.get(chargeLine.getChargeID());
 
-        double newChargeAmount = charge.getChargeAmount() - chargeLineAmount;
+        BigDecimal newChargeAmount = charge.getChargeAmount().subtract(chargeLineAmount);
         charge.setChargeAmount(newChargeAmount);
 
         int numChargeLines = charge.getNumChargeLines() - 1;
         charge.setNumChargeLines(numChargeLines);
-        chargeService.update(charge);
+
+        if(numChargeLines > 0)
+            chargeService.update(charge);
+
+        else
+            chargeService.remove(charge);
 
         chargeLineDAO.remove(chargeLine);
     }

@@ -10,6 +10,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <div class="col-sm-3 col-md-2 sidebar">
     <ul class="nav nav-sidebar">
+        <li><a href="<spring:url value="/admin/home"/>">Home</a></li>
         <li><a href="<spring:url value="/admin/student/studentList"/>">Students</a></li>
         <li><a href="">Staff</a></li>
         <li><a href="<spring:url value="/admin/courseList"/>">Academics</a></li>

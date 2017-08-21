@@ -10,45 +10,52 @@
   Time: 5:10 AM
   To change this template use File | Settings | File Templates.
 --%>
+
+<%@include file="../template/navbar.jsp"%>
+<%@include file="../template/sidebar.jsp" %>
+
+<!-- Input form formatting -->
+<link href="<spring:url value="/resources/css/inputDropdown.css"/>" rel="stylesheet">
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
+<script>
+
+</script>
 <html lang="en">
 
 <body>
-<%@include file="../template/navbar.jsp"%>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header">${course.courseName}: Add student</h1>
+<div class="container-fluid" ng-app="addStudentToCourseControllerApp">
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div ng-controller="addStudentToCourseController" ng-init="refreshCourseRegistrationWrapper('${courseRegistrationWrapper}')">
+            <h1 class="page-header">${course.courseName}: Add students</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/editCourse/${course.courseID}/addStudentToCourse" method="post" modelAttribute="memberCourseRegistration">
+            <input type="submit" my-on-key-down-call="fetchMember(memberString)" ng-click="addToRegistrationList()"
 
-                <form:hidden path="courseID" value="${memberCourseRegistration.courseID}"/>
-                <form:hidden path="isEnrolled" value="true"/>
+            <div class="container-fluid" >
+                <table id="addMembersTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Member ID</th>
+                            <th>Member</th>
+                            <th>Cancel</th>
+                        </tr>
+                    </thead>
 
-                <div class="form-group">
-                    <label for="addMember">Member</label>
-                    <form:select path="memberID" id="addMember" items="${unenrolledMembersMap}" class="form-Control"/>
-                </div>
+                    <tbody>
+                        <tr ng-repeat="courseRegistrationWrapperObject in courseRegistrationWrapperObjectList">
+                            <td>{{courseRegistrationWrapperObject.member.memberID}}</td>
+                            <td>{{courseRegistrationWrapperObject.member.memberFirstName}} {{courseRegistrationWrapperObject.member.memberLastName}}</td>
+                            <td><a class="label label-danger" ng-click="removeStudentFromCourse(courseRegistrationWrapperObjectList, courseRegistrationWrapperObject.member.memberID)"><span class="glyphicon glyphicon-remove"></span></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                <div class="form-group">
-                    <label for="referralMember">Referred By:</label>
-                    <form:select path="referMemberID" id="referralMember" items="${allMembersMap}" class="form-Control"/>
-                </div>
+            <input type="submit" value="Submit" class="btn btn=default">
 
-                <div class="form-group"><span style="color: #FF0000">${dateEnrolledErrorMessage}</span>
-                    <label for="dateEnrolled">Date Enrolled (MM/DD/YYYY)</label>
-                    <form:input path="dateRegistered" id="dateEnrolled" class="form-Control"/>
-                </div>
-
-                <br><br>
-
-                <input type="submit" value="submit" class="btn btn=default">
-
-                <input action="action" onclick="history.go(-1);" value="Cancel" class="btn btn-default">
-
-            </form:form>
+            <input action="action" onclick="history.go(-1);" value="Cancel" class="btn btn-default">
         </div>
     </div>
 </div>

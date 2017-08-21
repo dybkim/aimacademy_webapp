@@ -2,6 +2,7 @@ package com.aimacademyla.controller.student;
 
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.builder.impl.MemberCourseFinancesWrapperBuilder;
+import com.aimacademyla.model.builder.impl.MemberListWrapperBuilder;
 import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.model.wrapper.MemberCourseFinancesWrapper;
 import com.aimacademyla.model.wrapper.MemberListWrapper;
@@ -11,13 +12,11 @@ import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.temporal.Temporal;
 import java.util.*;
 
 /**
@@ -35,6 +34,8 @@ public class StudentListController {
     private AttendanceService attendanceService;
     private ChargeService chargeService;
     private PaymentService paymentService;
+    private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
+    private SeasonService seasonService;
 
     @Autowired
     public StudentListController(MemberService memberService,
@@ -43,7 +44,9 @@ public class StudentListController {
                                  CourseSessionService courseSessionService,
                                  AttendanceService attendanceService,
                                  ChargeService chargeService,
-                                 PaymentService paymentService){
+                                 PaymentService paymentService,
+                                 MemberMonthlyRegistrationService memberMonthlyRegistrationService,
+                                 SeasonService seasonService){
         this.memberService = memberService;
         this.courseService = courseService;
         this.memberCourseRegistrationService = memberCourseRegistrationService;
@@ -51,34 +54,62 @@ public class StudentListController {
         this.attendanceService = attendanceService;
         this.chargeService = chargeService;
         this.paymentService = paymentService;
+        this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
+        this.seasonService = seasonService;
     }
 
     @RequestMapping
-    public String getStudentList(Model model){
-        List<Member> memberList = memberService.getMemberList();
-        List<Member> inactiveList = new ArrayList<>();
-        Iterator it = memberList.iterator();
+    public String getStudentList(@RequestParam(value="month", required = false) Integer month,
+                                 @RequestParam(value="year", required = false) Integer year,
+                                 Model model){
+        LocalDate cycleStartDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(),1);
 
-        while(it.hasNext()){
-            Member member = (Member) it.next();
-            if(!member.getMemberIsActive()){
-                inactiveList.add(member);
-                it.remove();
-            }
-        }
+        if(month != null && year != null)
+            cycleStartDate = LocalDate.of(year, month ,1);
+        MemberListWrapperBuilder memberListWrapperBuilder = new MemberListWrapperBuilder(memberService, memberMonthlyRegistrationService);
+        MemberListWrapper memberListWrapper = memberListWrapperBuilder.setCycleStartDate(cycleStartDate).build();
+        List<LocalDate> monthsList = TemporalReference.getMonthList();
+        Collections.reverse(monthsList);
 
-        MemberListWrapper memberListWrapper = new MemberListWrapper(memberList, inactiveList);
+        model.addAttribute("cycleStartDate", cycleStartDate);
+        model.addAttribute("monthsList", monthsList);
         model.addAttribute("memberListWrapper", memberListWrapper);
         return "/student/studentList";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String getStudentList(@ModelAttribute("memberListWrapper") MemberListWrapper memberListWrapper, Model model){
-        List<Member> memberList = memberListWrapper.getMemberList();
-        memberList.addAll(memberListWrapper.getInactiveList());
+    public String getStudentList(@ModelAttribute("memberListWrapper") MemberListWrapper memberListWrapper,
+                                 @RequestParam("month") int month,
+                                 @RequestParam("year") int year){
+        HashMap<Integer, Boolean> membershipHashMap = memberListWrapper.getMembershipHashMap();
+        LocalDate cycleStartDate = LocalDate.of(year, month, 1);
 
-        memberService.updateMemberList(memberList);
-        return "redirect:/admin/student/studentList";
+        for(int memberID : membershipHashMap.keySet()){
+            Member member = memberService.get(memberID);
+            MemberMonthlyRegistration memberMonthlyRegistration = memberMonthlyRegistrationService.getMemberMonthlyRegistrationForMemberByDate(member, cycleStartDate);
+
+            Boolean memberIsRegistered = membershipHashMap.get(memberID);
+
+            if(memberIsRegistered == null)
+                memberIsRegistered = false;
+
+            if(memberIsRegistered){
+                if(memberMonthlyRegistration == null){
+                    memberMonthlyRegistration = new MemberMonthlyRegistration();
+                    memberMonthlyRegistration.setMemberID(memberID);
+                    memberMonthlyRegistration.setCycleStartDate(cycleStartDate);
+                    memberMonthlyRegistration.setSeasonID(seasonService.getSeason(cycleStartDate).getSeasonID());
+                    memberMonthlyRegistrationService.update(memberMonthlyRegistration);
+                }
+            }
+
+            else{
+                if(memberMonthlyRegistration != null){
+                    memberMonthlyRegistrationService.remove(memberMonthlyRegistration);
+                }
+            }
+        }
+        return "redirect:/admin/student/studentList?month=" + cycleStartDate.getMonthValue() + "&year=" + cycleStartDate.getYear();
     }
 
     @RequestMapping("/addStudent")

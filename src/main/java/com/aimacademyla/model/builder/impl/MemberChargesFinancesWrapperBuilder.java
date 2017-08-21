@@ -12,13 +12,12 @@ import com.aimacademyla.service.ChargeLineService;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.CourseService;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.Temporal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-public class MemberChargesFinancesWrapperBuilder implements GenericBuilder<MemberChargesFinancesWrapper>{
+public class    MemberChargesFinancesWrapperBuilder implements GenericBuilder<MemberChargesFinancesWrapper>{
 
     private MemberChargesFinancesWrapper memberChargesFinancesWrapper;
     private LocalDate selectedDate;
@@ -70,11 +69,10 @@ public class MemberChargesFinancesWrapperBuilder implements GenericBuilder<Membe
         HashMap<Integer, Charge> chargeHashMap = new HashMap<>();
         HashMap<Integer, List<ChargeLine>> chargeLineListHashMap = new HashMap<>();
         HashMap<Integer, Course> courseHashMap = new HashMap<>();
-        HashMap<Integer, Double> hoursBilledHashMap = new HashMap<>();
-        List<LocalDate> monthsList = new ArrayList<>();
-        double hoursBilledTotal = 0;
-        double totalChargesAmount = 0;
-        double totalDiscountAmount = 0;
+        HashMap<Integer, BigDecimal> hoursBilledHashMap = new HashMap<>();
+        BigDecimal hoursBilledTotal = BigDecimal.valueOf(0);
+        BigDecimal totalChargesAmount = BigDecimal.valueOf(0);
+        BigDecimal totalDiscountAmount = BigDecimal.valueOf(0);
 
         for(Charge charge : chargeList){
             chargeHashMap.put(charge.getChargeID(), charge);
@@ -82,26 +80,14 @@ public class MemberChargesFinancesWrapperBuilder implements GenericBuilder<Membe
             chargeLineListHashMap.put(charge.getChargeID(), chargeLineList);
             Course course = courseService.get(charge.getCourseID());
             courseHashMap.put(charge.getChargeID(), course);
-            hoursBilledHashMap.put(charge.getChargeID(), course.getClassDuration() * chargeLineList.size());
-            hoursBilledTotal += course.getClassDuration() * chargeLineList.size();
-            totalChargesAmount += charge.getChargeAmount();
-            totalDiscountAmount += charge.getDiscountAmount();
+            hoursBilledHashMap.put(charge.getChargeID(), course.getClassDuration().multiply(BigDecimal.valueOf(chargeLineList.size())));
+            hoursBilledTotal = course.getClassDuration().multiply(BigDecimal.valueOf(chargeLineList.size()));
+            totalChargesAmount = totalChargesAmount.add(charge.getChargeAmount());
+            totalDiscountAmount = totalDiscountAmount.add(charge.getDiscountAmount());
         }
 
-//        List<Charge> allChargesList = chargeService.getChargesByMember(member);
-
-//        outer:
-//        for(Charge charge : allChargesList){
-//            if(charge.getChargeAmount() > 0){
-//                for(LocalDate date : monthsList){
-//                    if(date.getMonthValue() == charge.getCycleStartDate().getMonthValue() && date.getYear() == charge.getCycleStartDate().getYear())
-//                        continue outer;
-//                }
-//                monthsList.add(charge.getCycleStartDate());
-//            }
-//        }
-
-        monthsList =  TemporalReference.getMonthList();
+        List<LocalDate> monthsList =  TemporalReference.getMonthList();
+        Collections.reverse(monthsList);
 
         memberChargesFinancesWrapper.setMonthSelectedIndex(0);
 

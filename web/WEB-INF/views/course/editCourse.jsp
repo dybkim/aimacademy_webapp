@@ -71,6 +71,7 @@
                 <form:hidden path="course.courseID" value="${courseRegistrationWrapper.course.courseID}"/>
                 <form:hidden path="course.totalNumSessions" value="${courseRegistrationWrapper.course.totalNumSessions}"/>
                 <form:hidden path="course.pricePerHour" value="${courseRegistrationWrapper.course.pricePerHour}"/>
+                <form:hidden path="course.classDuration" value="${courseRegistrationWrapper.course.classDuration}"/>
 
                 <div class="form-group"><form:errors path="course.courseName" cssStyle="color: #FF0000"/>
                     <label for="courseTitle">Course Title</label>
@@ -104,6 +105,11 @@
                     <form:input path="course.courseEndDate" id="endDate" class="date" value="${formattedEndDate}"/>
                 </div>
 
+                <div class="form-group">
+                    <label for="isActiveCheckBox">Is Active:</label>
+                    <form:checkbox path="course.isActive" value="${courseRegistrationWrapper.course.isActive}" id="isActiveCheckBox"/>
+                </div>
+
                 <br>
 
                 <a href="<spring:url value="/admin/courseList/editCourse/${courseRegistrationWrapper.course.courseID}/addStudentToCourse"/>" class="btn btn-primary">Add Member</a>
@@ -111,7 +117,7 @@
                 <br>
                 <br>
 
-                <h><b>Members Enrolled</b></h>
+                <h><b>Drop Members</b></h>
                 <div class="table-responsive">
                     <table class="table table-striped dt-responsive" id="memberListContainer">
                         <thead>
@@ -134,7 +140,6 @@
                     </table>
                 </div>
 
-                <form:hidden path="course.isActive" value="${courseRegistrationWrapper.course.isActive}"/>
 
                 <form:hidden path="course.numEnrolled" value="${courseRegistrationWrapper.course.numEnrolled}"/>
 
@@ -143,6 +148,8 @@
                 <input type="submit" value="submit" class="btn btn=default">
 
                 <a href="<spring:url value="/admin/courseList/courseInfo/${courseRegistrationWrapper.course.courseID}"/>" class="btn btn-default">Back To Course Page</a>
+
+                <a href="" class="btn btn-danger">Delete Course</a>
 
             </form:form>
         </div>

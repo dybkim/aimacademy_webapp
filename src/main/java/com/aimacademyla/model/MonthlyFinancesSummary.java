@@ -2,23 +2,25 @@ package com.aimacademyla.model;
 
 import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
  * Created by davidkim on 4/10/17.
  */
-@Entity(name="Monthly_Charges_Summary")
-public class MonthlyChargesSummary implements Serializable{
+@Entity(name="Monthly_Finances_Summary")
+public class MonthlyFinancesSummary implements Serializable{
 
     private static final long serialVersionUID = 399088079685831204L;
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="MonthlyChargesSummaryID")
-    private int monthlyChargesSummaryID;
+    @Column(name="MonthlyFinancesSummaryID")
+    private int monthlyFinancesSummaryID;
 
     @Column(name="SeasonID")
     private Integer seasonID;
@@ -39,16 +41,24 @@ public class MonthlyChargesSummary implements Serializable{
     @Column(name="NumCourses")
     private int numCourses;
 
-    public MonthlyChargesSummary(){
+    @Column(name="TotalChargeAmount")
+    @NumberFormat(style= NumberFormat.Style.CURRENCY)
+    private BigDecimal totalChargeAmount;
+
+    @Column(name="TotalPaymentAmount")
+    @NumberFormat(style= NumberFormat.Style.CURRENCY)
+    private BigDecimal totalPaymentAmount;
+
+    public MonthlyFinancesSummary(){
         numChargesTotal = 0;
         numChargesFulfilled = 0;
     }
-    public int getMonthlyChargesSummaryID() {
-        return monthlyChargesSummaryID;
+    public int getMonthlyFinancesSummaryID() {
+        return monthlyFinancesSummaryID;
     }
 
-    public void setMonthlyChargesSummaryID(int monthlyChargesSummaryID) {
-        this.monthlyChargesSummaryID = monthlyChargesSummaryID;
+    public void setMonthlyFinancesSummaryID(int monthlyFinancesSummaryID) {
+        this.monthlyFinancesSummaryID = monthlyFinancesSummaryID;
     }
 
     public int getNumChargesTotal() {
@@ -97,5 +107,21 @@ public class MonthlyChargesSummary implements Serializable{
 
     public void setNumCourses(int numCourses) {
         this.numCourses = numCourses;
+    }
+
+    public BigDecimal getTotalChargeAmount() {
+        return totalChargeAmount;
+    }
+
+    public void setTotalChargeAmount(BigDecimal totalChargeAmount) {
+        this.totalChargeAmount = totalChargeAmount;
+    }
+
+    public BigDecimal getTotalPaymentAmount() {
+        return totalPaymentAmount;
+    }
+
+    public void setTotalPaymentAmount(BigDecimal totalPaymentAmount) {
+        this.totalPaymentAmount = totalPaymentAmount;
     }
 }

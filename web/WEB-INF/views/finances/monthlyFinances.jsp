@@ -19,10 +19,10 @@
 
         var monthlySummaryListTable = $('#monthlySummaryListTable').DataTable({
             "lengthMenu": [[25,50,-1], [25,50, "All"]],
-            "order": [[6, "desc"]],
+            "order": [[8, "desc"]],
             "columnDefs": [
                 {
-                    "targets": [6],
+                    "targets": [8],
                     "visible": false,
                     "searchable": false
                 }
@@ -54,22 +54,26 @@
                         <th>Month/Year</th>
                         <th>Season</th>
                         <th>Active Members</th>
-                        <th>Charges Paid</th>
-                        <th>Courses Held</th>
-                        <th>Info</th>
+                        <th>Expected Revenue</th>
+                        <th>Actual Revenue</th>
+                        <th>Costs</th>
+                        <th>Net Profit</th>
+                        <th>Breakdown</th>
                         <th>YearMonth Hidden</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${monthlyChargesSummaryList}" var="monthlyChargesSummary">
+                    <c:forEach items="${monthlyFinancesSummaryList}" var="monthlyFinancesSummary">
                         <tr>
-                            <td>${monthlyChargesSummary.cycleStartDate.month.toString()} ${monthlyChargesSummary.cycleStartDate.year}</td>
-                            <td>${seasonDescriptionHashMap.get(monthlyChargesSummary.monthlyChargesSummaryID)}</td>
-                            <td>${monthlyChargesSummary.numMembers}</td>
-                            <th>${monthlyChargesSummary.numChargesFulfilled} / ${monthlyChargesSummary.numChargesTotal}</th>
-                            <td>${monthlyChargesSummary.numCourses}</td>
+                            <td>${monthlyFinancesSummary.cycleStartDate.month.toString()} ${monthlyFinancesSummary.cycleStartDate.year}</td>
+                            <td>${seasonDescriptionHashMap.get(monthlyFinancesSummary.monthlyFinancesSummaryID)}</td>
+                            <td>${monthlyFinancesSummary.numMembers}</td>
+                            <th>${monthlyFinancesSummary.totalChargeAmount}</th>
+                            <th>${monthlyFinancesSummary.totalPaymentAmount}</th>
+                            <td>TBA</td>
+                            <td>TBA</td>
                             <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
-                            <td><fmt:parseDate value="${monthlyChargesSummary.cycleStartDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                            <td><fmt:parseDate value="${monthlyFinancesSummary.cycleStartDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
                                 <fmt:formatDate value="${parsedDate}" var="formattedYear" type="date" pattern="yyyy" timeZone="GMT" />
                                 <fmt:formatDate value="${parsedDate}" var="formattedMonth" type="date" pattern="MM" timeZone="GMT" />
                                     ${formattedYear}${formattedMonth}</td>

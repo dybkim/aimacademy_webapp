@@ -31,8 +31,8 @@ public class CourseServiceImpl extends GenericServiceImpl<Course, Integer> imple
     }
 
     @Override
-    public List<Course> getActiveCourseList() {
-        return courseDAO.getActiveCourseList();
+    public List<Course> getCourseList() {
+        return courseDAO.getCourseList();
     }
 
     @Override

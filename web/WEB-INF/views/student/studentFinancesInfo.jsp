@@ -17,6 +17,8 @@
 <meta name="_csrf" content="${_csrf.token}"/>
 <meta name="_csrf_header" content="${_csrf.headerName}"/>
 
+<link href="<spring:url value="/resources/css/studentFinancesInfoElements.css"/>" rel="stylesheet">
+
 <script>
 
 //    studentFinancesControllerApp.directive('chargeTable', function(){
@@ -125,7 +127,7 @@
                         </select>
                     </div>
 
-                    <div class="container-fluid" style="border: thin solid black">
+                    <div class="container-fluid" style="border: thin solid black; float:left; padding-bottom: 20px; margin-bottom: 100px;">
                         <h4>Add Other Charge</h4>
 
                         <form>
@@ -133,26 +135,28 @@
                             <input id="chargeDescription" class="form-control" ng-model="chargeDescription"/>
 
                             <label for="chargeAmount">Amount:</label>
-                            <input id="chargeAmount" class="form-control" ng-model="chargeAmount"/>
+                            <input id="chargeAmount" class="form-control" ng-model="chargeAmount">
 
                             <label for="chargeDiscount">Discount:</label>
-                            <input id="chargeDiscount" class="form-control" ng-model="chargeDiscount"/>
+                            <input id="chargeDiscount" class="form-control" ng-model="chargeDiscount">
 
-                            <input type="submit" value="Add Charge" class="btn btn=default" ng-click="addMiscCharge('${member.memberID}', chargeDescription, chargeAmount, chargeDiscount)"/>
+                            <input type="submit" value="Add Charge" class="btn btn=default" ng-click="addMiscCharge('${member.memberID}', chargeDescription, chargeAmount, chargeDiscount)" style="display:inline"/>
+
+                            <br>
                         </form>
                     </div>
 
                     <div class="container-fluid" >
                         <table id="chargesTable" class="table table-striped">
                             <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>Hours Billed</th>
-                                <th>Price</th>
-                                <th>Discount</th>
-                                <th>Total</th>
-                                <th>Drop Charge</th>
-                            </tr>
+                                <tr>
+                                    <th>Charge Description</th>
+                                    <th>Hours Billed</th>
+                                    <th>Balance</th>
+                                    <th>Discount</th>
+                                    <th>Total</th>
+                                    <th>Drop Charge</th>
+                                </tr>
                             </thead>
 
                             <tbody>
@@ -160,9 +164,9 @@
                                     <td>{{charge.description}}</td>
                                     <td>{{memberChargesFinancesWrapper.hoursBilledHashMap[charge.chargeID]}} hours</td>
                                     <td>{{charge.chargeAmount}}</td>
-                                    <td ng-change="addDiscountToCharge(charge,discountAmount)" ng-model="discountAmount">{{charge.discountAmount}}</td>
+                                    <td><form ng-submit="addDiscountToCharge(charge.chargeID, charge.discountAmount)"><input ng-model="charge.discountAmount" style="text-align:center; width:50px;" /></form></td>
                                     <td>{{charge.chargeAmount - charge.discountAmount}}</td>
-                                    <td><a href="" class="label label-danger" ng-click="dropMiscCharge(charge)"><span class="glyphicon glyphicon-remove"></span></a></td>
+                                    <td><a class="label label-danger" ng-click="dropMiscCharge(charge)"><span class="glyphicon glyphicon-remove"></span></a></td>
                                 </tr>
 
                                 <tr>

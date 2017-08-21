@@ -41,6 +41,9 @@
     <!-- Custom styles for this template -->
     <link href="<spring:url value="/resources/css/dashboard.css"/>" rel="stylesheet">
 
+    <!-- Table row column alignment -->
+    <link href="<spring:url value="/resources/css/tablerow-alignment.css"/>" rel="stylesheet">
+
     <!-- CSS DataTables Link -->
     <link href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" rel="stylesheet">
 
@@ -48,6 +51,7 @@
     <link href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css" rel="stylesheet">
 
     <![endif]-->
+</head>
 <html>
 
 <body>
@@ -61,14 +65,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="<spring:url value="/"/> ">AIM Academy</a>
+            <a class="navbar-brand" href="<spring:url value="/admin/home"/> ">AIM Academy</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <c:if test="${pageContext.request.userPrincipal.name != null}">
                     <li><a>${pageContext.request.userPrincipal.name}</a></li>
                 </c:if>
-                <li><a href="<spring:url value="/home"/>">Home</a></li>
+                <li><a href="<spring:url value="/admin/home"/>">Home</a></li>
                 <li><a href="#">Settings</a></li>
                 <li><a href="#">Profile</a></li>
                 <li><a href="#">Help</a></li>

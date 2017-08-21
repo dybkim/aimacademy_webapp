@@ -16,9 +16,19 @@
 <script>
     $(document).ready(function(){
 
-        $('.table').DataTable({
-            "lengthMenu": [[25,50,-1], [25,50, "All"]],
+        $('a[data-toggle="tabpanel"]').on( 'shown.bs.tab', function (e) {
+            $.fn.dataTable.tables(true).columns.adjust();
+        } );
+
+        var courseListTable = $('#courseListTable').DataTable({
+            "lengthMenu": [[25,50,-1], [25,50, "All"]]
         });
+
+        var inactiveCourseListTable = $('#inactiveCourseListTable').DataTable({
+            "lengthMenu": [[25,50,-1], [25,50, "All"]]
+        });
+
+        $('.nav-tabs a[href="#tab-courses"]').tab('show');
     });
 </script>
 
@@ -38,31 +48,65 @@
 
             <br>
 
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>Course ID#</th>
-                        <th>Course Name</th>
-                        <th>Course Type</th>
-                        <th>Students Enrolled</th>
-                        <th>Finances</th>
-                        <th>Edit Course Info</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${courseList}" var="course">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation"><a href="#tab-courses" aria-controls="tab-courses" role="tab" data-toggle="tab">Current Courses</a></li>
+                <li role="presentation"><a href="#tab-inactiveCourses" aria-controls="tab-inactiveCourses" role="tab" data-toggle="tab">Past Courses</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="tab-courses">
+                    <table class="table table-striped" id="courseListTable">
+                        <thead>
                         <tr>
-                            <td>${course.courseID}</td>
-                            <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}"/>">${course.courseName}</a></td>
-                            <td>${course.courseType}</td>
-                            <td>${course.numEnrolled}</td>
-                            <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>
-                            <td><a href="<spring:url value="/admin/courseList/editCourse/${course.courseID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                            <th>Course ID#</th>
+                            <th>Course Name</th>
+                            <th>Course Type</th>
+                            <th>Students Enrolled</th>
+                            <th>Finances</th>
+                            <th>Edit Course Info</th>
                         </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${courseList}" var="course">
+                            <tr>
+                                <td>${course.courseID}</td>
+                                <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}"/>">${course.courseName}</a></td>
+                                <td>${course.courseType}</td>
+                                <td>${course.numEnrolled}</td>
+                                <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>
+                                <td><a href="<spring:url value="/admin/courseList/editCourse/${course.courseID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade in active" id="tab-inactiveCourses">
+                    <table class="table table-striped" id="inactiveCourseListTable">
+                        <thead>
+                        <tr>
+                            <th>Course ID#</th>
+                            <th>Course Name</th>
+                            <th>Course Type</th>
+                            <th>Students Enrolled</th>
+                            <th>Finances</th>
+                            <th>Edit Course Info</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${inactiveCourseList}" var="course">
+                            <tr>
+                                <td>${course.courseID}</td>
+                                <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}"/>">${course.courseName}</a></td>
+                                <td>${course.courseType}</td>
+                                <td>${course.numEnrolled}</td>
+                                <td><a href=""><span class="glyphicon glyphicon-usd"></span></a></td>
+                                <td><a href="<spring:url value="/admin/courseList/editCourse/${course.courseID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

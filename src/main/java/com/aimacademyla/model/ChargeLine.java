@@ -1,8 +1,11 @@
 package com.aimacademyla.model;
 
+import org.springframework.format.annotation.NumberFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Created by davidkim on 3/21/17.
@@ -21,12 +24,13 @@ public class ChargeLine implements Serializable{
     @Column(name="AttendanceID")
     private int attendanceID;
 
-    @Column(name="ChargeID")
+    @JoinColumn(name="ChargeID")
     private int chargeID;
 
     @Column(name="TotalCharge")
-    @Pattern(regexp="^(0|[1-9][0-9]*)$", message="Charge amount must be numeric")
-    private double totalCharge;
+//    @Pattern(regexp="^(0|[1-9][0-9]*)$", message="Charge amount must be numeric")
+    @NumberFormat(style= NumberFormat.Style.CURRENCY)
+    private BigDecimal totalCharge;
 
     public int getChargeLineID() {
         return chargeLineID;
@@ -52,11 +56,11 @@ public class ChargeLine implements Serializable{
         this.chargeID = chargeID;
     }
 
-    public double getTotalCharge() {
+    public BigDecimal getTotalCharge() {
         return totalCharge;
     }
 
-    public void setTotalCharge(double totalCharge) {
+    public void setTotalCharge(BigDecimal totalCharge) {
         this.totalCharge = totalCharge;
     }
 }

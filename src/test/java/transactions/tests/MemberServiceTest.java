@@ -66,7 +66,7 @@ public class MemberServiceTest extends AbstractTransactionTest {
         assertEquals("Member1 should persist within the database", member.getMemberID(), member1.getMemberID());
         assertNotNull("Member1 should also have a course registration for open study", memberCourseRegistration);
 
-        member1.setMemberIsActive(false);
+//        member1.setMemberIsActive(false);
         memberService.update(member1);
 
         memberCourseRegistration = memberCourseRegistrationDAO.get(memberCourseRegistrationPK);
@@ -86,7 +86,7 @@ public class MemberServiceTest extends AbstractTransactionTest {
         assertEquals("Member1 should persist within the database", member.getMemberID(), member1.getMemberID());
         assertNotNull("Member1 should also have a course registration for open study", memberCourseRegistration);
 
-        member1.setMemberIsActive(true);
+//        member1.setMemberIsActive(true);
         memberService.update(member1);
 
         member = memberService.get(member1.getMemberID());
