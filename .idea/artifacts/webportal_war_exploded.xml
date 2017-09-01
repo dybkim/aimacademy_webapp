@@ -83,6 +83,7 @@
           <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.2.2" />
           <element id="library" level="project" name="Maven: org.springframework:spring-tx:4.3.5.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:4.3.5.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-web:4.3.10.RELEASE" />
         </element>
       </element>
     </root>
