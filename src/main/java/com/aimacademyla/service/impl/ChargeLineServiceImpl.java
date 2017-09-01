@@ -80,6 +80,12 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
     }
 
     @Override
+    public void remove(List<ChargeLine> chargeLineList){
+        for(ChargeLine chargeLine : chargeLineList)
+            remove(chargeLine);
+    }
+
+    @Override
     public ChargeLine getChargeLineByAttendanceID(int attendanceID) {
         return chargeLineDAO.getChargeLineByAttendanceID(attendanceID);
     }

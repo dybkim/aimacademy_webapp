@@ -13,4 +13,6 @@ public interface CourseSessionService extends GenericService<CourseSession, Inte
     List<CourseSession> getCourseSessionsForCourse(Course course);
 
     int generateCourseSessionIDAfterSave(CourseSession courseSession);
+
+    void remove(List<CourseSession> courseSessionList);
 }

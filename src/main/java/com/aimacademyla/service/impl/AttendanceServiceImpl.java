@@ -74,4 +74,10 @@ public class AttendanceServiceImpl extends GenericServiceImpl<Attendance, Intege
     @Override
     public void addOrUpdateAttendanceList(List<Attendance> attendanceList){attendanceDAO.addOrUpdateAttendanceList(attendanceList);}
 
+    @Override
+    public void remove(List<Attendance> attendanceList){
+        for(Attendance attendance : attendanceList)
+            remove(attendance);
+    }
+
 }

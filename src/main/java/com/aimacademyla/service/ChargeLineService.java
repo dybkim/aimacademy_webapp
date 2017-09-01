@@ -10,5 +10,6 @@ import java.util.List;
  */
 public interface ChargeLineService extends GenericService<ChargeLine, Integer>{
     ChargeLine getChargeLineByAttendanceID(int attendanceID);
+    void remove(List<ChargeLine> chargeLineList);
     List<ChargeLine> getChargeLinesByCharge(Charge charge);
 }

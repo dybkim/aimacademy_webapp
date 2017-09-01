@@ -2,54 +2,90 @@
  * Created by davidkim on 8/20/17.
  */
 
-var addStudentToCourseControllerApp = angular.module("addStudentToCourseControllerApp",[]);
+var addStudentToCourseControllerApp = angular.module("addStudentToCourseControllerApp",['ui.bootstrap']);
+//
+// addStudentToCourseControllerApp.factory('autoCompleteDataService', ['$http', function($http){
+//     var memberStringList = [];
+//
+//     var getSource = function(){
+//         return $http.get("/admin/rest/studentList/getList").success(function(response){
+//             return JSON.stringify(response);
+//         });
+//     };
+//     return{
+//         getSource:getSource
+//     };
+//
+// }]);
+//
+// addStudentToCourseControllerApp.directive('autoComplete', function(autoCompleteDataService){
+//     return{
+//         restrict:'A',
+//         link: function(scope, elem, attr, ctrl){
+//             elem.autocomplete({
+//                 source: autoCompleteDataService.getSource(),
+//                 minLength: 3
+//             });
+//         }
+//     }
+// });
 
-addStudentToCourseControllerApp.directive('onKeyDown',function () {
-    return function (scope, element, attrs) {
-        element.bind("keydown keypress", function (event) {
-            if (element.val().length >= 3) {
-                scope.$apply(function () {
-                    scope.$eval(attrs.onKeyDown);
-                });
-                event.preventDefault();
+
+addStudentToCourseControllerApp.controller("addStudentToCourseController", function($scope, $http, $window){
+
+    $scope.selectedMember = null;
+    $scope.memberList = [];
+    $scope.registrationList = [];
+
+    $scope.init = function(courseID){
+        $scope.courseID = courseID;
+        $http.get("/admin/studentList/rest/getList").then(function(memberList){
+            for(var i = 0; i < memberList.data.length; i++){
+                $scope.memberList.push(new Member(memberList.data[i].memberID, memberList.data[i].memberFirstName, memberList.data[i].memberLastName));
             }
         });
     };
-});
 
-addStudentToCourseControllerApp.controller("addStudentToCourseController", function($scope, $http){
+    $scope.addToRegistrationList = function(){
+        var hasMember = false;
+        for(i = 0; i < $scope.registrationList.length; i++){
+            if($scope.registrationList[i].id === $scope.selectedMember.id){
+                hasMember = true;
+                break;
+            }
+        }
 
-    $scope.refreshCourseRegistrationWrapper = function(courseRegistrationWrapper){
-        $scope.course = courseRegistrationWrapper.course;
-        $scope.courseRegistrationWrapperObjectList = courseRegistrationWrapper.courseRegistrationWrapperObjectList;
-    };
+        if(!hasMember)
+            $scope.registrationList.push($scope.selectedMember);
 
-    $scope.addToRegistrationList = function(memberID, courseRegistrationWrapperObjectList){
-        var json = JSON.stringify(courseRegistrationWrapperObjectList);
-        $http.put("/admin/courseList/rest/" + $scope.course.courseID + "/addStudentToCourse/" + memberID, json).success(function(courseRegistrationWrapper){
-            $scope.refreshCourseRegistrationWrapper(courseRegistrationWrapper);
-        });
         $scope.selectedMember = null;
     };
 
-    $scope.removeStudentFromCourse = function(memberID, courseRegistrationWrapperObjectList){
-        var json = JSON.stringify(courseRegistrationWrapperObjectList);
-        $http.delete("/admin/courseList/rest/" + $scope.course.courseID + "/removeStudentFromCourse" + memberID, json).success(function(courseRegistrationWrapper){
-            $scope.refreshCourseRegistrationWrapper(courseRegistrationWrapper);
-        });
-    };
-
-    $scope.submitRegistrationList = function(courseRegistrationWrapper){
-        var json = JSON.stringify(courseRegistrationWrapper);
-        $http.post("/admin/courseList/rest/" + $scope.course.courseID + "/submit", json).success(function(){
-            window.location.replace("/admin/courseList/courseInfo/" + $scope.course.courseID);
-        });
-    };
-
-    $scope.fetchMember = function(memberString){
-        $http.get("/admin/courseList/rest/" + $scope.courseID + "/fetchSearchString?=" + memberString).success(function(memberList){
-            $scope.memberList = memberList;
+    $scope.removeStudentFromCourseRegistration = function(member){
+        var id = member.id;
+        $scope.registrationList = $scope.registrationList.filter(function(member){
+            return member.id !== id;
         })
     };
 
+    $scope.submitRegistrationList = function(){
+        if($scope.registrationList.length === 0){
+            alert("No members selected!");
+            return;
+        }
+
+        var idList = [];
+        for(var i = 0; i < $scope.registrationList.length; i++){
+            idList.push($scope.registrationList[i].id);
+        }
+        idList = angular.toJson(idList);
+        $http.post("/admin/courseList/rest/" + $scope.courseID + "/submitRegistrationList", idList).then(function(){
+            $window.location.href = "/admin/courseList/courseInfo/" + $scope.courseID;
+        });
+    };
+
+    var Member = function(memberID, memberFirstName, memberLastName){
+        this.id = memberID;
+        this.name = memberFirstName + ' ' + memberLastName;
+    }
 });

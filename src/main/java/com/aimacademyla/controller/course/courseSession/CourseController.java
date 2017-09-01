@@ -200,9 +200,6 @@ public class CourseController {
     }
     @RequestMapping(value="/{courseID}/cancelAddCourseSession/{courseSessionID}")
     public String cancelAddCourseSession(@PathVariable("courseID") int courseID, @PathVariable("courseSessionID") int courseSessionID, @ModelAttribute("courseSessionAttendanceListWrapper") CourseSessionAttendanceListWrapper courseSessionAttendanceListWrapper, Model model){
-        CourseSession courseSession = courseSessionService.get(courseSessionID);
-        courseSessionService.remove(courseSession);
-
         return "redirect:/admin/courseList/courseInfo/" + courseID;
     }
 

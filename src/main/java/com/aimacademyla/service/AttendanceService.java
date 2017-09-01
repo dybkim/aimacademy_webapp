@@ -25,5 +25,6 @@ public interface AttendanceService extends GenericService<Attendance, Integer>{
     Attendance getAttendanceForMemberForCourseForDate(Member member, Course course, LocalDate date);
 
     void addOrUpdateAttendanceList(List<Attendance> attendanceList);
+    void remove(List<Attendance> attendanceList);
 
 }

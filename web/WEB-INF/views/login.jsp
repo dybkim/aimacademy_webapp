@@ -52,8 +52,8 @@
 </nav>
 
 <div class="container-wrapper">
-    <div class="container">
-        <div id="login-box">
+    <div class="container" style="padding-top:40px">
+        <div id="login-box" style="text-align: left; border: solid; width: 500px; padding-left: 40px; padding-right: 40px; padding-bottom:40px">
             <h2>Login</h2>
 
             <c:if test="${not empty logout}">

@@ -30,31 +30,19 @@
             ]
         });
 
-        $(function() {
-            $("#addMember-search").autocomplete({
-                source: function(request, response) {
+        $("#deleteCourseButton").click(function() {
+            if(confirm("Deleting this course will delete all related attendance and financial records! Are you sure you want to delete?")){
                     $.ajax({
-                        url: "/admin/courseList/rest/${courseRegistrationWrapper.course.courseID}/fetchNonEnrolledMembers'",
-                        type: "GET",
-                        data: { term: request.term },
-
+                        url: "/admin/courseList/deleteCourse/${courseRegistrationWrapper.course.courseID}/'",
+                        type: "DELETE",
                         dataType: "json",
-
-                        success: function(data) {
-                            response($.map(data, function(member){
-                                var memberInfo = JSON.stringify(member.memberID) + ' ' + JSON.stringify(member.memberFirstName) + JSON.stringify(member.memberLastName);
-                                return {
-                                    label: memberInfo,
-                                    value: memberInfo
-                                };
-                            }));
+                        success: function() {
+                            window.location.replace("/admin/courseList");
                         }
                     });
                 }
-            });
         });
-
-    })
+})
 
 </script>
 
@@ -110,8 +98,6 @@
                     <form:checkbox path="course.isActive" value="${courseRegistrationWrapper.course.isActive}" id="isActiveCheckBox"/>
                 </div>
 
-                <br>
-
                 <a href="<spring:url value="/admin/courseList/editCourse/${courseRegistrationWrapper.course.courseID}/addStudentToCourse"/>" class="btn btn-primary">Add Member</a>
 
                 <br>
@@ -149,7 +135,7 @@
 
                 <a href="<spring:url value="/admin/courseList/courseInfo/${courseRegistrationWrapper.course.courseID}"/>" class="btn btn-default">Back To Course Page</a>
 
-                <a href="" class="btn btn-danger">Delete Course</a>
+                <a href="" id="deleteCourseButton" class="btn btn-danger">Delete Course</a>
 
             </form:form>
         </div>

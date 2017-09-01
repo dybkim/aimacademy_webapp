@@ -54,7 +54,7 @@ studentFinancesControllerApp.controller("studentFinancesControl", function($scop
 
     $scope.dropMiscCharge = function(charge){
         if(charge.courseID === 1){
-            $http.put('/admin/student/rest/studentFinances/dropMiscCharge/' + charge.chargeID).success(function(){
+            $http.put('/admin/student/rest/studentFinances/dropMiscCharge/' + charge.chargeID).then(function(){
                 $scope.refreshChargesList();
             })
         }

@@ -6,6 +6,7 @@ import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapperObject;
 import com.aimacademyla.service.*;
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,9 @@ public class CourseHomeController {
     private CourseSessionService courseSessionService;
     private MemberCourseRegistrationService memberCourseRegistrationService;
     private SeasonService seasonService;
-    private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
+    private ChargeService chargeService;
+    private ChargeLineService chargeLineService;
+    private PaymentService paymentService;
 
     private static final Logger logger = LogManager.getLogger(CourseHomeController.class);
 
@@ -45,14 +48,18 @@ public class CourseHomeController {
                                 CourseSessionService courseSessionService,
                                 MemberCourseRegistrationService memberCourseRegistrationService,
                                 SeasonService seasonService,
-                                MemberMonthlyRegistrationService memberMonthlyRegistrationService){
+                                ChargeService chargeService,
+                                ChargeLineService chargeLineService,
+                                PaymentService paymentService){
         this.courseService = courseService;
         this.attendanceService = attendanceService;
         this.memberService = memberService;
         this.courseSessionService = courseSessionService;
         this.memberCourseRegistrationService = memberCourseRegistrationService;
         this.seasonService = seasonService;
-        this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
+        this.chargeService = chargeService;
+        this.chargeLineService = chargeLineService;
+        this.paymentService = paymentService;
     }
 
     @RequestMapping
@@ -109,7 +116,7 @@ public class CourseHomeController {
 
     @RequestMapping("/editCourse/{courseID}")
     public String editCourse(@PathVariable("courseID") int courseID, Model model){
-        CourseRegistrationWrapper courseRegistrationWrapper = new CourseRegistrationWrapperBuilder(memberService, courseService).setCourseID(courseID).build();
+        CourseRegistrationWrapper courseRegistrationWrapper = new CourseRegistrationWrapperBuilder(memberService, memberCourseRegistrationService, courseService).setCourseID(courseID).build();
         model.addAttribute(courseRegistrationWrapper);
 
         return "/course/editCourse";
@@ -138,11 +145,13 @@ public class CourseHomeController {
          * Have to check for null list instead of empty list because JSP returns null list if list is empty
          */
         if(courseRegistrationWrapper.getCourseRegistrationWrapperObjectList() != null){
-            numEnrolled = courseRegistrationWrapper.getCourseRegistrationWrapperObjectList().size();
+            for(CourseRegistrationWrapperObject courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList())
+                if(!courseRegistrationWrapperObject.getIsDropped())
+                    numEnrolled++;
+
             updateMemberCourseRegistrationList(courseRegistrationWrapper);
         }
-
-
+        
         course.setNumEnrolled(numEnrolled);
         courseService.update(course);
 
@@ -152,36 +161,6 @@ public class CourseHomeController {
     @RequestMapping("/editCourse/{courseID}/addStudentToCourse")
     public String addStudentToCourse(@PathVariable("courseID") int courseID, Model model){
         Course course = courseService.get(courseID);
-        List<Member> activeMembers = memberService.getActiveMembersByCourse(course);
-        List<Member> allMembers = memberService.getMemberList();
-        LinkedHashMap<Integer, String> unenrolledMembersMap = new LinkedHashMap<>();
-        LinkedHashMap<Integer, String> allMembersMap = new LinkedHashMap<>();
-
-        allMembers.sort((memberLHS, memberRHS) -> {
-            int result = memberLHS.getMemberFirstName().compareTo(memberRHS.getMemberFirstName());
-
-            if(result == 0)
-                result = memberLHS.getMemberLastName().compareTo(memberRHS.getMemberLastName());
-
-            return result;
-        });
-
-        for(Member member : allMembers) {
-            String identifier = member.getMemberFirstName() + " " + member.getMemberLastName() + " " + member.getMemberID();
-            allMembersMap.put(member.getMemberID(), identifier);
-            unenrolledMembersMap.put(member.getMemberID(), identifier);
-        }
-
-        for(Member member : activeMembers){
-            unenrolledMembersMap.remove(member.getMemberID());
-        }
-
-        MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
-        memberCourseRegistration.setCourseID(courseID);
-
-        model.addAttribute("unenrolledMembersMap", unenrolledMembersMap);
-        model.addAttribute("allMembersMap", allMembersMap);
-        model.addAttribute("memberCourseRegistration", memberCourseRegistration);
         model.addAttribute("course", course);
 
         return "/course/addStudentToCourse";
@@ -206,6 +185,39 @@ public class CourseHomeController {
         memberCourseRegistrationService.add(memberCourseRegistration);
 
         return "redirect:/admin/courseList/editCourse/" + courseID;
+    }
+
+    @RequestMapping(value="/deleteCourse/{courseID}", method = RequestMethod.DELETE)
+    public String deleteCourse(@PathVariable("courseID") int courseID){
+        Course course = courseService.get(courseID);
+        List<CourseSession> courseSessionList = courseSessionService.getCourseSessionsForCourse(course);
+        List<Attendance> attendanceList = attendanceService.getAttendanceForCourse(course);
+        List<Charge> chargeList = chargeService.getChargesByCourse(course);
+        List<ChargeLine> chargeLineList = new ArrayList<>();
+        List<Payment> paymentList = new ArrayList<>();
+        List<MemberCourseRegistration> memberCourseRegistrationList = memberCourseRegistrationService.getMemberCourseRegistrationListForCourse(course);
+
+        for(Charge charge : chargeList){
+            List<ChargeLine> chargeLines = chargeLineService.getChargeLinesByCharge(charge);
+
+            if(chargeLines != null)
+                chargeLineList.addAll(chargeLines);
+
+            Payment payment = paymentService.getPaymentForCharge(charge);
+
+            if(payment != null)
+                paymentList.add(payment);
+        }
+
+        chargeLineService.remove(chargeLineList);
+        memberCourseRegistrationService.remove(memberCourseRegistrationList);
+        paymentService.remove(paymentList);
+        attendanceService.remove(attendanceList);
+        courseSessionService.remove(courseSessionList);
+        chargeService.remove(chargeList);
+        courseService.remove(course);
+
+        return "redirect:/admin/courseList";
     }
 
     private Model checkDateErrors(List<FieldError> errorList, Model model){

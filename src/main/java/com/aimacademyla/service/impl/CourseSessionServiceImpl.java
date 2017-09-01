@@ -36,4 +36,9 @@ public class CourseSessionServiceImpl extends GenericServiceImpl<CourseSession, 
         return courseSessionDAO.generateCourseSessionIDAfterSave(courseSession);
     }
 
+    @Override
+    public void remove(List<CourseSession> courseSessionList){
+        for(CourseSession courseSession : courseSessionList)
+            remove(courseSession);
+    }
 }

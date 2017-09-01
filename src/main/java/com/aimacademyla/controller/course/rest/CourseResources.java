@@ -4,12 +4,15 @@ import com.aimacademyla.controller.GenericResponse;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
+import com.aimacademyla.model.builder.impl.CourseRegistrationWrapperBuilder;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.model.dto.CourseResourcesDTO;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import com.aimacademyla.service.MemberService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.codehaus.jackson.map.util.JSONWrappedObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +29,7 @@ import java.util.List;
  * Created by davidkim on 7/7/17.
  */
 @Controller
-@RequestMapping("/admin/courseList/rest/")
+@RequestMapping("/admin/courseList/rest")
 public class CourseResources {
 
     private MemberService memberService;
@@ -41,6 +45,13 @@ public class CourseResources {
         this.memberCourseRegistrationService = memberCourseRegistrationService;
     }
 
+    @RequestMapping(value="/{courseID}/getCourseRegistration")
+    @ResponseBody
+    public CourseRegistrationWrapper getCourseRegistrationWrapper(@PathVariable("courseID") int courseID){
+        CourseRegistrationWrapperBuilder courseRegistrationWrapperBuilder = new CourseRegistrationWrapperBuilder(memberService, memberCourseRegistrationService, courseService);
+        return courseRegistrationWrapperBuilder.setCourseID(courseID).build();
+    }
+
     @RequestMapping(value="/{courseID}/validateAddCourseSession")
     public @ResponseBody
     ResponseEntity<GenericResponse> validateAddCourseSession(@PathVariable("courseID") int courseID){
@@ -50,22 +61,6 @@ public class CourseResources {
             }, HttpStatus.INTERNAL_SERVER_ERROR);
 
         return new ResponseEntity<>(new GenericResponse("OK", "NO_ERROR", HttpStatus.OK.value()){},HttpStatus.OK);
-    }
-
-    @RequestMapping(value="/{courseID}/addStudentToCourse/{memberID}", method=RequestMethod.PUT)
-    public void addMemberToCourse(@PathVariable("courseID") int courseID, @PathVariable("memberID") int memberID, Model model){
-        List<Member> memberList = memberService.getMemberList();
-        Course course = courseService.get(courseID);
-        model.addAttribute(memberList);
-        model.addAttribute(course);
-    }
-
-    @RequestMapping(value="/{courseID}/removeStudentFromCourse/{memberID}", method=RequestMethod.DELETE)
-    public void removeStudentsFromCourse(@PathVariable("courseID") int courseID, @PathVariable("memberID") int memberID, Model model){
-        List<Member> memberList = memberService.getMemberList();
-        Course course = courseService.get(courseID);
-        model.addAttribute(memberList);
-        model.addAttribute(course);
     }
 
     @RequestMapping(value="/{courseID}/fetchNonEnrolledMembers", method=RequestMethod.GET)
@@ -94,4 +89,19 @@ public class CourseResources {
         return resultList;
     }
 
+    @RequestMapping(value="/{courseID}/submitRegistrationList", method=RequestMethod.POST)
+    public String submitRegistrationList(@PathVariable("courseID") int courseID, @RequestBody List<Integer> memberIDList){
+        for(Integer memberID : memberIDList){
+            MemberCourseRegistrationPK memberCourseRegistrationPK = new MemberCourseRegistrationPK(memberID, courseID);
+            MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
+            memberCourseRegistration.setMemberCourseRegistrationPK(memberCourseRegistrationPK);
+            memberCourseRegistration.setMemberID(memberID);
+            memberCourseRegistration.setCourseID(courseID);
+            memberCourseRegistration.setIsEnrolled(true);
+            memberCourseRegistration.setDateRegistered(LocalDate.now());
+            memberCourseRegistrationService.update(memberCourseRegistration);
+        }
+
+        return "redirect:/admin/courseList/courseInfo/" + courseID;
+    }
 }

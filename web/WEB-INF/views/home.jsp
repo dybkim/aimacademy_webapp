@@ -34,9 +34,9 @@
         $('.nav-tabs a[href="#tab-members"]').tab('show');
 
         $('#selectMonthBox').change(function(){
-            var json = json.parse($(this).val());
-            var month = json[0];
-            var year = json[1];
+            var date = $.parseJSON($(this).val());
+            var month = date[0];
+            var year = date[1];
             window.location.replace('/admin/home?month=' + month + '&year=' + year);
         });
 

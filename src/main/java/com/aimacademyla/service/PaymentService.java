@@ -13,4 +13,6 @@ public interface PaymentService extends GenericService<Payment, Integer>{
     List<Payment> getPaymentsByMemberForCourse(Member member, Course course);
 
     Payment getPaymentForCharge(Charge charge);
+
+    void remove(List<Payment> paymentList);
 }

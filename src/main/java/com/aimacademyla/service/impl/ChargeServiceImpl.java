@@ -41,14 +41,62 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
 
     @Override
     public void add(Charge charge) {
-        if(charge.getMonthlyFinancesSummaryID() == null){
-            MonthlyFinancesSummary monthlyFinancesSummary = monthlyFinancesSummaryService.getMonthlyFinancesSummary(charge.getCycleStartDate());
-            if(monthlyFinancesSummary != null) {
-                charge.setMonthlyFinancesSummaryID(monthlyFinancesSummary.getMonthlyFinancesSummaryID());
-                charge.setSeasonID(monthlyFinancesSummary.getSeasonID());
-            }
-        }
+        MonthlyFinancesSummary monthlyFinancesSummary = monthlyFinancesSummaryService.getMonthlyFinancesSummary(charge.getCycleStartDate());
+
+        if(charge.getMonthlyFinancesSummaryID() == null)
+            charge.setMonthlyFinancesSummaryID(monthlyFinancesSummary.getMonthlyFinancesSummaryID());
+
+        int numChargesTotal = monthlyFinancesSummary.getNumChargesTotal();
+        BigDecimal totalChargeAmount = monthlyFinancesSummary.getTotalChargeAmount().add(charge.getChargeAmount());
+        monthlyFinancesSummary.setNumChargesTotal(numChargesTotal + 1);
+        monthlyFinancesSummary.setTotalChargeAmount(totalChargeAmount);
+        monthlyFinancesSummaryService.update(monthlyFinancesSummary);
+
         chargeDAO.add(charge);
+    }
+
+    @Override
+    public void update(Charge charge){
+        Charge previousCharge = chargeDAO.get(charge.getChargeID());
+        MonthlyFinancesSummary monthlyFinancesSummary = monthlyFinancesSummaryService.getMonthlyFinancesSummary(charge.getCycleStartDate());
+
+        if(charge.getMonthlyFinancesSummaryID() == null)
+            charge.setMonthlyFinancesSummaryID(monthlyFinancesSummary.getMonthlyFinancesSummaryID());
+
+        int numChargesTotal = monthlyFinancesSummary.getNumChargesTotal();
+
+        if(previousCharge != null){
+            BigDecimal totalChargeAmount = monthlyFinancesSummary.getTotalChargeAmount().add(charge.getChargeAmount());
+            monthlyFinancesSummary.setNumChargesTotal(numChargesTotal + 1);
+            monthlyFinancesSummary.setTotalChargeAmount(totalChargeAmount);
+            monthlyFinancesSummaryService.update(monthlyFinancesSummary);
+
+            chargeDAO.update(charge);
+            return;
+        }
+
+        BigDecimal totalChargeAmount = monthlyFinancesSummary.getTotalChargeAmount().subtract(previousCharge.getChargeAmount()).add(charge.getChargeAmount());
+        monthlyFinancesSummary.setTotalChargeAmount(totalChargeAmount);
+        monthlyFinancesSummaryService.update(monthlyFinancesSummary);
+
+        chargeDAO.update(charge);
+    }
+
+    @Override
+    public void remove(Charge charge){
+        charge = chargeDAO.get(charge.getChargeID());
+        MonthlyFinancesSummary monthlyFinancesSummary = monthlyFinancesSummaryService.getMonthlyFinancesSummary(charge.getCycleStartDate());
+        if(monthlyFinancesSummary.getNumChargesTotal() <= 0){
+            chargeDAO.remove(charge);
+            return;
+        }
+
+        int numCharges = monthlyFinancesSummary.getNumChargesTotal();
+        BigDecimal totalChargeAmount = monthlyFinancesSummary.getTotalChargeAmount().subtract(charge.getChargeAmount());
+        monthlyFinancesSummary.setTotalChargeAmount(totalChargeAmount);
+        monthlyFinancesSummary.setNumChargesTotal(numCharges - 1);
+        monthlyFinancesSummaryService.update(monthlyFinancesSummary);
+        chargeDAO.remove(charge);
     }
 
     @Override
@@ -109,6 +157,12 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
     @Override
     public List<Charge> getChargesByDate(LocalDate localDate){
         return chargeDAO.getChargesByDate(localDate);
+    }
+
+    @Override
+    public void remove(List<Charge> chargeList){
+        for(Charge charge : chargeList)
+            remove(charge);
     }
 
     private Charge generateCharge(int memberID, int courseID, LocalDate date){

@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%--
   Created by IntelliJ IDEA.
   User: davidkim
@@ -21,11 +22,27 @@
         } );
 
         var courseListTable = $('#courseListTable').DataTable({
-            "lengthMenu": [[25,50,-1], [25,50, "All"]]
+            "lengthMenu": [[25,50,-1], [25,50, "All"]],
+            "order": [[0, "desc"]],
+            "columnDefs": [
+                {
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                }
+            ]
         });
 
         var inactiveCourseListTable = $('#inactiveCourseListTable').DataTable({
-            "lengthMenu": [[25,50,-1], [25,50, "All"]]
+            "lengthMenu": [[25,50,-1], [25,50, "All"]],
+            "order": [[0, "desc"]],
+            "columnDefs": [
+                {
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                }
+            ]
         });
 
         $('.nav-tabs a[href="#tab-courses"]').tab('show');
@@ -58,8 +75,9 @@
                     <table class="table table-striped" id="courseListTable">
                         <thead>
                         <tr>
-                            <th>Course ID#</th>
-                            <th>Course Name</th>
+                            <th></th>
+                            <th>Start Date</th>
+                            <th>Course</th>
                             <th>Course Type</th>
                             <th>Students Enrolled</th>
                             <th>Finances</th>
@@ -69,7 +87,9 @@
                         <tbody>
                         <c:forEach items="${courseList}" var="course">
                             <tr>
-                                <td>${course.courseID}</td>
+                                <td><fmt:parseDate value="${course.courseStartDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                                    <fmt:formatDate value="${parsedDate}" var="formattedHiddenDate" type="date" pattern="yyyy/MM/dd" timeZone="GMT" />${formattedHiddenDate}</td>
+                                <td>${course.courseStartDate.month} ${course.courseStartDate.year}</td>
                                 <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}"/>">${course.courseName}</a></td>
                                 <td>${course.courseType}</td>
                                 <td>${course.numEnrolled}</td>
@@ -85,8 +105,9 @@
                     <table class="table table-striped" id="inactiveCourseListTable">
                         <thead>
                         <tr>
-                            <th>Course ID#</th>
-                            <th>Course Name</th>
+                            <th></th>
+                            <th>Start Date</th>
+                            <th>Course</th>
                             <th>Course Type</th>
                             <th>Students Enrolled</th>
                             <th>Finances</th>
@@ -96,7 +117,9 @@
                         <tbody>
                         <c:forEach items="${inactiveCourseList}" var="course">
                             <tr>
-                                <td>${course.courseID}</td>
+                                <td><fmt:parseDate value="${course.courseStartDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                                    <fmt:formatDate value="${parsedDate}" var="formattedHiddenDate" type="date" pattern="yyyy/MM/dd" timeZone="GMT" />${formattedHiddenDate}</td>
+                                <td>${course.courseStartDate.month} ${course.courseStartDate.year}</td>
                                 <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}"/>">${course.courseName}</a></td>
                                 <td>${course.courseType}</td>
                                 <td>${course.numEnrolled}</td>

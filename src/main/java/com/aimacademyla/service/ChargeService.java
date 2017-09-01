@@ -23,4 +23,5 @@ public interface ChargeService extends GenericService<Charge, Integer>{
     List<Charge> getChargesByCourse(int courseID);
     List<Charge> getChargesByCourse(Course course);
     List<Charge> getChargesByDate(LocalDate localDate);
+    void remove(List<Charge> chargeList);
 }

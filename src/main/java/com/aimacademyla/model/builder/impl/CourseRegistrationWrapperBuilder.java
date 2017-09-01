@@ -2,10 +2,12 @@ package com.aimacademyla.model.builder.impl;
 
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
+import com.aimacademyla.model.MemberCourseRegistration;
 import com.aimacademyla.model.builder.GenericBuilder;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapperObject;
 import com.aimacademyla.service.CourseService;
+import com.aimacademyla.service.MemberCourseRegistrationService;
 import com.aimacademyla.service.MemberService;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.List;
 public class CourseRegistrationWrapperBuilder implements GenericBuilder<CourseRegistrationWrapper> {
 
     private MemberService memberService;
+    private MemberCourseRegistrationService memberCourseRegistrationService;
     private CourseService courseService;
 
     private int courseID;
@@ -22,8 +25,9 @@ public class CourseRegistrationWrapperBuilder implements GenericBuilder<CourseRe
 
     private CourseRegistrationWrapperBuilder(){}
 
-    public CourseRegistrationWrapperBuilder(MemberService memberService, CourseService courseService){
+    public CourseRegistrationWrapperBuilder(MemberService memberService, MemberCourseRegistrationService memberCourseRegistrationService, CourseService courseService){
         this.memberService = memberService;
+        this.memberCourseRegistrationService = memberCourseRegistrationService;
         this.courseService = courseService;
 
         courseRegistrationWrapper = new CourseRegistrationWrapper();
@@ -37,14 +41,17 @@ public class CourseRegistrationWrapperBuilder implements GenericBuilder<CourseRe
     @Override
     public CourseRegistrationWrapper build() {
         Course course = courseService.get(courseID);
-        List<Member> activeMemberList = memberService.getActiveMembersByCourse(course);
-        CourseRegistrationWrapperObject courseRegistrationWrapperObject;
         List<CourseRegistrationWrapperObject> courseRegistrationWrapperObjectList = new ArrayList<>();
+        List<MemberCourseRegistration> memberCourseRegistrationList = memberCourseRegistrationService.getMemberCourseRegistrationListForCourse(course);
 
-        for (Member member : activeMemberList) {
-            courseRegistrationWrapperObject = new CourseRegistrationWrapperObject();
-            courseRegistrationWrapperObject.setMember(member);
+        for(MemberCourseRegistration memberCourseRegistration : memberCourseRegistrationList){
+            if(!memberCourseRegistration.getIsEnrolled())
+                continue;
+
+            Member member = memberService.get(memberCourseRegistration.getMemberID());
+            CourseRegistrationWrapperObject courseRegistrationWrapperObject = new CourseRegistrationWrapperObject();
             courseRegistrationWrapperObject.setIsDropped(false);
+            courseRegistrationWrapperObject.setMember(member);
             courseRegistrationWrapperObjectList.add(courseRegistrationWrapperObject);
         }
 

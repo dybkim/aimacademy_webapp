@@ -21,10 +21,17 @@
     <title>AIM Academy Portal</title>
 
     <!-- Angular JS -->
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.js"></script>
 
     <!-- JQuery 3-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+    <!-- JQuery UI-->
+    <script type="text/javascript" src="<spring:url value="/resources/js/jquery-ui.min.js"/>"></script>
 
     <!-- Bootstrap JS -->
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -49,6 +56,9 @@
 
     <!-- CSS DataTables Bootstrap -->
     <link href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css" rel="stylesheet">
+
+    <!-- JQueryUI CSS -->
+    <link href="<spring:url value="/resources/css/jquery-ui.min.css"/>" rel="stylesheet">
 
     <![endif]-->
 </head>

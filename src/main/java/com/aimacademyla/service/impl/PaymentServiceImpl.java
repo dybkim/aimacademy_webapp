@@ -18,6 +18,7 @@ import java.util.List;
 public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> implements PaymentService{
 
     private PaymentDAO paymentDAO;
+
     @Autowired
     public PaymentServiceImpl(@Qualifier("paymentDAO")GenericDAO<Payment, Integer> genericDAO){
         super(genericDAO);
@@ -42,6 +43,12 @@ public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> imp
             payment = generateNoPayment(charge);
 
         return payment;
+    }
+
+    @Override
+    public void remove(List<Payment> paymentList){
+        for(Payment payment : paymentList)
+            remove(payment);
     }
 
     private Payment generateNoPayment(Charge charge){

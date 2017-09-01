@@ -55,13 +55,22 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
         int numEnrolled = course.getNumEnrolled();
         MemberCourseRegistration persistedMemberCourseRegistration = memberCourseRegistrationDAO.get(memberCourseRegistration.getMemberID(), memberCourseRegistration.getCourseID());
 
-        if(memberCourseRegistration.getIsEnrolled() && !persistedMemberCourseRegistration.getIsEnrolled())
+        if(persistedMemberCourseRegistration != null){
+            if(memberCourseRegistration.getIsEnrolled() && !persistedMemberCourseRegistration.getIsEnrolled())
+                course.setNumEnrolled(numEnrolled + 1);
+
+            else if(!memberCourseRegistration.getIsEnrolled() && persistedMemberCourseRegistration.getIsEnrolled())
+                course.setNumEnrolled(numEnrolled - 1);
+
+            memberCourseRegistrationDAO.update(memberCourseRegistration);
+            courseDAO.update(course);
+            return;
+        }
+
+        if(memberCourseRegistration.getIsEnrolled())
             course.setNumEnrolled(numEnrolled + 1);
 
-        else if(!memberCourseRegistration.getIsEnrolled() && persistedMemberCourseRegistration.getIsEnrolled())
-            course.setNumEnrolled(numEnrolled - 1);
-
-        memberCourseRegistrationDAO.update(memberCourseRegistration);
+        memberCourseRegistrationDAO.add(memberCourseRegistration);
         courseDAO.update(course);
     }
 
@@ -71,6 +80,12 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
         Course course = courseDAO.get(memberCourseRegistration.getCourseID());
         course.setNumEnrolled(course.getNumEnrolled() - 1);
         courseDAO.update(course);
+    }
+
+    @Override
+    public void remove(List<MemberCourseRegistration> memberCourseRegistrationList){
+        for(MemberCourseRegistration memberCourseRegistration : memberCourseRegistrationList)
+            remove(memberCourseRegistration);
     }
 
     @Override

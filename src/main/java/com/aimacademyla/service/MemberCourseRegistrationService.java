@@ -20,4 +20,6 @@ public interface MemberCourseRegistrationService extends GenericService<MemberCo
 
     void update(List<MemberCourseRegistration> memberCourseRegistrationList);
 
+    void remove(List<MemberCourseRegistration> memberCourseRegistrationList);
+
 }

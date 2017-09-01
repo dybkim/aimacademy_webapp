@@ -19,97 +19,6 @@
 
 <link href="<spring:url value="/resources/css/studentFinancesInfoElements.css"/>" rel="stylesheet">
 
-<script>
-
-//    studentFinancesControllerApp.directive('chargeTable', function(){
-//        return function(scope, element, attrs){
-//
-//            // apply DataTable options, use defaults if none specified by user
-//            var options = {};
-//            if (attrs.chargeTable.length > 0) {
-//                options = scope.$eval(attrs.chargeTable);
-//            } else {
-//                options = {
-//                    "bStateSave": true,
-//                    "iCookieDuration": 2419200, /* 1 month */
-//                    "bJQueryUI": true,
-//                    "bPaginate": false,
-//                    "bLengthChange": false,
-//                    "bFilter": false,
-//                    "bInfo": false,
-//                    "bDestroy": true
-//                };
-//            }
-//
-//            // Tell the dataTables plugin what columns to use
-//            // We can either derive them from the dom, or use setup from the controller
-//            var explicitColumns = [];
-//            element.find('th').each(function(index, elem) {
-//                explicitColumns.push($(elem).text());
-//            });
-//            if (explicitColumns.length > 0) {
-//                options["aoColumns"] = explicitColumns;
-//            } else if (attrs.aoColumns) {
-//                options["aoColumns"] = scope.$eval(attrs.aoColumns);
-//            }
-//
-//            // aoColumnDefs is dataTables way of providing fine control over column config
-//            if (attrs.aoColumnDefs) {
-//                options["aoColumnDefs"] = scope.$eval(attrs.aoColumnDefs);
-//            }
-//
-//            if (attrs.fnRowCallback) {
-//                options["fnRowCallback"] = scope.$eval(attrs.fnRowCallback);
-//            }
-//
-//            // apply the plugin
-//            var dataTable = element.dataTable(options);
-//
-//            // watch for any changes to our data, rebuild the DataTable
-//            scope.$watch(attrs.aaData, function(value) {
-//                var val = value || null;
-//                if (val) {
-//                    dataTable.ajax.reload();
-//                }
-//            });
-//        };
-//    });
-
-
-
-//        $scope.myCallback = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-//            $('td:eq(2)', nRow).bind('click', function () {
-//                $scope.$apply(function () {
-//                    $scope.someClickHandler(aData);
-//                });
-//            });
-//            return nRow;
-//        };
-//
-//        $scope.someClickHandler = function (info) {
-//            $scope.message = 'clicked: ' + info.price;
-//        };
-//
-//        $scope.columnDefs = [
-//            {"mDataProp": "category", "aTargets": [0]},
-//            {"mDataProp": "name", "aTargets": [1]},
-//            {"mDataProp": "price", "aTargets": [2]}
-//        ];
-//
-//        $scope.overrideOptions = {
-//            "bStateSave": true,
-//            "iCookieDuration": 2419200, /* 1 month */
-//            "bJQueryUI": true,
-//            "bPaginate": true,
-//            "bLengthChange": false,
-//            "bFilter": true,
-//            "bInfo": true,
-//            "bDestroy": true
-//        };
-
-
-</script>
-
 <html>
     <body>
         <div class="container-fluid" ng-app="studentFinancesControllerApp">
@@ -122,8 +31,8 @@
                     <div class="form-group">
                         <label for="selectDate">Month</label>
                         <select id="selectDate" data-ng-model="monthSelected"
-                                data-ng-options="monthSelected as [monthSelected.month, monthSelected.year].join(' ') for monthSelected in monthsList"
-                                ng-change="initChargesWrapper('${member.memberID}',monthSelected.monthValue,monthSelected.year)">
+                                data-ng-options="localDate as (localDate.month + ' ' + localDate.year) for localDate in monthsList"
+                                ng-change="initChargesWrapper('${member.memberID}', monthSelected.monthValue, monthSelected.year)">
                         </select>
                     </div>
 

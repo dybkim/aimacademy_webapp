@@ -31,7 +31,7 @@ public class Attendance implements Serializable{
     @DateTimeFormat(pattern="MM/dd/yyyy")
     private LocalDate attendanceDate;
 
-    @Column(name="wasPresent")
+    @Column(name="WasPresent")
     private boolean wasPresent;
 
     public int getAttendanceID() {
