@@ -1,3 +1,4 @@
 # Set Java launch options
 
-JAVA_OPTS='-Dspring.profiles.active=production -Duser.timezone=GMT'
+set JAVA_OPTS='-Dspring.profiles.active=production -Duser.timezone=GMT'
+service tomcat8 start
