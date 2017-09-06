@@ -8,8 +8,8 @@ hooks:
     - location: scripts/start_application.sh
       timeout: 300
       runas: root
- ApplicationStop:
+  ApplicationStop:
     - location: scripts/stop_application.sh
       timeout: 300
- ValidateService:
-    - locaiton: scripts/basic_health_check.sh
+  ValidateService:
+    - location: scripts/basic_health_check.sh
