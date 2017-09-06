@@ -13,12 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        locations="classpath:resources/testContext.xml"
+        locations = "classpath*:**/resources/testContext.xml"
 )
 @SqlGroup({
-        @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:initializationScript.sql")
+        @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath*:/resources/initializationScript.sql")
 })
-@Transactional
 public abstract class AbstractTransactionTest {
 
 }

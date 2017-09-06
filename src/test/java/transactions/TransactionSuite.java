@@ -2,6 +2,7 @@ package transactions;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.springframework.test.context.ContextConfiguration;
 import transactions.tests.MemberServiceTest;
 
 /**
@@ -9,7 +10,7 @@ import transactions.tests.MemberServiceTest;
  */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses(MemberServiceTest.class)
+@Suite.SuiteClasses({MemberServiceTest.class, })
 public class TransactionSuite {
 
 }

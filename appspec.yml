@@ -1,0 +1,10 @@
+version: 0.0
+os: linux
+files:
+  - source: /target/AIMAcademyCMS.war
+    destination: /tmp/codedeploy-deployment-staging-area/
+hooks:
+  BeforeInstall:
+    - location: scripts/start_server
+      timeout:300
+      runas: root

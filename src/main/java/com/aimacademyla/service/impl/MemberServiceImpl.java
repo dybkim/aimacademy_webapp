@@ -79,9 +79,6 @@ public class MemberServiceImpl extends GenericServiceImpl<Member, Integer> imple
         return memberList;
     }
 
-
-
-
     @Override
     public void updateMemberList(List<Member> memberList){
         memberDAO.updateMemberList(memberList);

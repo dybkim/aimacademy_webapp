@@ -1,15 +1,15 @@
 package transactions.tests;
 
-import com.aimacademyla.dao.MemberCourseRegistrationDAO;
-import com.aimacademyla.dao.MemberDAO;
+import com.aimacademyla.dao.*;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
-import com.aimacademyla.service.MemberService;
+import com.aimacademyla.service.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import transactions.AbstractTransactionTest;
 
 import static org.junit.Assert.*;
@@ -18,13 +18,11 @@ import static org.junit.Assert.*;
  * Created by davidkim on 6/21/17.
  */
 
+@Transactional
 public class MemberServiceTest extends AbstractTransactionTest {
 
     @Autowired
     private MemberService memberService;
-
-    @Autowired
-    private MemberDAO memberDAO;
 
     @Autowired
     private MemberCourseRegistrationDAO memberCourseRegistrationDAO;
@@ -42,6 +40,10 @@ public class MemberServiceTest extends AbstractTransactionTest {
         memberCourseRegistrationPK1 = new MemberCourseRegistrationPK(member1.getMemberID(), Course.OPEN_STUDY_ID);
     }
 
+    @Test
+    public void checkService() throws Exception{
+        assertNotNull(memberService);
+    }
 
     @Test
     public void addMemberTest() throws Exception{
@@ -115,4 +117,19 @@ public class MemberServiceTest extends AbstractTransactionTest {
         assertNull("Member1's course registration for open study should no longer persist as member2 has been removed", memberCourseRegistration);
     }
 
+    public MemberService getMemberService() {
+        return memberService;
+    }
+
+    public void setMemberService(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+    public MemberCourseRegistrationDAO getMemberCourseRegistrationDAO() {
+        return memberCourseRegistrationDAO;
+    }
+
+    public void setMemberCourseRegistrationDAO(MemberCourseRegistrationDAO memberCourseRegistrationDAO) {
+        this.memberCourseRegistrationDAO = memberCourseRegistrationDAO;
+    }
 }
