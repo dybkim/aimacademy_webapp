@@ -1,6 +1,5 @@
 package com.aimacademyla.model.builder.impl;
 
-import com.aimacademyla.formatter.LocalDateFormatter;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.Payment;

@@ -29,7 +29,7 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Add new student</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/studentList/addStudent" method="post" modelAttribute="member">
+            <form:form action="${pageContext.request.contextPath}/admin/student/studentList/addStudent" method="POST" modelAttribute="member">
 
                 <div class="form-group">
                     <label for="firstName">First Name</label><form:errors path="memberFirstName" cssStyle="color: #FF0000"/>

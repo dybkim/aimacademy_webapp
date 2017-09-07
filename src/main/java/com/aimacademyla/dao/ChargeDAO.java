@@ -1,6 +1,5 @@
 package com.aimacademyla.dao;
 
-import com.aimacademyla.formatter.LocalDateFormatter;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;

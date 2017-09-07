@@ -1,7 +1,5 @@
 package com.aimacademyla.model.reference;
 
-import com.aimacademyla.formatter.LocalDateFormatter;
-
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
