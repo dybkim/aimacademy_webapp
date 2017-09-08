@@ -7,7 +7,7 @@ var studentFinancesControllerApp = angular.module ("studentFinancesControllerApp
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRF-Token';
 });
 
-studentFinancesControllerApp.controller("studentFinancesControl", function($scope, $http){
+studentFinancesControllerApp.controller("studentFinancesControl", function($scope, $http, $location){
 
     $scope.refreshChargesList = function(){
         $http.get('/admin/student/rest/studentFinances/' + $scope.memberID + '?month=' + $scope.month + '&year=' + $scope.year).success(function (data){

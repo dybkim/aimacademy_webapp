@@ -49,6 +49,7 @@
                 </executions>
             </plugin>
         </plugins>
+        <finalName>webportal</finalName>
     </build>
 
     <dependencies>

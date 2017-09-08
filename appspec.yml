@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 files:
-   -source: /webportal.war
+   -source: /target/webportal.war
    destination: /tmp/codedeploy-deployment-staging-area/
 hooks:
   ApplicationStart:

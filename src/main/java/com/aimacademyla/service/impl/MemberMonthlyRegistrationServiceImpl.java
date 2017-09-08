@@ -62,6 +62,9 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
         /**
          * Charge is generated if none exists
          * chargeAmount for openstudy is set as a constant value since it is not calculated per hour
+         *
+         * IMPORTANT: AN OPEN STUDY COURSE ENTITY MUST EXIST ALREADY IN THE DATABASE, ELSE NO ENTITY WILL BE RETURNED
+         * TODO: MUST IMPLEMENT A CHECK TO SEE IF OPEN STUDY COURSE ENTITY EXISTS
          */
         Course course = courseService.get(Course.OPEN_STUDY_ID);
         Charge charge = chargeService.getChargeByMemberForCourseByDate(entity.getMemberID(), Course.OPEN_STUDY_ID, entity.getCycleStartDate());
