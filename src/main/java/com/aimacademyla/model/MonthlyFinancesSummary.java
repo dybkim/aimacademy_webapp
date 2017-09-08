@@ -26,7 +26,7 @@ public class MonthlyFinancesSummary implements Serializable{
     private Integer seasonID;
 
     @Column(name="NumTotalCharges")
-    private int numChargesTotal;
+    private int numTotalCharges;
 
     @Column(name="NumChargesFulfilled")
     private int numChargesFulfilled;
@@ -50,7 +50,7 @@ public class MonthlyFinancesSummary implements Serializable{
     private BigDecimal totalPaymentAmount;
 
     public MonthlyFinancesSummary(){
-        numChargesTotal = 0;
+        numTotalCharges = 0;
         numChargesFulfilled = 0;
     }
     public int getMonthlyFinancesSummaryID() {
@@ -61,12 +61,12 @@ public class MonthlyFinancesSummary implements Serializable{
         this.monthlyFinancesSummaryID = monthlyFinancesSummaryID;
     }
 
-    public int getNumChargesTotal() {
-        return numChargesTotal;
+    public int getNumTotalCharges() {
+        return numTotalCharges;
     }
 
-    public void setNumChargesTotal(int numChargesTotal) {
-        this.numChargesTotal = numChargesTotal;
+    public void setNumTotalCharges(int numTotalCharges) {
+        this.numTotalCharges = numTotalCharges;
     }
 
     public int getNumChargesFulfilled() {

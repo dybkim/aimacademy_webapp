@@ -58,7 +58,7 @@ public class CourseDAOImpl extends GenericDAOImpl<Course, Integer> implements Co
     @Override
     public List<Course> getCourseListByDate(LocalDate date){
         Session session = currentSession();
-        Query query = session.createQuery("FROM Course WHERE CourseStartDate < :date AND CourseEndDate > :date");
+        Query query = session.createQuery("FROM Course WHERE CourseStartDate <= :date AND CourseEndDate >= :date");
         query.setParameter("date",date);
         List<Course> courseList = query.getResultList();
         session.flush();

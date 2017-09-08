@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +81,10 @@ public class MonthlyFinancesSummaryServiceImpl extends GenericServiceImpl<Monthl
 
         monthlyFinancesSummary.setNumCourses(numCourses);
         monthlyFinancesSummary.setNumMembers(numMembers);
+        monthlyFinancesSummary.setNumTotalCharges(0);
+        monthlyFinancesSummary.setNumChargesFulfilled(0);
+        monthlyFinancesSummary.setTotalChargeAmount(BigDecimal.ZERO);
+        monthlyFinancesSummary.setTotalPaymentAmount(BigDecimal.ZERO);
 
         monthlyFinancesSummaryDAO.add(monthlyFinancesSummary);
 

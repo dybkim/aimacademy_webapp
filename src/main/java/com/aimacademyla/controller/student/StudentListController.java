@@ -66,6 +66,7 @@ public class StudentListController {
 
         if(month != null && year != null)
             cycleStartDate = LocalDate.of(year, month ,1);
+
         MemberListWrapperBuilder memberListWrapperBuilder = new MemberListWrapperBuilder(memberService, memberMonthlyRegistrationService);
         MemberListWrapper memberListWrapper = memberListWrapperBuilder.setCycleStartDate(cycleStartDate).build();
         List<LocalDate> monthsList = TemporalReference.getMonthList();
