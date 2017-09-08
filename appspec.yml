@@ -4,10 +4,3 @@ files:
    -source: /target/webportal.war
    destination: /tmp/codedeploy-deployment-staging-area/
 hooks:
-  ApplicationStart:
-    - location: scripts/start_application.sh
-      timeout: 300
-      runas: root
-  ApplicationStop:
-    - location: scripts/stop_application.sh
-      timeout: 300

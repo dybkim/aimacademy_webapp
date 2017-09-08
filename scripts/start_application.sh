@@ -1,9 +1,17 @@
 # Set Java launch options
 
-rm /usr/share/tomcat8/webapps/webportal.war
+CATALINA_HOME='/usr/share/tomcat8'
+TEMP_STAGING_DIR='/tmp/codedeploy-deployment-staging-area'
+WAR_STAGED_LOCATION="$TEMP_STAGING_DIR/webportal.war"
 
-rm -rf /usr/share/tomcat8/webapps/webportal
+if [[ -f $CATALINA_HOME/webapps/webportal.war ]]; then
+	rm $CATALINA_HOME/webapps/webportal.war
+fi
 
-cp /tmp/codedeploy-deployment-staging-area/webportal.war /usr/share/tomcat8/webapps/webportal.war
+if [[ -d $CATALINA_HOME/webapps/webportal ]]; then
+	rm -rfv $CATALINA_HOME/webapps/webportal
+fi
+
+cp $WAR_STAGED_LOCATION $CATALINA_HOME/webapps/webportal.war
 
 service tomcat8 start
