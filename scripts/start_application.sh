@@ -10,7 +10,7 @@ if [[ -f "$CATALINA_HOME/webapps/webportal.war ]]; then
 	rm $CATALINA_HOME/webapps/webportal.war
 fi
 
-if[[ -d "$CATALINA_HOME/webapps/webportal ]]; then
+if [[ -d "$CATALINA_HOME/webapps/webportal ]]; then
 	rm -rfv $CATALINA_HOME/webapps/webportal
 fi
 
