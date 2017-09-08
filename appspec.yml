@@ -1,6 +1,10 @@
 version: 0.0
 os: linux
-files:
-   -source: /target/webportal.war
-   destination: /tmp/codedeploy-deployment-staging-area/
 hooks:
+  ApplicationStart:
+    - location: scripts/start_application.sh
+      timemout: 300
+      runas: root
+  ApplicationStop:
+    - location: scripts/stop_application.sh
+      timeout: 300
