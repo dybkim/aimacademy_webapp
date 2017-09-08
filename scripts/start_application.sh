@@ -6,11 +6,11 @@ WAR_STAGED_LOCATION="$TEMP_STAGING_DIR/webportal.war"
 
 set JAVA_OPTS='-Dspring.profiles.active=production -Duser.timezone=GMT'
 
-if [[ -f "$CATALINA_HOME/webapps/webportal.war ]]; then
+if [[ -f $CATALINA_HOME/webapps/webportal.war ]]; then
 	rm $CATALINA_HOME/webapps/webportal.war
 fi
 
-if [[ -d "$CATALINA_HOME/webapps/webportal ]]; then
+if [[ -d $CATALINA_HOME/webapps/webportal ]]; then
 	rm -rfv $CATALINA_HOME/webapps/webportal
 fi
 
