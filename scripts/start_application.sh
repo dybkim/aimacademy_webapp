@@ -4,13 +4,9 @@ CATALINA_HOME='/usr/share/tomcat8'
 TEMP_STAGING_DIR='/tmp/codedeploy-deployment-staging-area'
 WAR_STAGED_LOCATION="$TEMP_STAGING_DIR/webportal.war"
 
-if [[ -f $CATALINA_HOME/webapps/webportal.war ]]; then
-	rm $CATALINA_HOME/webapps/webportal.war
-fi
+rm $CATALINA_HOME/webapps/webportal.war
 
-if [[ -d $CATALINA_HOME/webapps/webportal ]]; then
-	rm -rfv $CATALINA_HOME/webapps/webportal
-fi
+rm -rf $CATALINA_HOME/webapps/webportal
 
 cp $WAR_STAGED_LOCATION $CATALINA_HOME/webapps/webportal.war
 
