@@ -28,7 +28,12 @@ public class SeasonServiceImpl extends GenericServiceImpl<Season, Integer> imple
 
     @Override
     public Season getSeason(LocalDate date) {
-        return seasonDAO.getSeasonByDate(date);
+        Season season = seasonDAO.getSeasonByDate(date);
+        
+        if(season == null)
+            season = seasonDAO.get(Season.NO_SEASON_FOUND);
+
+        return season;
     }
 
 }

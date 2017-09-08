@@ -29,14 +29,7 @@ public class SeasonDAOImpl extends GenericDAOImpl<Season, Integer> implements Se
     public Season getSeasonByDate(LocalDate date) {
         Session session = currentSession();
         Query query = session.createQuery("FROM Season WHERE StartDate < :date AND EndDate > :date").setParameter("date", date);
-        Season season;
-
-        try {
-            season = (Season) query.getSingleResult();
-        }catch(NoResultException e){
-            season = session.get(Season.class, Season.NO_SEASON_FOUND);
-            return season;
-        }
+        Season season = (Season) query.uniqueResult();
 
         return season;
     }
