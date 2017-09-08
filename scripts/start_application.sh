@@ -4,8 +4,6 @@ CATALINA_HOME='/usr/share/tomcat8'
 TEMP_STAGING_DIR='/tmp/codedeploy-deployment-staging-area'
 WAR_STAGED_LOCATION="$TEMP_STAGING_DIR/webportal.war"
 
-set JAVA_OPTS='-Dspring.profiles.active=production -Duser.timezone=GMT'
-
 if [[ -f $CATALINA_HOME/webapps/webportal.war ]]; then
 	rm $CATALINA_HOME/webapps/webportal.war
 fi
