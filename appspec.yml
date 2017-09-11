@@ -5,6 +5,10 @@ files:
       destination: /tmp/codedeploy-deployment-staging-area
     - source: web/
       destination: /tmp/codedeploy-deployment-staging-area
+    - source: target/webportal/WEB-INF/classes
+      destination: /tmp/codedeploy-deployment-staging-area
+    - source: target/webportal/WEB-INF/lib
+      destination: /tmp/codedeploy-deployment-staging-area
 hooks:
   ApplicationStart:
     - location: scripts/start_application.sh
