@@ -19,4 +19,4 @@ mv $WAR_STAGED_LOCATION $CATALINA_HOME/webapps/webportal.war
 mv TEMP_STAGING_DIR/META-INF/ $CATALINA_HOME/webapps/webportal/
 mv TEMP_STAGING_DIR/WEB-INF/ $CATALINA_HOME/webapps/webportal/
 
-service tomcat8 start
+#service tomcat8 start
