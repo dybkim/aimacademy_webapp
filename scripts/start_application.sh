@@ -15,6 +15,6 @@ fi
 #Copy Required Files
 
 mv $WAR_STAGED_LOCATION $CATALINA_HOME/webapps/webportal.war
-mv TEMP_STAGING_DIR/ $CATALINA_HOME/webapps/webportal/
+mv TEMP_STAGING_DIR/* $CATALINA_HOME/webapps/webportal/
 
 service tomcat8 start
