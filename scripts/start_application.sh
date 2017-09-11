@@ -21,4 +21,6 @@ mv $TEMP_STAGING_DIR/WEB-INF/ $CATALINA_HOME/webapps/webportal/
 mv $TEMP_STAGING_DIR/classes/ $CATALINA_HOME/webapps/webportal/WEB-INF/
 mv $TEMP_STAGING_DIR/lib/ $CATALINA_HOME/webapps/webportal/WEB-INF/
 
+rm $TEMP_STAGING_DIR/web.xml
+
 service tomcat8 start
