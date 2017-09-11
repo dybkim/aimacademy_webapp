@@ -14,7 +14,7 @@ fi
 
 #Copy Required Files
 
-mkdir $CATALINA_HOME/webapps/webportal
+#mkdir $CATALINA_HOME/webapps/webportal
 mv $WAR_STAGED_LOCATION $CATALINA_HOME/webapps/webportal.war
 mv TEMP_STAGING_DIR/META-INF/ $CATALINA_HOME/webapps/webportal/
 mv TEMP_STAGING_DIR/WEB-INF/ $CATALINA_HOME/webapps/webportal/
