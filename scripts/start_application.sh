@@ -22,7 +22,10 @@ if [[ -d $CATALINA_HOME/webapps/webportal/META-INF ]]; then
 if [[ -d $CATALINA_HOME/webapps/webportal/WEB-INF ]]; then
 	rm -rfv $CATALINA_HOME/webapps/webportal/WEB-INF
 
-cp -R TEMP_STAGING_DIR/META-INF $CATALINA_HOME/webapps
-cp -R TEMP_STAGING_DIR/WEB-INF $CATALINA_HOME/webapps
+if ! [[ -f $CATALINA_HOME/webapps/webportal ]]; then
+	mkdir $CATALINA_HOME/webapps/webportal
+
+cp -R TEMP_STAGING_DIR/META-INF $CATALINA_HOME/webapps/webportal
+cp -R TEMP_STAGING_DIR/WEB-INF $CATALINA_HOME/webapps/webportal
 
 service tomcat8 start
