@@ -16,13 +16,13 @@ fi
 
 cp $WAR_STAGED_LOCATION $CATALINA_HOME/webapps/webportal.war
 
-#if [[ -d $CATALINA_HOME/webapps/webportal/META-INF ]]; then
-#	rm -rfv $CATALINA_HOME/webapps/webportal/META-INF
+if [[ -d $CATALINA_HOME/webapps/webportal/META-INF ]]; then
+	rm -rfv $CATALINA_HOME/webapps/webportal/META-INF
 
-#if [[ -d $CATALINA_HOME/webapps/webportal/WEB-INF ]]; then
-#	rm -rfv $CATALINA_HOME/webapps/webportal/WEB-INF
+if [[ -d $CATALINA_HOME/webapps/webportal/WEB-INF ]]; then
+	rm -rfv $CATALINA_HOME/webapps/webportal/WEB-INF
 
-#cp -a TEMP_STAGING_DIR/META-INF $CATALINA_HOME/webapps
-#cp -a TEMP_STAGING_DIR/WEB-INF $CATALINA_HOME/webapps
+cp -R TEMP_STAGING_DIR/META-INF $CATALINA_HOME/webapps
+cp -R TEMP_STAGING_DIR/WEB-INF $CATALINA_HOME/webapps
 
 service tomcat8 start

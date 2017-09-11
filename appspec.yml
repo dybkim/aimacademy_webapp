@@ -3,9 +3,7 @@ os: linux
 files:
     - source: target/webportal.war
       destination: /tmp/codedeploy-deployment-staging-area
-    - source: web/META-INF
-      destination: /tmp/codedeploy-deployment-staging-area
-    - source: web/WEB-INF
+    - source: web/
       destination: /tmp/codedeploy-deployment-staging-area
 hooks:
   ApplicationStart:
