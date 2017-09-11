@@ -14,7 +14,7 @@ fi
 
 #Copy Required Files
 
-cp $WAR_STAGED_LOCATION $CATALINA_HOME/webapps/webportal.war
+mv $WAR_STAGED_LOCATION $CATALINA_HOME/webapps/webportal.war
 
 if [[ -d $CATALINA_HOME/webapps/webportal/META-INF ]]; then
 	rm -rfv $CATALINA_HOME/webapps/webportal/META-INF
@@ -22,10 +22,7 @@ if [[ -d $CATALINA_HOME/webapps/webportal/META-INF ]]; then
 if [[ -d $CATALINA_HOME/webapps/webportal/WEB-INF ]]; then
 	rm -rfv $CATALINA_HOME/webapps/webportal/WEB-INF
 
-if ! [[ -f $CATALINA_HOME/webapps/webportal ]]; then
-	mkdir $CATALINA_HOME/webapps/webportal
-
-cp -R TEMP_STAGING_DIR/META-INF $CATALINA_HOME/webapps/webportal
-cp -R TEMP_STAGING_DIR/WEB-INF $CATALINA_HOME/webapps/webportal
+mv TEMP_STAGING_DIR/META-INF $CATALINA_HOME/webapps/webportal/
+mv TEMP_STAGING_DIR/WEB-INF $CATALINA_HOME/webapps/webportal/
 
 service tomcat8 start
