@@ -23,7 +23,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>3.1.0</version>
                 <configuration>
+                    <warSourceDirectory>web</warSourceDirectory>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                     <webXml>web\WEB-INF\web.xml</webXml>
                 </configuration>
             </plugin>
