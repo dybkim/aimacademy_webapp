@@ -14,7 +14,7 @@
         <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
         <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/aimacademy?useLegacyDatetimeCode=false&amp;serverTimezone=GMT&amp;autoReconnect=true"/>
         <property name="user" value="root"/>
-        <property name="password" value=""/>
+        <property name="password" value="$"/>
         <property name="maxPoolSize" value="25" />
         <property name="minPoolSize" value="10" />
         <property name="maxStatements" value="100" />
