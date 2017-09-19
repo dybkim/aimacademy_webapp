@@ -132,7 +132,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <c:forEach items="${inactiveMemberList}" var="member">
+                                <c:forEach items="${paidBalanceMemberList}" var="member">
                                     <tr>
                                         <td>${member.memberID}</td>
                                         <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>

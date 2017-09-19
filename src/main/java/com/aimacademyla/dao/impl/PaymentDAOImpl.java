@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository("paymentDAO")
@@ -45,10 +46,21 @@ public class PaymentDAOImpl extends GenericDAOImpl<Payment, Integer> implements 
     }
 
     @Override
-    public Payment getPaymentForCharge(Charge charge){
+    public List<Payment> getPaymentsForDate(LocalDate date){
         Session session = currentSession();
-        Query query = session.createQuery("FROM Payment WHERE chargeID = :chargeID");
-        query.setParameter("chargeID", charge.getChargeID());
+        Query query = session.createQuery("FROM Payment WHERE MONTH(CycleStartDate) = MONTH(:date) AND YEAR(CycleStartDate) = YEAR(:date)");
+        query.setParameter("date", date);
+        List<Payment> paymentList = query.getResultList();
+        session.flush();
+
+        return paymentList;
+    }
+
+    @Override
+    public Payment getPaymentForMemberByDate(Member member, LocalDate date){
+        Session session = currentSession();
+        Query query = session.createQuery("FROM Payment WHERE MONTH(CycleStartDate) = MONTH(:date) AND YEAR(CycleStartDate) = YEAR(:date) AND MemberID = :memberID");
+        query.setParameter("date", date).setParameter("memberID", member.getMemberID());
         Payment payment = (Payment) query.uniqueResult();
         session.flush();
 

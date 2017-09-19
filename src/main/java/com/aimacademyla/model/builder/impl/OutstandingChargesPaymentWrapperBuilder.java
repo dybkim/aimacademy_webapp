@@ -43,69 +43,58 @@ public class OutstandingChargesPaymentWrapperBuilder implements GenericBuilder<O
 
     @Override
     public OutstandingChargesPaymentWrapper build() {
-
-        List<Member> allMemberList = memberService.getMemberList();
-        List<Member> memberList;
-        List<Member> inactiveMemberList;
+        List<Member> outstandingBalanceMemberList = new ArrayList<>();
+        List<Member> paidBalanceMemberList = new ArrayList<>();
 
         HashMap<Integer, Member> allMemberHashMap = new HashMap<>();
-        HashMap<Integer, Member> memberHashMap = new HashMap<>();
-        HashMap<Integer, Member> inactiveMemberHashMap;
+        HashMap<Integer, BigDecimal> allMembersPaymentHashMap = new HashMap<>();
+        HashMap<Integer, BigDecimal> allMembersChargesHashMap = new HashMap<>();
+        HashMap<Integer, BigDecimal> balanceAmountHashMap = new HashMap<>();
+
         List<Charge> chargeList = chargeService.getChargesByDate(cycleStartDate);
 
-        Iterator it = allMemberList.iterator();
-
-        for(Member member : allMemberList)
-            allMemberHashMap.put(member.getMemberID(), member);
-
         for(Charge charge : chargeList){
-            Payment payment = paymentService.getPaymentForCharge(charge);
-            BigDecimal totalAmountPaid = charge.getDiscountAmount().add(payment.getPaymentAmount());
+            Member member = memberService.get(charge.getMemberID());
+            allMemberHashMap.put(member.getMemberID(), member);
+            balanceAmountHashMap.put(member.getMemberID(), BigDecimal.ZERO);
 
-            if(charge.getChargeAmount().subtract(totalAmountPaid).compareTo(BigDecimal.ZERO) > 0)
-                memberHashMap.put(charge.getMemberID(), allMemberHashMap.get(charge.getMemberID()));
-        }
+            BigDecimal chargeAmount = charge.getChargeAmount();
 
-
-        for(int memberID : memberHashMap.keySet())
-            allMemberHashMap.remove(memberID);
-
-        inactiveMemberHashMap = allMemberHashMap;
-
-        memberList = new ArrayList<Member>(memberHashMap.values());
-        inactiveMemberList = new ArrayList<Member>(inactiveMemberHashMap.values());
-
-        HashMap<Integer, BigDecimal> allOutstandingChargesHashMap = generateOutstandingChargesHashMap(allMemberList, cycleStartDate);
-        HashMap<Integer, BigDecimal> outstandingChargesHashMap = generateOutstandingChargesHashMap(memberList, cycleStartDate);
-        HashMap<Integer, BigDecimal> inactiveOutstandingChargesHashMap = generateOutstandingChargesHashMap(inactiveMemberList, cycleStartDate);
-
-        outstandingChargesPaymentWrapper.setCycleStartDate(cycleStartDate);
-        outstandingChargesPaymentWrapper.setInactiveMemberList(inactiveMemberList);
-        outstandingChargesPaymentWrapper.setMemberList(memberList);
-        outstandingChargesPaymentWrapper.setInactiveOutstandingChargesHashMap(inactiveOutstandingChargesHashMap);
-        outstandingChargesPaymentWrapper.setOutstandingChargesHashMap(outstandingChargesHashMap);
-
-        return outstandingChargesPaymentWrapper;
-    }
-
-    /**
-     * Returned HashMap is mapped by: <memberID, outstandingBalance>
-    */
-    private HashMap<Integer, BigDecimal> generateOutstandingChargesHashMap(List<Member> memberList, LocalDate date){
-        HashMap<Integer, BigDecimal> outstandingChargesMap = new HashMap<>();
-
-        for(Member member : memberList){
-            BigDecimal outstandingBalance = BigDecimal.valueOf(0);
-            List<Charge> chargeList = chargeService.getChargesByMemberByDate(member, date);
-
-            for(Charge charge : chargeList){
-                Payment payment = paymentService.getPaymentForCharge(charge);
-                outstandingBalance = outstandingBalance.add(charge.getChargeAmount().subtract(charge.getDiscountAmount()).subtract(payment.getPaymentAmount()));
+            if(allMembersChargesHashMap.containsKey(member.getMemberID())){
+                chargeAmount = allMembersChargesHashMap.get(member.getMemberID()).add(chargeAmount);
+                allMembersChargesHashMap.put(member.getMemberID(), chargeAmount);
             }
 
-            outstandingChargesMap.put(member.getMemberID(), outstandingBalance);
+            else
+                allMembersChargesHashMap.put(member.getMemberID(), chargeAmount);
+
+            if(!allMembersPaymentHashMap.containsKey(member.getMemberID())){
+                Payment payment = paymentService.getPaymentForMemberByDate(member, cycleStartDate);
+                allMembersPaymentHashMap.put(member.getMemberID(), payment.getPaymentAmount());
+            }
         }
 
-        return outstandingChargesMap;
+        for(Integer memberID : allMembersChargesHashMap.keySet()){
+            BigDecimal outstandingBalance = allMembersChargesHashMap.get(memberID).subtract(allMembersPaymentHashMap.get(memberID));
+
+            if(outstandingBalance.compareTo(BigDecimal.ZERO) <= 0) {
+                paidBalanceMemberList.add(allMemberHashMap.get(memberID));
+                balanceAmountHashMap.put(memberID, outstandingBalance);
+            }
+
+            else{
+                outstandingBalanceMemberList.add(allMemberHashMap.get(memberID));
+                balanceAmountHashMap.put(memberID, outstandingBalance);
+            }
+        }
+
+        outstandingChargesPaymentWrapper.setCycleStartDate(cycleStartDate);
+        outstandingChargesPaymentWrapper.setPaidBalanceMemberList(paidBalanceMemberList);
+        outstandingChargesPaymentWrapper.setOutstandingBalanceMemberList(outstandingBalanceMemberList);
+        outstandingChargesPaymentWrapper.setChargesAmountHashMap(allMembersChargesHashMap);
+        outstandingChargesPaymentWrapper.setPaymentAmountHashMap(allMembersPaymentHashMap);
+        outstandingChargesPaymentWrapper.setBalanceAmountHashMap(balanceAmountHashMap);
+
+        return outstandingChargesPaymentWrapper;
     }
 }

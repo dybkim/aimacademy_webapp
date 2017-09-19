@@ -23,7 +23,6 @@ public class MemberCourseFinancesWrapperBuilder implements GenericBuilder<Member
     private LocalDate cycleStartDate;
     private Member member;
 
-
     private MemberCourseFinancesWrapperBuilder(){}
 
     public MemberCourseFinancesWrapperBuilder(PaymentService paymentService,
@@ -44,10 +43,9 @@ public class MemberCourseFinancesWrapperBuilder implements GenericBuilder<Member
     }
 
     public MemberCourseFinancesWrapper build(){
-        HashMap<Integer, Payment> chargePaymentHashMap = new HashMap<>();
 
         BigDecimal totalChargeAmount = BigDecimal.valueOf(0);
-        BigDecimal totalPaymentAmount = BigDecimal.valueOf(0);
+        BigDecimal totalPaymentAmount = paymentService.getPaymentForMemberByDate(member, cycleStartDate).getPaymentAmount();
 
         List<Charge> chargeList = chargeService.getChargesByMemberByDate(member, cycleStartDate);
         Iterator it = chargeList.iterator();
@@ -64,19 +62,12 @@ public class MemberCourseFinancesWrapperBuilder implements GenericBuilder<Member
             }
 
             totalChargeAmount = totalChargeAmount.add((charge.getChargeAmount().subtract(charge.getDiscountAmount())));
-            Payment payment = paymentService.getPaymentForCharge(charge);
-
-            if(payment.getPaymentID() != Payment.NO_PAYMENT){
-                totalPaymentAmount = totalPaymentAmount.add(payment.getPaymentAmount());
-                chargePaymentHashMap.put(charge.getChargeID(), payment);
-            }
         }
 
         memberCourseFinancesWrapper.setChargeList(chargeList);
         memberCourseFinancesWrapper.setDate(cycleStartDate);
         memberCourseFinancesWrapper.setTotalChargeAmount(totalChargeAmount);
         memberCourseFinancesWrapper.setTotalPaymentAmount(totalPaymentAmount);
-        memberCourseFinancesWrapper.setChargePaymentHashMap(chargePaymentHashMap);
 
         return memberCourseFinancesWrapper;
     }

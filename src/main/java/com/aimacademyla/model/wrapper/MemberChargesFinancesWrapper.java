@@ -3,6 +3,7 @@ package com.aimacademyla.model.wrapper;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.ChargeLine;
 import com.aimacademyla.model.Course;
+import com.aimacademyla.model.Member;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -17,6 +18,9 @@ public class MemberChargesFinancesWrapper implements Serializable{
     /**
      * All hashmaps are mapped with chargeID's as the key
      */
+
+    private Member member;
+
     private HashMap<Integer, Charge> chargeHashMap;
 
     private HashMap<Integer, Course> courseHashMap;
@@ -36,6 +40,14 @@ public class MemberChargesFinancesWrapper implements Serializable{
     private BigDecimal totalChargesAmount;
 
     private BigDecimal totalDiscountAmount;
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
 
     public HashMap<Integer, Charge> getChargeHashMap() {
         return chargeHashMap;

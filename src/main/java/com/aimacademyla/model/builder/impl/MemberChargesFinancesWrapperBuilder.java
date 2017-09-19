@@ -98,7 +98,7 @@ public class    MemberChargesFinancesWrapperBuilder implements GenericBuilder<Me
                 break;
             }
         }
-
+        memberChargesFinancesWrapper.setMember(member);
         memberChargesFinancesWrapper.setChargeHashMap(chargeHashMap);
         memberChargesFinancesWrapper.setChargeLineListHashMap(chargeLineListHashMap);
         memberChargesFinancesWrapper.setCourseHashMap(courseHashMap);

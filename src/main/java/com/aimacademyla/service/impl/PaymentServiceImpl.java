@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -36,11 +37,16 @@ public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> imp
     }
 
     @Override
-    public Payment getPaymentForCharge(Charge charge) {
-        Payment payment = paymentDAO.getPaymentForCharge(charge);
+    public List<Payment> getPaymentsForDate(LocalDate date) {
+        return paymentDAO.getPaymentsForDate(date);
+    }
+
+    @Override
+    public Payment getPaymentForMemberByDate(Member member, LocalDate date){
+        Payment payment = paymentDAO.getPaymentForMemberByDate(member, date);
 
         if(payment == null)
-            payment = generateNoPayment(charge);
+            payment = generateNoPayment(member, date);
 
         return payment;
     }
@@ -51,10 +57,10 @@ public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> imp
             remove(payment);
     }
 
-    private Payment generateNoPayment(Charge charge){
+    private Payment generateNoPayment(Member member, LocalDate date){
         Payment payment = new Payment();
         payment.setPaymentID(Payment.NO_PAYMENT);
-        payment.setChargeID(charge.getChargeID());
+        payment.setCycleStartDate(date);
         payment.setPaymentAmount(BigDecimal.valueOf(0));
         return payment;
     }

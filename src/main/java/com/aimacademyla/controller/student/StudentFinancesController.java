@@ -51,16 +51,7 @@ public class StudentFinancesController {
 
         Member member = memberService.get(memberID);
 
-        List<LocalDate> monthsList = new ArrayList<>();
-        List<Charge> allChargesList = chargeService.getChargesByMember(member);
-
-        for(Charge charge : allChargesList) {
-            if(charge.getChargeAmount().compareTo(BigDecimal.ZERO) > 0)
-                monthsList.add(charge.getCycleStartDate());
-        }
-
         model.addAttribute("member", member);
-        model.addAttribute("monthsList", monthsList);
         model.addAttribute("selectedDate", selectedDate);
 
         return "/student/studentFinancesInfo";

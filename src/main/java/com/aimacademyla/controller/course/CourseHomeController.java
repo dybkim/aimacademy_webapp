@@ -194,7 +194,7 @@ public class CourseHomeController {
         List<Attendance> attendanceList = attendanceService.getAttendanceForCourse(course);
         List<Charge> chargeList = chargeService.getChargesByCourse(course);
         List<ChargeLine> chargeLineList = new ArrayList<>();
-        List<Payment> paymentList = new ArrayList<>();
+//        List<Payment> paymentList = new ArrayList<>();
         List<MemberCourseRegistration> memberCourseRegistrationList = memberCourseRegistrationService.getMemberCourseRegistrationListForCourse(course);
 
         for(Charge charge : chargeList){
@@ -202,16 +202,16 @@ public class CourseHomeController {
 
             if(chargeLines != null)
                 chargeLineList.addAll(chargeLines);
-
-            Payment payment = paymentService.getPaymentForCharge(charge);
-
-            if(payment != null)
-                paymentList.add(payment);
+//
+//            Payment payment = paymentService.getPaymentForCharge(charge);
+//
+//            if(payment != null)
+//                paymentList.add(payment);
         }
 
         chargeLineService.remove(chargeLineList);
         memberCourseRegistrationService.remove(memberCourseRegistrationList);
-        paymentService.remove(paymentList);
+//        paymentService.remove(paymentList);
         attendanceService.remove(attendanceList);
         courseSessionService.remove(courseSessionList);
         chargeService.remove(chargeList);

@@ -3,12 +3,10 @@ package com.aimacademyla.controller.student.rest;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
+import com.aimacademyla.model.Season;
 import com.aimacademyla.model.builder.impl.MemberChargesFinancesWrapperBuilder;
 import com.aimacademyla.model.wrapper.MemberChargesFinancesWrapper;
-import com.aimacademyla.service.ChargeLineService;
-import com.aimacademyla.service.ChargeService;
-import com.aimacademyla.service.CourseService;
-import com.aimacademyla.service.MemberService;
+import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -25,16 +23,19 @@ public class StudentResources{
     private ChargeService chargeService;
     private ChargeLineService chargeLineService;
     private CourseService courseService;
+    private SeasonService seasonService;
 
     @Autowired
     public StudentResources(MemberService memberService,
                             ChargeService chargeService,
                             ChargeLineService chargeLineService,
-                            CourseService courseService){
+                            CourseService courseService,
+                            SeasonService seasonService){
         this.memberService = memberService;
         this.chargeService = chargeService;
         this.chargeLineService = chargeLineService;
         this.courseService = courseService;
+        this.seasonService = seasonService;
     }
 
     @RequestMapping("/studentFinances/{memberID}")
@@ -68,6 +69,7 @@ public class StudentResources{
         charge.setDiscountAmount(chargeDiscount);
         charge.setCourseID(Course.OTHER_ID);
         charge.setCycleStartDate(selectedDate);
+        charge.setSeasonID(seasonService.getSeason(selectedDate).getSeasonID());
 
         chargeService.add(charge);
     }

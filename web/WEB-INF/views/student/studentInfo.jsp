@@ -121,7 +121,7 @@
                         <tr>
                             <th ></th>
                             <th>Month/Year</th>
-                            <th>Charges Fulfilled / ChargesTotal</th>
+                            <th>Charges Total</th>
                             <th>Amount Paid</th>
                             <th>Total Charges</th>
                         </tr>
@@ -136,7 +136,7 @@
                                 <c:choose>
                                     <c:when test="${memberCourseFinancesWrapper.chargeList.size() != 0}">
                                         <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesWrapper.date.monthValue}&year=${memberCourseFinancesWrapper.date.year}"/>">${memberCourseFinancesWrapper.date.month.toString()} ${memberCourseFinancesWrapper.date.year}</a></td>
-                                        <td>${memberCourseFinancesWrapper.chargePaymentHashMap.size()}/${memberCourseFinancesWrapper.chargeList.size()}</td>
+                                        <td>${memberCourseFinancesWrapper.chargeList.size()}</td>
                                         <td>${memberCourseFinancesWrapper.totalPaymentAmount}</td>
                                         <td>${memberCourseFinancesWrapper.totalChargeAmount}</td>
                                     </c:when>

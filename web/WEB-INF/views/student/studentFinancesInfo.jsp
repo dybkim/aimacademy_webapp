@@ -36,7 +36,7 @@
                         </select>
                     </div>
 
-                    <div class="container-fluid" style="border: thin solid black; float:left; padding-bottom: 20px; margin-bottom: 100px;">
+                    <div class="container-fluid" style="border: thin solid black; float:left; padding-bottom: 20px; margin-bottom: 50px;">
                         <h4>Add Other Charge</h4>
 
                         <form>
@@ -49,10 +49,20 @@
                             <label for="chargeDiscount">Discount:</label>
                             <input id="chargeDiscount" class="form-control" ng-model="chargeDiscount">
 
-                            <input type="submit" value="Add Charge" class="btn btn=default" ng-click="addMiscCharge('${member.memberID}', chargeDescription, chargeAmount, chargeDiscount)" style="display:inline"/>
+                            <input type="submit" value="Add Charge" class="btn btn=default" ng-click="addMiscCharge('${member.memberID}', chargeDescription, chargeAmount, chargeDiscount)"/>
 
                             <br>
                         </form>
+                    </div>
+
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+
+                    <div class="container-fluid" style="text-align:left">
+                        <h4 style="text-align:left">All Charges</h4>
                     </div>
 
                     <div class="container-fluid" >

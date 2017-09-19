@@ -18,7 +18,6 @@ public class MemberCourseFinancesWrapper implements Serializable{
     private LocalDate date;
     private BigDecimal totalChargeAmount;
     private BigDecimal totalPaymentAmount;
-    private HashMap<Integer, Payment> chargePaymentHashMap;
 
     public List<Charge> getChargeList() {
         return chargeList;
@@ -50,13 +49,5 @@ public class MemberCourseFinancesWrapper implements Serializable{
 
     public void setTotalPaymentAmount(BigDecimal totalPaymentAmount) {
         this.totalPaymentAmount = totalPaymentAmount;
-    }
-
-    public HashMap<Integer, Payment> getChargePaymentHashMap() {
-        return chargePaymentHashMap;
-    }
-
-    public void setChargePaymentHashMap(HashMap<Integer, Payment> chargePaymentHashMap) {
-        this.chargePaymentHashMap = chargePaymentHashMap;
     }
 }

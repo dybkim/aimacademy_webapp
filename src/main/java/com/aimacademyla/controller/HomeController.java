@@ -55,20 +55,23 @@ public class HomeController {
         OutstandingChargesPaymentWrapperBuilder outstandingChargesPaymentWrapperBuilder = new OutstandingChargesPaymentWrapperBuilder(memberService, paymentService, chargeService);
         OutstandingChargesPaymentWrapper outstandingChargesPaymentWrapper = outstandingChargesPaymentWrapperBuilder.setCycleStartDate(cycleStartDate).build();
 
-        List<Member> memberList = outstandingChargesPaymentWrapper.getMemberList();
-        List<Member> inactiveMemberList = outstandingChargesPaymentWrapper.getInactiveMemberList();
-        HashMap<Integer, BigDecimal> outstandingChargesHashMap = outstandingChargesPaymentWrapper.getOutstandingChargesHashMap();
-        HashMap<Integer, BigDecimal> inactiveOutstandingChargesHashMap = outstandingChargesPaymentWrapper.getInactiveOutstandingChargesHashMap();
+        List<Member> paidBalanceMemberList = outstandingChargesPaymentWrapper.getPaidBalanceMemberList();
+        List<Member> outstandingBalanceMemberList = outstandingChargesPaymentWrapper.getOutstandingBalanceMemberList();
+        HashMap<Integer, BigDecimal> chargesAmountHashMap = outstandingChargesPaymentWrapper.getChargesAmountHashMap();
+        HashMap<Integer, BigDecimal> paymentAmountHashMap = outstandingChargesPaymentWrapper.getPaymentAmountHashMap();
+        HashMap<Integer, BigDecimal> balanceAmountHashMap = outstandingChargesPaymentWrapper.getBalanceAmountHashMap();
 
         List<LocalDate> monthsList = TemporalReference.getMonthList();
         Collections.reverse(monthsList);
 
         model.addAttribute("cycleStartDate", cycleStartDate);
         model.addAttribute("monthsList", monthsList);
-        model.addAttribute("memberList", memberList);
-        model.addAttribute("inactiveMemberList", inactiveMemberList);
-        model.addAttribute("outstandingChargesHashMap", outstandingChargesHashMap);
-        model.addAttribute("inactiveOutstandingChargesHashMap", inactiveOutstandingChargesHashMap);
+        model.addAttribute("paidBalanceMemberList", paidBalanceMemberList);
+        model.addAttribute("outstandingBalanceMemberList", outstandingBalanceMemberList);
+        model.addAttribute("chargesAmountHashMap", chargesAmountHashMap);
+        model.addAttribute("paymentAmountHashMap", paymentAmountHashMap);
+        model.addAttribute("balanceAmountHashMap", balanceAmountHashMap);
+
         return "home";
     }
 

@@ -83,19 +83,21 @@
                                 <th>ID</th>
                                 <th>Member Name</th>
                                 <th>Outstanding Balance</th>
+                                <th>Amount Paid</th>
                                 <th>Finance Info</th>
-                                <th>Invoice</th>
+                                <th>Download Invoice</th>
                             </tr>
                             </thead>
 
                             <tbody>
-                            <c:forEach items="${memberList}" var="member">
+                            <c:forEach items="${outstandingBalanceMemberList}" var="member">
                                 <tr>
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
-                                    <td>${outstandingChargesHashMap.get(member.memberID)}</td>
+                                    <td>${balanceAmountHashMap.get(member.memberID)}</td>
+                                    <td>${paymentAmountHashMap.get(member.memberID)} / ${chargesAmountHashMap.get(member.memberID)}</td>
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
-                                    <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                                    <td><a href="<spring:url value="/admin/resources/excel/generateInvoice/student/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
                             </c:forEach>
                             </tbody>
@@ -109,17 +111,19 @@
                                 <th>ID</th>
                                 <th>Member Name</th>
                                 <th>Outstanding Balance</th>
+                                <th>Amount Paid</th>
                                 <th>Finance Info</th>
-                                <th>Invoice</th>
+                                <th>Download Invoice</th>
                             </tr>
                             </thead>
 
                             <tbody>
-                            <c:forEach items="${inactiveMemberList}" var="member">
+                            <c:forEach items="${paidBalanceMemberList}" var="member">
                                 <tr>
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
-                                    <td>${inactiveOutstandingChargesHashMap.get(member.memberID)}</td>
+                                    <td>${balanceAmountHashMap.get(member.memberID)}</td>
+                                    <td>${paymentAmountHashMap.get(member.memberID)} / ${chargesAmountHashMap.get(member.memberID)}</td>
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>

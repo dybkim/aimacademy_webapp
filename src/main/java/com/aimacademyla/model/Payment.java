@@ -24,8 +24,9 @@ public class Payment implements Serializable {
     @Column(name="MemberID")
     private int memberID;
 
-    @Column(name="ChargeID")
-    private int chargeID;
+    @Column(name="CycleStartDate")
+    @DateTimeFormat(pattern = "MM/dd/yyyy")
+    private LocalDate cycleStartDate;
 
     @Column(name="PaymentAmount")
     @NumberFormat(style= NumberFormat.Style.CURRENCY)
@@ -51,12 +52,12 @@ public class Payment implements Serializable {
         this.memberID = memberID;
     }
 
-    public int getChargeID() {
-        return chargeID;
+    public LocalDate getCycleStartDate() {
+        return cycleStartDate;
     }
 
-    public void setChargeID(int chargeID) {
-        this.chargeID = chargeID;
+    public void setCycleStartDate(LocalDate date){
+        this.cycleStartDate = date;
     }
 
     public BigDecimal getPaymentAmount() {

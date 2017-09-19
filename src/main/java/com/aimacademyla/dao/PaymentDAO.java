@@ -5,6 +5,7 @@ import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.Payment;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PaymentDAO extends GenericDAO<Payment, Integer>{
@@ -13,5 +14,7 @@ public interface PaymentDAO extends GenericDAO<Payment, Integer>{
 
     List<Payment> getPaymentsByMemberForCourse(Member member, Course course);
 
-    Payment getPaymentForCharge(Charge charge);
+    List<Payment> getPaymentsForDate(LocalDate date);
+
+    Payment getPaymentForMemberByDate(Member member, LocalDate date);
 }

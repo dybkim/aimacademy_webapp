@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -92,6 +93,11 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
 
     @Override
     public List<ChargeLine> getChargeLinesByCharge(Charge charge){
-        return chargeLineDAO.getChargeLinesByCharge(charge);
+        List<ChargeLine> chargeLineList = chargeLineDAO.getChargeLinesByCharge(charge);
+
+        if(chargeLineList == null)
+            chargeLineList = new ArrayList<>();
+
+        return chargeLineList;
     }
 }
