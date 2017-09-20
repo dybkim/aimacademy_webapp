@@ -2,15 +2,14 @@ package com.aimacademyla.model.builder.impl;
 
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Member;
-import com.aimacademyla.model.Payment;
 import com.aimacademyla.model.builder.GenericBuilder;
 import com.aimacademyla.model.wrapper.MemberCourseFinancesWrapper;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.PaymentService;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,9 +49,7 @@ public class MemberCourseFinancesWrapperBuilder implements GenericBuilder<Member
         List<Charge> chargeList = chargeService.getChargesByMemberByDate(member, cycleStartDate);
         Iterator it = chargeList.iterator();
 
-        /**
-         * Remove charges from charge list that have an amount of 0 dollars
-         */
+        //Remove charges from charge list that have an amount of 0 dollars
         while(it.hasNext()){
             Charge charge = (Charge) it.next();
 

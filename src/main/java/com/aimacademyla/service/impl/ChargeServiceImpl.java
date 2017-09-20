@@ -4,6 +4,7 @@ import com.aimacademyla.dao.ChargeDAO;
 import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.model.*;
+import com.aimacademyla.model.builder.initializer.impl.ChargeDefaultValueInitializer;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.MonthlyFinancesSummaryService;
 import com.aimacademyla.service.SeasonService;
@@ -138,8 +139,10 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
     public Charge getChargeByMemberForCourseByDate(int memberID, int courseID, LocalDate date){
         Charge charge = chargeDAO.getChargeByMemberForCourseByDate(memberID, courseID, date);
 
-        if(charge == null)
-            charge = generateCharge(memberID, courseID, date);
+        if(charge == null){
+            charge = new ChargeDefaultValueInitializer(courseDAO, seasonService).setCourseID(courseID).setMemberID(memberID).setLocalDate(date).initialize();
+            add(charge);
+        }
 
         return charge;
     }
@@ -163,26 +166,5 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
     public void remove(List<Charge> chargeList){
         for(Charge charge : chargeList)
             remove(charge);
-    }
-
-    private Charge generateCharge(int memberID, int courseID, LocalDate date){
-        Charge charge = new Charge();
-        Season season = seasonService.getSeason(date);
-        Course course = courseDAO.get(courseID);
-
-        if(course.getCourseID() != Course.OTHER_ID)
-            charge.setDescription(course.getCourseName() + " (" + course.getCourseType()+")");
-
-        charge.setMemberID(memberID);
-        charge.setCourseID(courseID);
-        charge.setCycleStartDate(LocalDate.of(date.getYear(), date.getMonth(), 1));
-        charge.setChargeAmount(BigDecimal.valueOf(0));
-        charge.setSeasonID(season.getSeasonID());
-        charge.setNumChargeLines(0);
-        charge.setDiscountAmount(BigDecimal.valueOf(0));
-
-        add(charge);
-
-        return charge;
     }
 }

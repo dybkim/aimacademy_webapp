@@ -3,7 +3,6 @@ package com.aimacademyla.controller.student.rest;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
-import com.aimacademyla.model.Season;
 import com.aimacademyla.model.builder.impl.MemberChargesFinancesWrapperBuilder;
 import com.aimacademyla.model.wrapper.MemberChargesFinancesWrapper;
 import com.aimacademyla.service.*;

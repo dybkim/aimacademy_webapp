@@ -9,6 +9,7 @@ import com.aimacademyla.model.wrapper.CourseRegistrationWrapperObject;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import com.aimacademyla.service.MemberService;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.util.ArrayList;
 import java.util.List;

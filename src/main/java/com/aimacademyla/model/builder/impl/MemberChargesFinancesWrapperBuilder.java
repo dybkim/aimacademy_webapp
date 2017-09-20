@@ -10,13 +10,13 @@ import com.aimacademyla.model.wrapper.MemberChargesFinancesWrapper;
 import com.aimacademyla.service.ChargeLineService;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.CourseService;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.temporal.Temporal;
 import java.util.*;
 
-public class    MemberChargesFinancesWrapperBuilder implements GenericBuilder<MemberChargesFinancesWrapper>{
+public class MemberChargesFinancesWrapperBuilder implements GenericBuilder<MemberChargesFinancesWrapper>{
 
     private MemberChargesFinancesWrapper memberChargesFinancesWrapper;
     private LocalDate selectedDate;

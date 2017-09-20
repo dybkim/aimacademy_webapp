@@ -9,7 +9,7 @@
   Time: 5:53 AM
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 
 <%@include file="../template/navbar.jsp"%>
 <%@include file="../template/sidebar.jsp" %>
@@ -53,16 +53,6 @@
 
                             <br>
                         </form>
-                    </div>
-
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-
-                    <div class="container-fluid" style="text-align:left">
-                        <h4 style="text-align:left">All Charges</h4>
                     </div>
 
                     <div class="container-fluid" >

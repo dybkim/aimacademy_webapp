@@ -79,5 +79,4 @@ public class AttendanceServiceImpl extends GenericServiceImpl<Attendance, Intege
         for(Attendance attendance : attendanceList)
             remove(attendance);
     }
-
 }

@@ -8,7 +8,6 @@ import com.aimacademyla.model.wrapper.MemberCourseFinancesWrapper;
 import com.aimacademyla.model.wrapper.MemberListWrapper;
 import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.time.temporal.Temporal;
 import java.util.*;
 
 /**

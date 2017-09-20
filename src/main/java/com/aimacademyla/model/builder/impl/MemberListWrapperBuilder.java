@@ -6,6 +6,7 @@ import com.aimacademyla.model.builder.GenericBuilder;
 import com.aimacademyla.model.wrapper.MemberListWrapper;
 import com.aimacademyla.service.MemberMonthlyRegistrationService;
 import com.aimacademyla.service.MemberService;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

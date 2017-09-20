@@ -1,4 +1,4 @@
-package com.aimacademyla.api.impl;
+package com.aimacademyla.api.excel.impl;
 
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Member;

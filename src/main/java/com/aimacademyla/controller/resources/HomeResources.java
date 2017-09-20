@@ -1,8 +1,5 @@
 package com.aimacademyla.controller.resources;
 
-import com.aimacademyla.model.Charge;
-import com.aimacademyla.model.Member;
-import com.aimacademyla.model.Payment;
 import com.aimacademyla.model.builder.impl.OutstandingChargesPaymentWrapperBuilder;
 import com.aimacademyla.model.wrapper.OutstandingChargesPaymentWrapper;
 import com.aimacademyla.service.ChargeService;
@@ -14,12 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin/home/rest")

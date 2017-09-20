@@ -1,4 +1,4 @@
-package com.aimacademyla.api;
+package com.aimacademyla.api.excel;
 
 public abstract class MSExcelWriter {
 

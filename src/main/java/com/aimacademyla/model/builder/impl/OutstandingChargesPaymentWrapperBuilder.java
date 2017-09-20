@@ -8,12 +8,12 @@ import com.aimacademyla.model.wrapper.OutstandingChargesPaymentWrapper;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.MemberService;
 import com.aimacademyla.service.PaymentService;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 public class OutstandingChargesPaymentWrapperBuilder implements GenericBuilder<OutstandingChargesPaymentWrapper>{

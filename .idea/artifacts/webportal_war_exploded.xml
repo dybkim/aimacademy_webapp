@@ -5,11 +5,6 @@
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="webportal" />
-          <element id="library" level="application" name="angular" />
-          <element id="library" level="application" name="bootstrap" />
-          <element id="library" level="application" name="dataTables.bootstrap" />
-          <element id="library" level="application" name="jquery-3.1.1" />
-          <element id="library" level="application" name="jquery.dataTables" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: jstl:jstl:1.2" />
@@ -73,8 +68,14 @@
           <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.10" />
           <element id="library" level="project" name="Maven: org.apache.commons:commons-collections4:4.1" />
           <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.2.2" />
-          <element id="library" level="project" name="Spring-4.3.4.RELEASE" />
-          <element id="library" level="project" name="Spring MVC-4.3.10.RELEASE" />
+          <element id="library" level="project" name="Maven: com.ullink.slack:simpleslackapi:1.0.0" />
+          <element id="library" level="project" name="Maven: org.apache.httpcomponents:httpclient:4.4" />
+          <element id="library" level="project" name="Maven: org.apache.httpcomponents:httpcore:4.4" />
+          <element id="library" level="project" name="Maven: org.apache.httpcomponents:httpmime:4.4" />
+          <element id="library" level="project" name="Maven: ch.qos.logback:logback-classic:1.1.3" />
+          <element id="library" level="project" name="Maven: ch.qos.logback:logback-core:1.1.3" />
+          <element id="library" level="project" name="Maven: org.threeten:threetenbp:1.3.1" />
+          <element id="library" level="project" name="Maven: org.glassfish.tyrus.bundles:tyrus-standalone-client:1.13.1" />
         </element>
       </element>
       <element id="directory" name="META-INF">

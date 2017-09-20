@@ -6,12 +6,12 @@ import com.aimacademyla.dao.MemberCourseRegistrationDAO;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
+import com.aimacademyla.model.builder.initializer.impl.MemberCourseRegistrationDefaultValueInitializer;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -36,7 +36,7 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
         MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationDAO.get(memberCourseRegistrationPK);
 
         if(memberCourseRegistration == null)
-            memberCourseRegistration = generateMemberCourseRegistration(memberCourseRegistrationPK.getMemberID(), memberCourseRegistrationPK.getCourseID());
+            memberCourseRegistration = new MemberCourseRegistrationDefaultValueInitializer().setMemberID(memberCourseRegistrationPK.getMemberID()).setCourseID(memberCourseRegistrationPK.getCourseID()).initialize();
 
         return memberCourseRegistration;
     }
@@ -93,7 +93,7 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
         MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationDAO.get(memberID, courseID);
 
         if(memberCourseRegistration == null)
-            memberCourseRegistration = generateMemberCourseRegistration(memberID, courseID);
+            memberCourseRegistration = new MemberCourseRegistrationDefaultValueInitializer().setMemberID(memberID).setCourseID(courseID).initialize();
 
         return memberCourseRegistration;
     }
@@ -113,16 +113,4 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
         for(MemberCourseRegistration memberCourseRegistration : memberCourseRegistrationList)
             memberCourseRegistrationDAO.update(memberCourseRegistration);
     }
-
-    private MemberCourseRegistration generateMemberCourseRegistration(int memberID, int courseID){
-        MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
-        memberCourseRegistration.setMemberCourseRegistrationPK(new MemberCourseRegistrationPK(memberID, courseID));
-        memberCourseRegistration.setMemberID(memberID);
-        memberCourseRegistration.setCourseID(courseID);
-        memberCourseRegistration.setDateRegistered(LocalDate.now());
-        memberCourseRegistration.setIsEnrolled(true);
-
-        return memberCourseRegistration;
-    }
-
 }

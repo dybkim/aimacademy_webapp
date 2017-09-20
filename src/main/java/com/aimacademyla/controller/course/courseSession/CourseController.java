@@ -88,9 +88,7 @@ public class CourseController {
             courseSessionMemberCountMap.put(courseSession.getCourseSessionID(), membersEnrolled);
         }
 
-        /**
-         * Tallies the number of courseSessions attended for each member, active and inactive
-         */
+        //Tallies the number of courseSessions attended for each member, active and inactive
         for(Member member : allMemberList){
             List<Attendance> attendanceList = attendanceService.getAttendanceForMemberForCourse(member, course);
             Iterator it = attendanceList.iterator();
@@ -145,9 +143,7 @@ public class CourseController {
     @RequestMapping(value="/{courseID}/addCourseSession", method = RequestMethod.POST)
     public String addCourseSession(@ModelAttribute("courseSessionAttendanceListWrapper") CourseSessionAttendanceListWrapper courseSessionAttendanceListWrapper, BindingResult result, @PathVariable("courseID") int courseID, final RedirectAttributes redirectAttributes){
 
-        /**
-         * Redirects page if date field is not inputted in the correct format
-         */
+        //Redirects page if date field is not inputted in the correct format
         if(result.hasErrors())
         {
             List<FieldError> errors = result.getFieldErrors();
@@ -173,10 +169,8 @@ public class CourseController {
         BigDecimal totalCharge = course.getPricePerHour().multiply(course.getClassDuration());
         int numAttended = 0;
 
-        /**
-         * Adds new attendance for new courseSession
-         * Updates chargeLines for each member's attendance
-         */
+        // Adds new attendance for new courseSession
+        // Updates chargeLines for each member's attendance
         for(Attendance attendance : attendanceList) {
             attendance.setAttendanceDate(courseSession.getCourseSessionDate());
             attendanceService.add(attendance);
@@ -193,8 +187,13 @@ public class CourseController {
             }
         }
 
+        int totalNumSessions = course.getTotalNumSessions();
+        course.setTotalNumSessions(totalNumSessions + 1);
+
         courseSession.setNumMembersAttended(numAttended);
+
         courseSessionService.update(courseSession);
+        courseService.update(course);
 
         return "redirect:/admin/courseList/courseInfo/" + courseID;
     }
@@ -211,9 +210,7 @@ public class CourseController {
         List<Member> memberList = new ArrayList<>();
         HashMap<Integer, Attendance> attendanceHashMap = new HashMap<>();
 
-        /**
-         * Assigns attendance for course for all members enrolled in that course
-         */
+        //Assigns attendance for course for all members enrolled in that course
         for(Attendance attendance : attendanceList){
             Member member = memberService.get(attendance.getMemberID());
             attendanceHashMap.put(member.getMemberID(), attendance);
@@ -251,9 +248,7 @@ public class CourseController {
 
         int numAttended = 0;
 
-        /**
-         * Updates chargesLines for each member's attendance
-         */
+        // Updates chargesLines for each member's attendance
 
         for(Attendance attendance : attendanceList) {
             attendance.setAttendanceDate(courseSession.getCourseSessionDate());
@@ -262,10 +257,9 @@ public class CourseController {
                 numAttended++;
                 Member member = memberService.get(attendance.getMemberID());
                 ChargeLine chargeLine = chargeLineService.getChargeLineByAttendanceID(attendance.getAttendanceID());
-                /**
-                 * If no chargeline currently exists
-                 * create new chargeline with the corresponding attendance instance
-                 */
+
+                // If no chargeline currently exists
+                // create new chargeline with the corresponding attendance instance
                 if(chargeLine == null){
                     chargeLine = new ChargeLine();
                     Charge charge = chargeService.getChargeByMemberForCourseByDate(member, course, attendance.getAttendanceDate());
@@ -317,8 +311,11 @@ public class CourseController {
             attendanceService.remove(attendance);
         }
 
-        courseSessionService.remove(courseSession);
+        int totalNumSessions = course.getTotalNumSessions();
+        course.setTotalNumSessions(totalNumSessions - 1);
 
+        courseSessionService.remove(courseSession);
+        courseService.update(course);
         return "redirect:/admin/courseList/courseInfo/" + courseID;
     }
 

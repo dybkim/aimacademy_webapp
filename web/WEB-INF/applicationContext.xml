@@ -69,6 +69,10 @@
         </security:authentication-provider>
     </security:authentication-manager>
 
+    <bean id="slackServiceThread" class="com.aimacademyla.api.slack.thread.SlackServiceThread">
+        <!--TODO: Setup conversion strategy for AIMSlackTeam-->
+        <!--<property name="slackTeam" value="com.aimacademyla.api.slack.team.AIMSlackTeam"/>-->
+    </bean>
 
     <beans profile="development">
         <context:property-placeholder

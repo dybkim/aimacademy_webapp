@@ -2,7 +2,6 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.PaymentDAO;
-import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.Payment;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -46,7 +44,7 @@ public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> imp
         Payment payment = paymentDAO.getPaymentForMemberByDate(member, date);
 
         if(payment == null)
-            payment = generateNoPayment(member, date);
+            payment = paymentDAO.get(Payment.NO_PAYMENT);
 
         return payment;
     }
@@ -55,13 +53,5 @@ public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> imp
     public void remove(List<Payment> paymentList){
         for(Payment payment : paymentList)
             remove(payment);
-    }
-
-    private Payment generateNoPayment(Member member, LocalDate date){
-        Payment payment = new Payment();
-        payment.setPaymentID(Payment.NO_PAYMENT);
-        payment.setCycleStartDate(date);
-        payment.setPaymentAmount(BigDecimal.valueOf(0));
-        return payment;
     }
 }

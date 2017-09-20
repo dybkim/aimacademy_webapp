@@ -1,8 +1,6 @@
 package com.aimacademyla.controller.student;
 
 import com.aimacademyla.model.*;
-import com.aimacademyla.model.builder.impl.MemberChargesFinancesWrapperBuilder;
-import com.aimacademyla.model.wrapper.MemberChargesFinancesWrapper;
 import com.aimacademyla.service.ChargeLineService;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.CourseService;
@@ -12,9 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

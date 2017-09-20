@@ -1,6 +1,6 @@
 package com.aimacademyla.controller.resources;
 
-import com.aimacademyla.api.impl.ExcelInvoiceView;
+import com.aimacademyla.api.excel.impl.ExcelInvoiceView;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.builder.impl.MemberChargesFinancesWrapperBuilder;
 import com.aimacademyla.model.wrapper.MemberChargesFinancesWrapper;
@@ -9,7 +9,6 @@ import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

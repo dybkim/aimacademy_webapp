@@ -5,6 +5,7 @@ import com.aimacademyla.dao.MemberMonthlyRegistrationDAO;
 import com.aimacademyla.dao.MonthlyFinancesSummaryDAO;
 import com.aimacademyla.model.MonthlyFinancesSummary;
 import com.aimacademyla.model.Season;
+import com.aimacademyla.model.builder.initializer.impl.MonthlyFinancesSummaryDefaultValueInitializer;
 import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberMonthlyRegistrationService;
@@ -52,8 +53,12 @@ public class MonthlyFinancesSummaryServiceImpl extends GenericServiceImpl<Monthl
     public MonthlyFinancesSummary getMonthlyFinancesSummary(LocalDate date) {
         MonthlyFinancesSummary monthlyFinancesSummary =  monthlyFinancesSummaryDAO.getMonthlyFinancesSummary(date);
 
-        if(monthlyFinancesSummary == null)
-            monthlyFinancesSummary = createMonthlyFinancesSummaryInstance(date);
+        if(monthlyFinancesSummary == null){
+            monthlyFinancesSummary = new MonthlyFinancesSummaryDefaultValueInitializer(memberMonthlyRegistrationDAO, courseService, seasonService)
+                                                                                        .setLocalDate(date)
+                                                                                        .initialize();
+            monthlyFinancesSummaryDAO.add(monthlyFinancesSummary);
+        }
 
         return monthlyFinancesSummary;
     }
@@ -68,28 +73,6 @@ public class MonthlyFinancesSummaryServiceImpl extends GenericServiceImpl<Monthl
         return monthlyFinancesSummaryDAO.getMonthlyFinancesSummaryCurrent();
     }
 
-    private MonthlyFinancesSummary createMonthlyFinancesSummaryInstance(LocalDate date) {
-        Season season = seasonService.getSeason(date);
-        int numCourses = courseService.getCourseListByDate(date).size();
-        int numMembers = memberMonthlyRegistrationDAO.getMemberMonthlyRegistrationList(date).size();
-
-        MonthlyFinancesSummary monthlyFinancesSummary = new MonthlyFinancesSummary();
-        monthlyFinancesSummary.setCycleStartDate(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
-
-        if(season != null)
-            monthlyFinancesSummary.setSeasonID(season.getSeasonID());
-
-        monthlyFinancesSummary.setNumCourses(numCourses);
-        monthlyFinancesSummary.setNumMembers(numMembers);
-        monthlyFinancesSummary.setNumTotalCharges(0);
-        monthlyFinancesSummary.setNumChargesFulfilled(0);
-        monthlyFinancesSummary.setTotalChargeAmount(BigDecimal.ZERO);
-        monthlyFinancesSummary.setTotalPaymentAmount(BigDecimal.ZERO);
-
-        monthlyFinancesSummaryDAO.add(monthlyFinancesSummary);
-
-        return monthlyFinancesSummary;
-    }
 
     private List<MonthlyFinancesSummary> generateMonthlyFinancesSummary(){
         int monthsElapsed = TemporalReference.numMonthsFromInception();
@@ -108,7 +91,9 @@ public class MonthlyFinancesSummaryServiceImpl extends GenericServiceImpl<Monthl
             monthlyFinancesSummary = monthlyFinancesSummaryDAO.getMonthlyFinancesSummary(date);
 
             if(monthlyFinancesSummaryDAO == null){
-                monthlyFinancesSummary = createMonthlyFinancesSummaryInstance(date);
+                monthlyFinancesSummary = new MonthlyFinancesSummaryDefaultValueInitializer(memberMonthlyRegistrationDAO, courseService, seasonService)
+                        .setLocalDate(date)
+                        .initialize();
                 monthlyFinancesSummaryDAO.add(monthlyFinancesSummary);
             }
 
