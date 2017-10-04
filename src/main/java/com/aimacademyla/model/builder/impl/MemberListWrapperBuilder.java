@@ -25,7 +25,6 @@ public class MemberListWrapperBuilder implements GenericBuilder<MemberListWrappe
     private MemberListWrapperBuilder(){
     }
 
-
     public MemberListWrapperBuilder(MemberService memberService, MemberMonthlyRegistrationService memberMonthlyRegistrationService) {
         this.memberService = memberService;
         this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
@@ -45,6 +44,17 @@ public class MemberListWrapperBuilder implements GenericBuilder<MemberListWrappe
 
         List<MemberMonthlyRegistration> memberMonthlyRegistrationList = memberMonthlyRegistrationService.getMemberMonthlyRegistrationList(cycleStartDate);
 
+        Iterator it = inactiveMemberList.iterator();
+
+        /*
+         * Since MemberIDs start from 1001, any entity less than 1001 has to be removed
+         */
+        while(it.hasNext()){
+            Member member = (Member) it.next();
+            if(member.getMemberID() <= 1000)
+                it.remove();
+        }
+
         for(Member member : inactiveMemberList)
             membershipHashMap.put(member.getMemberID(), false);
 
@@ -53,7 +63,7 @@ public class MemberListWrapperBuilder implements GenericBuilder<MemberListWrappe
             memberList.add(member);
             membershipHashMap.put(member.getMemberID(), true);
 
-            Iterator it = inactiveMemberList.iterator();
+            it = inactiveMemberList.iterator();
             while(it.hasNext()){
                 Member iteratedMember = (Member) it.next();
                 if(member.getMemberID() == iteratedMember.getMemberID()){

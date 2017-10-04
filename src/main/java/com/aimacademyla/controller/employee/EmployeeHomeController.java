@@ -28,10 +28,14 @@ public class EmployeeHomeController {
         List<Employee> employeeList = employeeService.getList();
         List<Employee> inactiveEmployeeList = new ArrayList<>();
 
-        for (Employee employee : employeeList) {
-            if (!employee.isActive()) {
+        Iterator it = employeeList.iterator();
+
+        while(it.hasNext()){
+            Employee employee = (Employee) it.next();
+
+            if(!employee.isActive()){
                 inactiveEmployeeList.add(employee);
-                employeeList.remove(employee);
+                it.remove();
             }
         }
 

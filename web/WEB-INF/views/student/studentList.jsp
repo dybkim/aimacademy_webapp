@@ -2,6 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%--
   Created by IntelliJ IDEA.
   User: davidkim
@@ -17,7 +18,7 @@
 <script>
     $(document).ready(function(){
 
-        $('a[data-toggle="tabpanel"]').on( 'shown.bs.tab', function (e) {
+        $('a[data-toggle="tabpanel"]').on( 'shown.bs.tab', function () {
             $.fn.dataTable.tables(true).columns.adjust();
         } );
 
@@ -87,7 +88,6 @@
                             <th>Student ID#</th>
                             <th>Student Name</th>
                             <th>Membership</th>
-                            <%--<th>Classes</th>--%>
                             <th>Finances</th>
                             <th>Edit Profile</th>
                         </tr>
@@ -95,27 +95,26 @@
 
                         <tbody>
                         <c:forEach items="${memberListWrapper.memberList}" var="member" varStatus="i" begin="0">
-                            <tr>
-                                <form:hidden path="memberList[${i.index}].memberID" value="${member.memberID}"/>
-                                <form:hidden path="memberList[${i.index}].memberFirstName" value="${member.memberFirstName}"/>
-                                <form:hidden path="memberList[${i.index}].memberLastName" value="${member.memberLastName}"/>
-                                <form:hidden path="memberList[${i.index}].memberPhoneNumber" value="${member.memberPhoneNumber}"/>
-                                <form:hidden path="memberList[${i.index}].memberEmailAddress" value="${member.memberEmailAddress}"/>
-                                <form:hidden path="memberList[${i.index}].memberStreetAddress" value="${member.memberStreetAddress}"/>
-                                <form:hidden path="memberList[${i.index}].memberAddressApartment" value="${member.memberAddressApartment}"/>
-                                <form:hidden path="memberList[${i.index}].memberCity" value="${member.memberCity}"/>
-                                <form:hidden path="memberList[${i.index}].memberZipCode" value="${member.memberZipCode}"/>
-                                <form:hidden path="memberList[${i.index}].memberState" value="${member.memberState}"/>
-                                <fmt:parseDate value="${member.memberEntryDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
-                                <fmt:formatDate value="${parsedDate}" var="formattedDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT" />
-                                <form:hidden path="memberList[${i.index}].memberEntryDate" id="entryDate" class="form-Control" value="${formattedDate}"/>
-                                <td><a href="<spring:url value ="/admin/student/studentList/editStudent/${member.memberID}"/>">${member.memberID}</a></td>
-                                <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
-                                <td><form:checkbox path="membershipHashMap[${member.memberID}]" value="${memberListWrapper.membershipHashMap.get(member.memberID)}" id="isActiveCheckbox"/></td>
-                                <%--<td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>--%>
-                                <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
-                                <td><a href="<spring:url value="/admin/student/studentList/editStudent/${member.memberID}"/>"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                            </tr>
+                                <tr>
+                                    <form:hidden path="memberList[${i.index}].memberID" value="${member.memberID}"/>
+                                    <form:hidden path="memberList[${i.index}].memberFirstName" value="${member.memberFirstName}"/>
+                                    <form:hidden path="memberList[${i.index}].memberLastName" value="${member.memberLastName}"/>
+                                    <form:hidden path="memberList[${i.index}].memberPhoneNumber" value="${member.memberPhoneNumber}"/>
+                                    <form:hidden path="memberList[${i.index}].memberEmailAddress" value="${member.memberEmailAddress}"/>
+                                    <form:hidden path="memberList[${i.index}].memberStreetAddress" value="${member.memberStreetAddress}"/>
+                                    <form:hidden path="memberList[${i.index}].memberAddressApartment" value="${member.memberAddressApartment}"/>
+                                    <form:hidden path="memberList[${i.index}].memberCity" value="${member.memberCity}"/>
+                                    <form:hidden path="memberList[${i.index}].memberZipCode" value="${member.memberZipCode}"/>
+                                    <form:hidden path="memberList[${i.index}].memberState" value="${member.memberState}"/>
+                                    <fmt:parseDate value="${member.memberEntryDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                                    <fmt:formatDate value="${parsedDate}" var="formattedDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT" />
+                                    <form:hidden path="memberList[${i.index}].memberEntryDate" id="entryDate" class="form-Control" value="${formattedDate}"/>
+                                    <td><a href="<spring:url value ="/admin/student/studentList/editStudent/${member.memberID}"/>">${member.memberID}</a></td>
+                                    <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
+                                    <td><form:checkbox path="membershipHashMap[${member.memberID}]" value="${memberListWrapper.membershipHashMap.get(member.memberID)}" id="isActiveCheckbox"/></td>
+                                    <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
+                                    <td><a href="<spring:url value="/admin/student/studentList/editStudent/${member.memberID}"/>"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                                </tr>
                         </c:forEach>
                         </tbody>
                     </table>

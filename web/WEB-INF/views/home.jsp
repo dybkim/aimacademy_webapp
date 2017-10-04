@@ -19,7 +19,7 @@
 <script>
     $(document).ready(function() {
 
-        $('a[data-toggle="tabpanel"]').on('shown.bs.tab', function (e) {
+        $('a[data-toggle="tabpanel"]').on('shown.bs.tab', function () {
             $.fn.dataTable.tables(true).columns.adjust();
         });
 
@@ -128,13 +128,25 @@
                                     <td><a href="<spring:url value="/admin/resources/excel/generateInvoice/student/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
 
-                                <c:forEach items="${chargeListHashMap.get(member.memberID)}" var="charge">
-                                    <tr class="child">
-                                        <td>${charge.description}</td>
-                                        <td>${charge.numChargeLines}</td>
-                                        <td>${charge.discountAmount}</td>
-                                    </tr>
-                                </c:forEach>
+                                <%--<c:forEach items="${chargeListHashMap.get(member.memberID)}" var="charge">--%>
+                                    <%--<table class="child">--%>
+                                        <%--<thead>--%>
+                                        <%--<tr>--%>
+                                            <%--<th>Course</th>--%>
+                                            <%--<th>Sessions Attended</th>--%>
+                                            <%--<th>Total Charge</th>--%>
+                                        <%--</tr>--%>
+                                        <%--</thead>--%>
+
+                                        <%--<tbody>--%>
+                                        <%--<tr>--%>
+                                            <%--<td>${charge.description}</td>--%>
+                                            <%--<td>${charge.numChargeLines}</td>--%>
+                                            <%--<td>${charge.chargeAmount - charge.discountAmount}</td>--%>
+                                        <%--</tr>--%>
+                                        <%--</tbody>--%>
+                                    <%--</table>--%>
+                                <%--</c:forEach>--%>
 
                             </c:forEach>
                             </tbody>
@@ -165,25 +177,25 @@
                                     <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
 
-                                    <c:forEach items="${chargeListHashMap.get(member.memberID)}" var="charge">
-                                        <table class="child">
-                                            <thead>
-                                            <tr>
-                                                <th>Course</th>
-                                                <th>Sessions Attended</th>
-                                                <th>Total Charge</th>
-                                            </tr>
-                                            </thead>
+                                    <%--<c:forEach items="${chargeListHashMap.get(member.memberID)}" var="charge">--%>
+                                        <%--<table class="child">--%>
+                                            <%--<thead>--%>
+                                            <%--<tr>--%>
+                                                <%--<th>Course</th>--%>
+                                                <%--<th>Sessions Attended</th>--%>
+                                                <%--<th>Total Charge</th>--%>
+                                            <%--</tr>--%>
+                                            <%--</thead>--%>
 
-                                            <tbody>
-                                                <tr>
-                                                    <td>${charge.description}</td>
-                                                    <td>${charge.numChargeLines}</td>
-                                                    <td>${charge.chargeAmount - charge.discountAmount}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </c:forEach>
+                                            <%--<tbody>--%>
+                                                <%--<tr>--%>
+                                                    <%--<td>${charge.description}</td>--%>
+                                                    <%--<td>${charge.numChargeLines}</td>--%>
+                                                    <%--<td>${charge.chargeAmount - charge.discountAmount}</td>--%>
+                                                <%--</tr>--%>
+                                            <%--</tbody>--%>
+                                        <%--</table>--%>
+                                    <%--</c:forEach>--%>
 
                             </c:forEach>
                             </tbody>
@@ -193,8 +205,6 @@
             </div>
         </div>
     </div>
-    </body>
-</html>
 
 
 
