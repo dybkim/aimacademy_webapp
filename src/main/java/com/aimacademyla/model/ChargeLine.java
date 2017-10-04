@@ -28,7 +28,6 @@ public class ChargeLine implements Serializable{
     private int chargeID;
 
     @Column(name="TotalCharge")
-//    @Pattern(regexp="^(0|[1-9][0-9]*)$", message="Charge amount must be numeric")
     @NumberFormat(style= NumberFormat.Style.CURRENCY)
     private BigDecimal totalCharge;
 

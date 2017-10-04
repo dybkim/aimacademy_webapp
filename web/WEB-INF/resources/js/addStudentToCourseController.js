@@ -3,33 +3,6 @@
  */
 
 var addStudentToCourseControllerApp = angular.module("addStudentToCourseControllerApp",['ui.bootstrap']);
-//
-// addStudentToCourseControllerApp.factory('autoCompleteDataService', ['$http', function($http){
-//     var memberStringList = [];
-//
-//     var getSource = function(){
-//         return $http.get("/admin/rest/studentList/getList").success(function(response){
-//             return JSON.stringify(response);
-//         });
-//     };
-//     return{
-//         getSource:getSource
-//     };
-//
-// }]);
-//
-// addStudentToCourseControllerApp.directive('autoComplete', function(autoCompleteDataService){
-//     return{
-//         restrict:'A',
-//         link: function(scope, elem, attr, ctrl){
-//             elem.autocomplete({
-//                 source: autoCompleteDataService.getSource(),
-//                 minLength: 3
-//             });
-//         }
-//     }
-// });
-
 
 addStudentToCourseControllerApp.controller("addStudentToCourseController", function($scope, $http, $window){
 
@@ -78,6 +51,7 @@ addStudentToCourseControllerApp.controller("addStudentToCourseController", funct
         for(var i = 0; i < $scope.registrationList.length; i++){
             idList.push($scope.registrationList[i].id);
         }
+
         idList = angular.toJson(idList);
         $http.post("/admin/courseList/rest/" + $scope.courseID + "/submitRegistrationList", idList).then(function(){
             $window.location.href = "/admin/courseList/courseInfo/" + $scope.courseID;

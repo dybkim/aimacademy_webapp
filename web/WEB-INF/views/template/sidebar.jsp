@@ -12,7 +12,7 @@
     <ul class="nav nav-sidebar">
         <li><a href="<spring:url value="/admin/home"/>">Home</a></li>
         <li><a href="<spring:url value="/admin/student/studentList"/>">Students</a></li>
-        <li><a href="">Staff</a></li>
+        <li><a href="<spring:url value="/admin/employee"/>">Staff</a></li>
         <li><a href="<spring:url value="/admin/courseList"/>">Academics</a></li>
         <li><a href="<spring:url value="/admin/finances"/>">Finances</a></li>
         <li><a href="">Forms</a></li>

@@ -63,7 +63,7 @@ public class CourseHomeController {
 
     @RequestMapping
     public String getCourseList(Model model){
-        List<Course> courseList = courseService.getCourseList();
+        List<Course> courseList = courseService.getList();
         List<Course> inactiveCourseList = new ArrayList<>();
         Iterator it = courseList.iterator();
 
@@ -133,10 +133,9 @@ public class CourseHomeController {
         }
 
         Course course = courseRegistrationWrapper.getCourse();
-        LocalDate startDate = course.getCourseStartDate();
 
-            if(startDate != null)
-                course.setSeasonID(seasonService.getSeason(course.getCourseStartDate()).getSeasonID());
+        if(course.getCourseStartDate() != null)
+            course.setSeasonID(seasonService.getSeason(course.getCourseStartDate()).getSeasonID());
 
         int numEnrolled = 0;
 
@@ -187,24 +186,24 @@ public class CourseHomeController {
     @RequestMapping(value="/deleteCourse/{courseID}", method = RequestMethod.DELETE)
     public String deleteCourse(@PathVariable("courseID") int courseID){
         Course course = courseService.get(courseID);
-        List<CourseSession> courseSessionList = courseSessionService.getCourseSessionsForCourse(course);
-        List<Attendance> attendanceList = attendanceService.getAttendanceForCourse(course);
-        List<Charge> chargeList = chargeService.getChargesByCourse(course);
-        List<ChargeLine> chargeLineList = new ArrayList<>();
-        List<MemberCourseRegistration> memberCourseRegistrationList = memberCourseRegistrationService.getMemberCourseRegistrationListForCourse(course);
-
-        for(Charge charge : chargeList){
-            List<ChargeLine> chargeLines = chargeLineService.getChargeLinesByCharge(charge);
-
-            if(chargeLines != null)
-                chargeLineList.addAll(chargeLines);
-        }
-
-        chargeLineService.remove(chargeLineList);
-        memberCourseRegistrationService.remove(memberCourseRegistrationList);
-        attendanceService.remove(attendanceList);
-        courseSessionService.remove(courseSessionList);
-        chargeService.remove(chargeList);
+//        List<CourseSession> courseSessionList = courseSessionService.getCourseSessionsForCourse(course);
+//        List<Attendance> attendanceList = attendanceService.getAttendanceForCourse(course);
+//        List<Charge> chargeList = chargeService.getChargesByCourse(course);
+//        List<ChargeLine> chargeLineList = new ArrayList<>();
+//        List<MemberCourseRegistration> memberCourseRegistrationList = memberCourseRegistrationService.getMemberCourseRegistrationListForCourse(course);
+//
+//        for(Charge charge : chargeList){
+//            List<ChargeLine> chargeLines = chargeLineService.getChargeLinesByCharge(charge);
+//
+//            if(chargeLines != null)
+//                chargeLineList.addAll(chargeLines);
+//        }
+//
+//        chargeLineService.remove(chargeLineList);
+//        memberCourseRegistrationService.remove(memberCourseRegistrationList);
+//        attendanceService.remove(attendanceList);
+//        courseSessionService.remove(courseSessionList);
+//        chargeService.remove(chargeList);
         courseService.remove(course);
 
         return "redirect:/admin/courseList";

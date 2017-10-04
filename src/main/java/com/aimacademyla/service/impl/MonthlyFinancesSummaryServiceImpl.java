@@ -44,10 +44,6 @@ public class MonthlyFinancesSummaryServiceImpl extends GenericServiceImpl<Monthl
         this.memberMonthlyRegistrationDAO = memberMonthlyRegistrationDAO;
     }
 
-    @Override
-    public List<MonthlyFinancesSummary> getAllMonthlyFinancesSummaries() {
-        return monthlyFinancesSummaryDAO.getAllMonthlyFinancesSummaries();
-    }
 
     @Override
     public MonthlyFinancesSummary getMonthlyFinancesSummary(LocalDate date) {

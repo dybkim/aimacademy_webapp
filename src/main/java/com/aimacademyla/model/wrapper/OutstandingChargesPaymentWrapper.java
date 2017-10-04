@@ -1,5 +1,6 @@
 package com.aimacademyla.model.wrapper;
 
+import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Member;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ public class OutstandingChargesPaymentWrapper implements Serializable{
     private HashMap<Integer, BigDecimal> paymentAmountHashMap;
     private HashMap<Integer, BigDecimal> chargesAmountHashMap;
     private HashMap<Integer, BigDecimal> balanceAmountHashMap;
+    private HashMap<Integer, List<Charge>> chargeListHashMap;
 
     public LocalDate getCycleStartDate() {
         return cycleStartDate;
@@ -66,4 +68,13 @@ public class OutstandingChargesPaymentWrapper implements Serializable{
     public void setBalanceAmountHashMap(HashMap<Integer, BigDecimal> balanceAmountHashMap) {
         this.balanceAmountHashMap = balanceAmountHashMap;
     }
+
+    public HashMap<Integer, List<Charge>> getChargeListHashMap() {
+        return chargeListHashMap;
+    }
+
+    public void setChargeListHashMap(HashMap<Integer, List<Charge>> chargeListHashMap) {
+        this.chargeListHashMap = chargeListHashMap;
+    }
 }
+

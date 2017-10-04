@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Created by davidkim on 6/23/17.
@@ -38,5 +39,10 @@ public abstract class GenericServiceImpl<E, K> implements GenericService<E, K> {
     @Override
     public E get(K key) {
         return genericDAO.get(key);
+    }
+
+    @Override
+    public List<E> getList(){
+        return genericDAO.getList();
     }
 }

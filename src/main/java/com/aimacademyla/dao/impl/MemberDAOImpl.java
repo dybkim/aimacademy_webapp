@@ -24,16 +24,6 @@ public class MemberDAOImpl extends GenericDAOImpl<Member,Integer> implements Mem
     }
 
     @Override
-    public List<Member> getMemberList(){
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Member");
-        List<Member> memberList = query.getResultList();
-        session.flush();
-
-        return memberList;
-    }
-
-    @Override
     public List<Member> getMembersByCourse(Course course){
         Session session = currentSession();
         Query query = session.createQuery("FROM Member WHERE memberID IN (SELECT memberID FROM Member_Course_Registration WHERE courseID = :courseID)");

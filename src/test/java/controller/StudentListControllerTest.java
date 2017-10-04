@@ -7,9 +7,12 @@ import com.aimacademyla.service.MemberService;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -23,6 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by davidkim on 2/14/17.
  */
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
 public class StudentListControllerTest {
 
     @Mock
@@ -39,21 +44,25 @@ public class StudentListControllerTest {
 
     private MockMvc mockMvc;
 
+    private Member member;
+
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(studentListControllerMock).build();
+        member = new Member();
+        member.setMemberID(1);
     }
 
     @Test
-    public void editStudentTest() throws Exception{
-        Member member = new Member();
-        member.setMemberID(1);
+    public void testEditStudent() throws Exception{
+        mockMvc.perform(post("/admin/student/studentList/editStudent").param("memberID", Integer.toString(member.getMemberID())))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/admin/student/studentList"));
+    }
 
-        mockMvc.perform(post("/admin/studentList/editStudent").param("memberID", Integer.toString(member.getMemberID())))
-                .andExpect(status().is(302))
-                .andExpect(view().name("redirect:/admin/studentList"));
+    @Test
+    public void testGetStudentInfo() throws Exception{
 
-        verify(memberServiceMock, times(1));
     }
 }

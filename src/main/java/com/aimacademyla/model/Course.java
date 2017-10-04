@@ -64,6 +64,10 @@ public class Course implements Serializable{
     @Column(name="ClassDuration")
     private BigDecimal classDuration;
 
+    //Primary Instructor ID
+    @Column(name="EmployeeID")
+    private Integer employeeID;
+
     public int getCourseID() {
         return courseID;
     }
@@ -158,5 +162,13 @@ public class Course implements Serializable{
 
     public void setClassDuration(BigDecimal classDuration) {
         this.classDuration = classDuration;
+    }
+
+    public Integer getEmployeeID() {
+        return employeeID;
+    }
+
+    public void setEmployeeID(Integer employeeID) {
+        this.employeeID = employeeID;
     }
 }

@@ -40,6 +40,35 @@
             window.location.replace('/admin/home?month=' + month + '&year=' + year);
         });
 
+        memberTable.find('tbody tr').on('click', function(){
+            var tr = $(this).closest('tr');
+            var row = memberTable.row(tr);
+
+            if(row.child.isShown()){
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+
+            else{
+                row.child(formatRow(row.data())).show();
+                tr.addClass('shown');
+            }
+        });
+
+        inactiveMemberTable.find('tbody tr').on('click', function(){
+            var tr = $(this).closest('tr');
+            var row = memberTable.row(tr);
+
+            if(row.child.isShown()){
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+
+            else{
+                row.child(formatRow(row.data().get(0))).show();
+                tr.addClass('shown');
+            }
+        });
     });
 
 
@@ -57,13 +86,12 @@
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
                 <h1 class="page-header">Home</h1>
-
                 <h3>${cycleStartDate.month} ${cycleStartDate.year}</h3>
 
                 <form:select path="cycleStartDate" id="selectMonthBox">
                     <form:option selected="true" value="">Select Month</form:option>
                     <c:forEach items="${monthsList}" var="date">
-                        <form:option value="[${date.monthValue},${date.year}]">${date.month} ${date.year}</form:option>
+                        <form:option value="/admin/home/">${date.month} ${date.year}</form:option>
                     </c:forEach>
                 </form:select>
 
@@ -72,7 +100,7 @@
 
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation"><a href="#tab-members" aria-controls="tab-members" role="tab" data-toggle="tab">Outstanding Balances</a></li>
-                    <li role="presentation"><a href="#tab-inactiveMembers" aria-controls="tab-inactiveMembers" role="tab" data-toggle="tab">No Balances</a></li>
+                    <li role="presentation"><a href="#tab-inactiveMembers" aria-controls="tab-inactiveMembers" role="tab" data-toggle="tab">Paid Balances</a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -91,7 +119,7 @@
 
                             <tbody>
                             <c:forEach items="${outstandingBalanceMemberList}" var="member">
-                                <tr>
+                                <tr class="parent">
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                     <td>${balanceAmountHashMap.get(member.memberID)}</td>
@@ -99,6 +127,15 @@
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     <td><a href="<spring:url value="/admin/resources/excel/generateInvoice/student/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
+
+                                <c:forEach items="${chargeListHashMap.get(member.memberID)}" var="charge">
+                                    <tr class="child">
+                                        <td>${charge.description}</td>
+                                        <td>${charge.numChargeLines}</td>
+                                        <td>${charge.discountAmount}</td>
+                                    </tr>
+                                </c:forEach>
+
                             </c:forEach>
                             </tbody>
                         </table>
@@ -127,6 +164,27 @@
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
+
+                                    <c:forEach items="${chargeListHashMap.get(member.memberID)}" var="charge">
+                                        <table class="child">
+                                            <thead>
+                                            <tr>
+                                                <th>Course</th>
+                                                <th>Sessions Attended</th>
+                                                <th>Total Charge</th>
+                                            </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr>
+                                                    <td>${charge.description}</td>
+                                                    <td>${charge.numChargeLines}</td>
+                                                    <td>${charge.chargeAmount - charge.discountAmount}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </c:forEach>
+
                             </c:forEach>
                             </tbody>
                         </table>

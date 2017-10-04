@@ -23,16 +23,6 @@ public class MonthlyFinancesSummaryDAOImpl extends GenericDAOImpl<MonthlyFinance
     }
 
     @Override
-    public List<MonthlyFinancesSummary> getAllMonthlyFinancesSummaries() {
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Monthly_Finances_Summary");
-        List<MonthlyFinancesSummary> monthlyFinancesSummaryList = query.getResultList();
-        session.flush();
-
-        return monthlyFinancesSummaryList;
-    }
-
-    @Override
     public MonthlyFinancesSummary getMonthlyFinancesSummary(LocalDate date) {
         Session session = currentSession();
         Query query = session.createQuery("FROM Monthly_Finances_Summary WHERE MONTH(CycleStartDate) = MONTH(:date) AND YEAR(CycleStartDate) = YEAR(:date)")

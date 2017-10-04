@@ -151,7 +151,7 @@
                                         <th>Session #</th>
                                         <th>Date</th>
                                         <th>Attendance</th>
-                                        <th>Edit Info</th>
+                                        <th>Edit Session</th>
                                         <th>Hidden Date</th>
                                     </tr>
                                 </thead>

@@ -1,15 +1,11 @@
 package com.aimacademyla.controller.course.courseSession;
 
 import com.aimacademyla.model.*;
-import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.model.wrapper.CourseSessionAttendanceListWrapper;
 import com.aimacademyla.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -171,12 +167,29 @@ public class CourseController {
 
         // Adds new attendance for new courseSession
         // Updates chargeLines for each member's attendance
-        for(Attendance attendance : attendanceList) {
+        for(Attendance attendance : attendanceList)
+            if(attendance.getWasPresent())
+                numAttended++;
+
+
+        int totalNumSessions = course.getTotalNumSessions();
+        course.setTotalNumSessions(totalNumSessions + 1);
+
+        courseSession.setNumMembersAttended(numAttended);
+
+        courseSessionService.update(courseSession);
+        courseService.update(course);
+
+        // Have to update courseSessionID after courseSessions are persisted for attendance instances
+        // to satisfy key relations in MySQL DB
+        for(Attendance attendance : attendanceList){
             attendance.setAttendanceDate(courseSession.getCourseSessionDate());
+            attendance.setCourseSessionID(courseSession.getCourseSessionID());
             attendanceService.add(attendance);
 
+            attendance.setAttendanceDate(courseSession.getCourseSessionDate());
+
             if(attendance.getWasPresent()){
-                numAttended++;
                 Member member = memberService.get(attendance.getMemberID());
                 Charge charge = chargeService.getChargeByMemberForCourseByDate(member, course, attendance.getAttendanceDate());
                 ChargeLine chargeLine = new ChargeLine();
@@ -186,14 +199,6 @@ public class CourseController {
                 chargeLineService.add(chargeLine);
             }
         }
-
-        int totalNumSessions = course.getTotalNumSessions();
-        course.setTotalNumSessions(totalNumSessions + 1);
-
-        courseSession.setNumMembersAttended(numAttended);
-
-        courseSessionService.update(courseSession);
-        courseService.update(course);
 
         return "redirect:/admin/courseList/courseInfo/" + courseID;
     }

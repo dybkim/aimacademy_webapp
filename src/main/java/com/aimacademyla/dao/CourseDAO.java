@@ -10,7 +10,6 @@ import java.util.List;
  * Created by davidkim on 2/8/17.
  */
 public interface CourseDAO extends GenericDAO<Course, Integer>{
-    List<Course> getCourseList();
 
     Course getCourseByName(String courseName);
 

@@ -50,6 +50,7 @@ public class OutstandingChargesPaymentWrapperBuilder implements GenericBuilder<O
         HashMap<Integer, BigDecimal> allMembersPaymentHashMap = new HashMap<>();
         HashMap<Integer, BigDecimal> allMembersChargesHashMap = new HashMap<>();
         HashMap<Integer, BigDecimal> balanceAmountHashMap = new HashMap<>();
+        HashMap<Integer, List<Charge>> chargeListHashMap = new HashMap<>();
 
         List<Charge> chargeList = chargeService.getChargesByDate(cycleStartDate);
 
@@ -75,6 +76,7 @@ public class OutstandingChargesPaymentWrapperBuilder implements GenericBuilder<O
         }
 
         for(Integer memberID : allMembersChargesHashMap.keySet()){
+            chargeListHashMap.put(memberID, new ArrayList<>());
             BigDecimal outstandingBalance = allMembersChargesHashMap.get(memberID).subtract(allMembersPaymentHashMap.get(memberID));
 
             if(outstandingBalance.compareTo(BigDecimal.ZERO) <= 0) {
@@ -88,12 +90,16 @@ public class OutstandingChargesPaymentWrapperBuilder implements GenericBuilder<O
             }
         }
 
+        for(Charge charge : chargeList)
+            chargeListHashMap.get(charge.getMemberID()).add(charge);
+
         outstandingChargesPaymentWrapper.setCycleStartDate(cycleStartDate);
         outstandingChargesPaymentWrapper.setPaidBalanceMemberList(paidBalanceMemberList);
         outstandingChargesPaymentWrapper.setOutstandingBalanceMemberList(outstandingBalanceMemberList);
         outstandingChargesPaymentWrapper.setChargesAmountHashMap(allMembersChargesHashMap);
         outstandingChargesPaymentWrapper.setPaymentAmountHashMap(allMembersPaymentHashMap);
         outstandingChargesPaymentWrapper.setBalanceAmountHashMap(balanceAmountHashMap);
+        outstandingChargesPaymentWrapper.setChargeListHashMap(chargeListHashMap);
 
         return outstandingChargesPaymentWrapper;
     }

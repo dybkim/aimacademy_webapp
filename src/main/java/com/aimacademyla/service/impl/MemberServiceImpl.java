@@ -36,11 +36,6 @@ public class MemberServiceImpl extends GenericServiceImpl<Member, Integer> imple
     }
 
     @Override
-    public List<Member> getMemberList() {
-       return memberDAO.getMemberList();
-    }
-
-    @Override
     public List<Member> getMembersByCourse(Course course){return memberDAO.getMembersByCourse(course);}
 
     @Override

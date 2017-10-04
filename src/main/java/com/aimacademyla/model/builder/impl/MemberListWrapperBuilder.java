@@ -40,7 +40,7 @@ public class MemberListWrapperBuilder implements GenericBuilder<MemberListWrappe
     @Override
     public MemberListWrapper build() {
         List<Member> memberList = new ArrayList<>();
-        List<Member> inactiveMemberList = memberService.getMemberList();
+        List<Member> inactiveMemberList = memberService.getList();
         HashMap<Integer, Boolean> membershipHashMap = new HashMap<>();
 
         List<MemberMonthlyRegistration> memberMonthlyRegistrationList = memberMonthlyRegistrationService.getMemberMonthlyRegistrationList(cycleStartDate);

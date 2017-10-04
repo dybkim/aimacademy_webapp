@@ -12,8 +12,6 @@ import java.util.List;
  */
 public interface MemberService extends GenericService<Member, Integer>{
 
-    List<Member> getMemberList();
-
     List<Member> getMembersByCourse(Course course);
 
     List<Member> getActiveMembersByCourse(Course course);

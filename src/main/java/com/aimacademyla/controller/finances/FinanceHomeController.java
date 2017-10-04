@@ -40,7 +40,7 @@ public class FinanceHomeController {
 
     @RequestMapping()
     public String home(Model model){
-        List<MonthlyFinancesSummary> monthlyFinancesSummaryList = monthlyFinancesSummaryService.getAllMonthlyFinancesSummaries();
+        List<MonthlyFinancesSummary> monthlyFinancesSummaryList = monthlyFinancesSummaryService.getList();
         HashMap<Integer, String> seasonDescriptionHashMap = new HashMap<>();
         for(MonthlyFinancesSummary monthlyFinancesSummary : monthlyFinancesSummaryList)
             seasonDescriptionHashMap.put(monthlyFinancesSummary.getMonthlyFinancesSummaryID(), Season.SeasonDescription.toString(monthlyFinancesSummary.getCycleStartDate()));

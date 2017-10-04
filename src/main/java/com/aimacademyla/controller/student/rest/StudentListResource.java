@@ -29,7 +29,7 @@ public class StudentListResource {
     @RequestMapping("/getList")
     @ResponseBody
     public String getStudentList(){
-        return new Gson().toJson(memberService.getMemberList());
+        return new Gson().toJson(memberService.getList());
     }
 
 }

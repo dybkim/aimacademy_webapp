@@ -60,6 +60,7 @@ public class HomeController {
         HashMap<Integer, BigDecimal> chargesAmountHashMap = outstandingChargesPaymentWrapper.getChargesAmountHashMap();
         HashMap<Integer, BigDecimal> paymentAmountHashMap = outstandingChargesPaymentWrapper.getPaymentAmountHashMap();
         HashMap<Integer, BigDecimal> balanceAmountHashMap = outstandingChargesPaymentWrapper.getBalanceAmountHashMap();
+        HashMap<Integer, List<Charge>> chargeListHashMap = outstandingChargesPaymentWrapper.getChargeListHashMap();
 
         List<LocalDate> monthsList = TemporalReference.getMonthList();
         Collections.reverse(monthsList);
@@ -71,6 +72,7 @@ public class HomeController {
         model.addAttribute("chargesAmountHashMap", chargesAmountHashMap);
         model.addAttribute("paymentAmountHashMap", paymentAmountHashMap);
         model.addAttribute("balanceAmountHashMap", balanceAmountHashMap);
+        model.addAttribute("chargeListHashMap", chargeListHashMap);
 
         return "home";
     }

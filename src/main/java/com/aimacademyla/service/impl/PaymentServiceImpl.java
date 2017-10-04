@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -43,8 +44,13 @@ public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> imp
     public Payment getPaymentForMemberByDate(Member member, LocalDate date){
         Payment payment = paymentDAO.getPaymentForMemberByDate(member, date);
 
-        if(payment == null)
-            payment = paymentDAO.get(Payment.NO_PAYMENT);
+        if(payment == null){
+            payment = new Payment();
+            payment.setMemberID(member.getMemberID());
+            payment.setCycleStartDate(LocalDate.of(date.getYear(), date.getMonthValue(), 1));
+            payment.setPaymentAmount(BigDecimal.ZERO);
+        }
+
 
         return payment;
     }

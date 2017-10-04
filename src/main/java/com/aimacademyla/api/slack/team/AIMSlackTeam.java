@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AIMSlackTeam implements SlackTeam{
 
-    @Value("${authtoken}")
+    @Value("xoxb-74759316407-mMLHsNG3ltLuvyVd3FRflWRD")
     private String id;
 
     private String name;

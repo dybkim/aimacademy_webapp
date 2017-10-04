@@ -11,13 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Created by davidkim on 6/28/17.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(
-        locations = "classpath*:**/resources/testContext.xml"
-)
-@SqlGroup({
-        @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath*:/resources/initializationScript.sql")
-})
 public abstract class AbstractTransactionTest {
 
 }
