@@ -109,7 +109,7 @@
                                     <fmt:parseDate value="${member.memberEntryDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
                                     <fmt:formatDate value="${parsedDate}" var="formattedDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT" />
                                     <form:hidden path="memberList[${i.index}].memberEntryDate" id="entryDate" class="form-Control" value="${formattedDate}"/>
-                                    <td><a href="<spring:url value ="/admin/student/studentList/editStudent/${member.memberID}"/>">${member.memberID}</a></td>
+                                    <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                     <td><form:checkbox path="membershipHashMap[${member.memberID}]" value="${memberListWrapper.membershipHashMap.get(member.memberID)}" id="isActiveCheckbox"/></td>
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
@@ -147,11 +147,11 @@
                                 <fmt:parseDate value="${member.memberEntryDate}" pattern="yyyy-MM-dd" var="parsedInactiveDate" type="date" />
                                 <fmt:formatDate value="${parsedInactiveDate}" var="formattedInactiveDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT" />
                                 <form:hidden path="inactiveMemberList[${i.index}].memberEntryDate" id="entryDate" class="form-Control" value="${formattedInactiveDate}"/>
-                                <td><a href="<spring:url value ="/admin/studentList/editStudent/${member.memberID}"/>">${member.memberID}</a></td>
+                                <td>${member.memberID}</td>
                                 <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                 <td><form:checkbox path="membershipHashMap[${member.memberID}]" value="${memberListWrapper.membershipHashMap.get(member.memberID)}" id="isActiveCheckbox"/></td>
                                 <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
-                                <td><a href="<spring:url value="/admin/studentList/editStudent/${member.memberID}"/>"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                                <td><a href="<spring:url value="/admin/student/studentList/editStudent/${member.memberID}"/>"><span class="glyphicon glyphicon-pencil"></span></a></td>
                             </tr>
                         </c:forEach>
                         </tbody>
