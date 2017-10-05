@@ -13,7 +13,9 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/dispatcher-servlet.xml,
-            /WEB-INF/applicationContext.xml
+            /WEB-INF/applicationContext.xml,
+            classpath*:/testContext.xml,
+            classpath*:/mockTestContext.xml
         </param-value>
     </context-param>
 

@@ -10,7 +10,11 @@
   Time: 5:10 AM
   To change this template use File | Settings | File Templates.
 --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%@ include file="../template/navbar.jsp"%>
+<%@ include file="../template/sidebar.jsp"%>
 
 <link href="<c:url value="/WEB-INF/resources/css/suggestion.css" />" rel="stylesheet">
 
@@ -49,12 +53,12 @@
             <form:form action="${pageContext.request.contextPath}/admin/courseList/addCourse" method="post" modelAttribute="courseRegistrationWrapper">
                 <div class="form-group"><form:errors path="course.courseName" cssStyle="color: #FF0000"/>
                     <label for="courseTitle">Course Title</label>
-                    <form:input path="course.courseName" id="courseTitle" class="form-Control"/>
+                    <form:input path="course.courseName" id="courseTitle" class="form-Control" cssStyle="width: 400px"/>
                 </div>
 
                 <div class="form-group"><form:errors path="course.courseType" cssStyle="color: #FF0000"/>
                     <label for="courseType">Course Type</label>
-                    <form:select path="course.courseType" id="courseType" class="form-Control">
+                    <form:select path="course.courseType" id="courseType" class="form-Control" cssStyle="width: 200px">
                         <form:option value="Supplement"/>
                         <form:option value="Finals Prep"/>
                         <form:option value="Test Prep"/>
@@ -75,12 +79,12 @@
 
                 <div class="form-group">
                     <label for="coursePrice">Price per hour</label>
-                    <form:input path="course.pricePerHour" id="coursePrice" class="form-control"/>
+                    <form:input path="course.pricePerHour" id="coursePrice" class="form-control" cssStyle="width: 100px"/>
                 </div>
 
                 <div class="form-group">
                     <label for="classDuration">Session length (hours)</label>
-                    <form:input path="course.classDuration" id="classDuration" class="form-control"/>
+                    <form:input path="course.classDuration" id="classDuration" class="form-control" cssStyle="width: 100px"/>
                 </div>
 
                 <form:hidden path="course.isActive" value="true"/>

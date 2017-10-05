@@ -53,7 +53,6 @@ public class MemberServiceTest extends AbstractTransactionTest {
         member.setMemberLastName("Young");
     }
 
-
     @Before
     public void setUp(){
         if(memberService.get(member.getMemberID()) != null)

@@ -16,4 +16,4 @@ fi
 
 mv $WAR_STAGED_LOCATION $CATALINA_HOME/webapps/webportal.war
 
-service tomcat8 restart
+service tomcat8 start

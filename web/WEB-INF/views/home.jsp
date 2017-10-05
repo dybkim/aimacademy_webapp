@@ -71,12 +71,6 @@
         });
     });
 
-
-
-//    var changeMonth = function(date){
-//        alert(date);
-//        window.location.replace('/admin/home?month=' + date[0] + '&year=' + date[1]);
-//    };
 </script>
 
 <html>

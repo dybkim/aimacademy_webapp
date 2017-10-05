@@ -20,20 +20,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <script>
-
-    <%--$(document).ready(function(){--%>
-        <%--var tags = ${memberListString};--%>
-
-        <%--$( "#memberDropdown" ).autocomplete({--%>
-            <%--source: tags,--%>
-            <%--select: function(event, ui){--%>
-                <%--$('#memberDropdown').val(ui.item.label);--%>
-            <%--},--%>
-            <%--focus: function(event, ui){--%>
-                <%--$('#memberDropdown').val(ui.item.label);--%>
-            <%--}--%>
-        <%--});--%>
-    <%--});--%>
 </script>
 
 <html lang="en">
@@ -73,6 +59,7 @@
             <input type="submit" value="Submit" class="btn btn=defaul" ng-click="submitRegistrationList()">
 
             <input action="action" onclick="history.go(-1);" value="Cancel" class="btn btn-default">
+        </div>
     </div>
 </div>
 

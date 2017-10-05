@@ -1,4 +1,4 @@
-package com.aimacademyla.controller.course.courseSession;
+package com.aimacademyla.controller.course.coursesession;
 
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.wrapper.CourseSessionAttendanceListWrapper;
@@ -146,7 +146,7 @@ public class CourseController {
 
             for (FieldError error : errors ) {
                 logger.error(error.getDefaultMessage());
-                if(error.getField().equals("courseSession.courseSessionDate"))
+                if(error.getField().equals("coursesession.courseSessionDate"))
                     redirectAttributes.addFlashAttribute("courseSessionDateErrorMessage", "Date must be in valid MM/DD/YYYY format");
             }
             return "redirect:/admin/courseList/courseInfo/" + courseID + "/addCourseSession";
@@ -165,7 +165,7 @@ public class CourseController {
         BigDecimal totalCharge = course.getPricePerHour().multiply(course.getClassDuration());
         int numAttended = 0;
 
-        // Adds new attendance for new courseSession
+        // Adds new attendance for new coursesession
         // Updates chargeLines for each member's attendance
         for(Attendance attendance : attendanceList)
             if(attendance.getWasPresent())
@@ -239,7 +239,7 @@ public class CourseController {
 
             for (FieldError error : errors ) {
                 logger.error(error.getDefaultMessage());
-                if(error.getField().equals("courseSession.courseSessionDate"))
+                if(error.getField().equals("coursesession.courseSessionDate"))
                     redirectAttributes.addFlashAttribute("courseSessionDateErrorMsg", "Date must be in MM/DD/YYYY format");
             }
 
