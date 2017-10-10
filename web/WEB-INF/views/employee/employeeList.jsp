@@ -25,12 +25,12 @@
 
         var employeeListTable = $('#employeeListTable').DataTable({
             "lengthMenu": [[25,50,-1], [25,50, "All"]],
-            "order": [[0, "desc"]],
+            "order": [[0, "asc"]]
         });
 
         var inactiveEmployeeListTable = $('#inactiveEmployeeListTable').DataTable({
             "lengthMenu": [[25,50,-1], [25,50, "All"]],
-            "order": [[0, "desc"]],
+            "order": [[0, "asc"]]
         });
 
         $('.nav-tabs a[href="#tab-employees"]').tab('show');
@@ -77,7 +77,7 @@
                             <td><fmt:parseDate value="${employee.dateEmployed}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
                                 <fmt:formatDate value="${parsedDate}" var="formattedHiddenDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT" />${formattedHiddenDate}</td>
                             <td>TBA</td>
-                            <td><a href="<spring:url value="/admin/employee/${employee}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                            <td><a href="<spring:url value="/admin/employee/editEmployee/${employee.employeeID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -105,7 +105,7 @@
                             <td><fmt:parseDate value="${employee.dateEmployed}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
                                 <fmt:formatDate value="${parsedDate}" var="formattedHiddenDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT" />${formattedHiddenDate}</td>
                             <td>TBA</td>
-                            <td><a href="<spring:url value="/admin/employee"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                            <td><a href="<spring:url value="/admin/employee/editEmployee/${employee.employeeID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                         </tr>
                     </c:forEach>
                     </tbody>
