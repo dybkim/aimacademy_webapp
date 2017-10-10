@@ -136,7 +136,6 @@
                     </table>
                 </div>
 
-
                 <form:hidden path="course.numEnrolled" value="${courseRegistrationWrapper.course.numEnrolled}"/>
 
                 <br><br>
