@@ -22,7 +22,7 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Edit student</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/studentList/editStudent" method="POST" modelAttribute="member">
+            <form:form action="${pageContext.request.contextPath}/admin/student/studentList/editStudent" method="POST" modelAttribute="member">
                 <div class="form-group">
                     <label for="firstName">First Name: </label><form:errors path="memberFirstName" cssStyle="color: #FF0000"/>
                     <form:input path="memberFirstName" id="firstName" class="form-Control" value="${member.memberFirstName}"/>
@@ -69,6 +69,7 @@
                 </div>
 
                 <div class="form-group">
+                    <span style="color: #FF0000">${dateJoinedErrorMessage}</span>
                     <label for="entryDate">Date Joined (MM/DD/YYYY): </label>
                     <fmt:parseDate value="${member.memberEntryDate}" pattern="yyyy-MM-dd" var="parsedEntryDate" type="date" />
                     <fmt:formatDate value="${parsedEntryDate}" var="formattedEntryDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT"/>

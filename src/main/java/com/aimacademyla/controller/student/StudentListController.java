@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -119,9 +121,17 @@ public class StudentListController {
     }
 
     @RequestMapping(value = "/addStudent", method = RequestMethod.POST)
-    public String addStudent(@Valid @ModelAttribute("member") Member member, BindingResult result){
+    public String addStudent(@Valid @ModelAttribute("member") Member member, BindingResult result, RedirectAttributes redirectAttributes){
         if(result.hasErrors())
-            return "/student/addStudent";
+        {
+            List<FieldError> errors = result.getFieldErrors();
+
+            for (FieldError error : errors ) {
+                if(error.getField().equals("memberEntryDate"))
+                    redirectAttributes.addFlashAttribute("dateJoinedErrorMessage", "Date must be in valid MM/DD/YYYY format");
+            }
+            return "redirect:/admin/student/studentList/addStudent";
+        }
 
         memberService.add(member);
         return "redirect:/admin/student/studentList";
@@ -135,9 +145,17 @@ public class StudentListController {
     }
 
     @RequestMapping(value = "/editStudent", method = RequestMethod.POST)
-    public String editStudent(@Valid @ModelAttribute("member") Member member, BindingResult result){
+    public String editStudent(@Valid @ModelAttribute("member") Member member, BindingResult result, RedirectAttributes redirectAttributes){
         if(result.hasErrors())
-            return "/student/editStudent";
+        {
+            List<FieldError> errors = result.getFieldErrors();
+
+            for (FieldError error : errors ) {
+                if(error.getField().equals("memberEntryDate"))
+                    redirectAttributes.addFlashAttribute("dateJoinedErrorMessage", "Date must be in valid MM/DD/YYYY format");
+            }
+            return "redirect:/admin/student/studentList/editStudent/" + member.getMemberID();
+        }
 
         memberService.update(member);
         return "redirect:/admin/student/studentList";

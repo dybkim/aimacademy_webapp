@@ -94,6 +94,16 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="coursePrice">Price per hour</label>
+                    <form:input path="course.pricePerHour" id="coursePrice" class="form-control" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.pricePerHour}"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="classDuration">Session length (hours)</label>
+                    <form:input path="course.classDuration" id="classDuration" class="form-control" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.classDuration}"/>
+                </div>
+
+                <div class="form-group">
                     <label for="isActiveCheckBox">Is Active:</label>
                     <form:checkbox path="course.isActive" value="${courseRegistrationWrapper.course.isActive}" id="isActiveCheckBox"/>
                 </div>

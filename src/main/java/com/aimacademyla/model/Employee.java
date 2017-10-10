@@ -1,5 +1,6 @@
 package com.aimacademyla.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -17,9 +18,11 @@ public class Employee implements Serializable{
     private int employeeID;
 
     @Column(name="EmployeeFirstName")
+    @NotEmpty(message = "Must provide first name!")
     private String employeeFirstName;
 
     @Column(name="EmployeeLastName")
+    @NotEmpty(message="Must provide last name!")
     private String employeeLastName;
 
     @Column(name="JobDescription")
@@ -84,11 +87,11 @@ public class Employee implements Serializable{
         this.dateTerminated = dateTerminated;
     }
 
-    public boolean isActive() {
+    public boolean getIsActive() {
         return isActive;
     }
 
-    public void setActive(boolean active) {
+    public void setIsActive(boolean active) {
         isActive = active;
     }
 }

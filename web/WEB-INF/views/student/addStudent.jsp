@@ -68,16 +68,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="zipCode">Zip Code</label>
-                    <form:input path="memberZipCode" id="zipCode" class="form-Control"/>
-                </div>
-
-                <div class="form-group">
                     <label for="state">State</label>
                     <form:input path="memberState" id="state" class="form-Control"/>
                 </div>
 
                 <div class="form-group">
+                    <label for="zipCode">Zip Code</label>
+                    <form:input path="memberZipCode" id="zipCode" class="form-Control"/>
+                </div>
+
+                <div class="form-group">
+                    <span style="color: #FF0000">${dateJoinedErrorMessage}</span>
                     <label for="entryDate">Date Joined (MM/DD/YYYY)</label>
                     <form:input path="memberEntryDate" id="entryDate" class="form-Control"/>
                 </div>
