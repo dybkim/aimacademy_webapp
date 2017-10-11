@@ -196,6 +196,7 @@ public class CourseController {
                 chargeLine.setAttendanceID(attendance.getAttendanceID());
                 chargeLine.setTotalCharge(totalCharge);
                 chargeLine.setChargeID(charge.getChargeID());
+                chargeLine.setHoursBilled(course.getClassDuration());
                 chargeLineService.add(chargeLine);
             }
         }
@@ -272,11 +273,13 @@ public class CourseController {
                     chargeLine.setChargeID(charge.getChargeID());
                     chargeLine.setAttendanceID(attendance.getAttendanceID());
                     chargeLine.setTotalCharge(totalCharge);
+                    chargeLine.setHoursBilled(course.getClassDuration());
                     chargeLineService.add(chargeLine);
                     continue;
                 }
 
                 chargeLine.setTotalCharge(totalCharge);
+                chargeLine.setHoursBilled(course.getClassDuration());
                 chargeLineService.update(chargeLine);
             }
 

@@ -60,6 +60,9 @@ public class Charge implements Serializable{
     @Column(name="NumChargeLines")
     private int numChargeLines;
 
+    @Column(name="HoursBilled")
+    private BigDecimal hoursBilled;
+
     public int getChargeID() {
         return chargeID;
     }
@@ -146,5 +149,13 @@ public class Charge implements Serializable{
 
     public void setNumChargeLines(int numChargeLines) {
         this.numChargeLines = numChargeLines;
+    }
+
+    public BigDecimal getHoursBilled() {
+        return hoursBilled;
+    }
+
+    public void setHoursBilled(BigDecimal hoursBilled) {
+        this.hoursBilled = hoursBilled;
     }
 }

@@ -4,10 +4,7 @@ import com.aimacademyla.model.*;
 import com.aimacademyla.model.builder.impl.OutstandingChargesPaymentWrapperBuilder;
 import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.model.wrapper.OutstandingChargesPaymentWrapper;
-import com.aimacademyla.service.ChargeService;
-import com.aimacademyla.service.MemberService;
-import com.aimacademyla.service.MonthlyFinancesSummaryService;
-import com.aimacademyla.service.PaymentService;
+import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,16 +27,19 @@ public class HomeController {
     private MemberService memberService;
     private ChargeService chargeService;
     private PaymentService paymentService;
+    private CourseService courseService;
 
     @Autowired
     public HomeController(MonthlyFinancesSummaryService monthlyFinancesSummaryService,
                           MemberService memberService,
                           ChargeService chargeService,
-                          PaymentService paymentService){
+                          PaymentService paymentService,
+                          CourseService courseService){
         this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
         this.memberService = memberService;
         this.chargeService = chargeService;
         this.paymentService = paymentService;
+        this.courseService = courseService;
     }
 
     @RequestMapping("/home")
@@ -61,6 +61,10 @@ public class HomeController {
         HashMap<Integer, BigDecimal> paymentAmountHashMap = outstandingChargesPaymentWrapper.getPaymentAmountHashMap();
         HashMap<Integer, BigDecimal> balanceAmountHashMap = outstandingChargesPaymentWrapper.getBalanceAmountHashMap();
         HashMap<Integer, List<Charge>> chargeListHashMap = outstandingChargesPaymentWrapper.getChargeListHashMap();
+        HashMap<Integer, Course> courseHashMap = new HashMap<>();
+
+        for(Course course : courseService.getList())
+            courseHashMap.put(course.getCourseID(), course);
 
         List<LocalDate> monthsList = TemporalReference.getMonthList();
         Collections.reverse(monthsList);
@@ -73,6 +77,7 @@ public class HomeController {
         model.addAttribute("paymentAmountHashMap", paymentAmountHashMap);
         model.addAttribute("balanceAmountHashMap", balanceAmountHashMap);
         model.addAttribute("chargeListHashMap", chargeListHashMap);
+        model.addAttribute("courseHashMap", courseHashMap);
 
         return "home";
     }

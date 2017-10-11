@@ -79,8 +79,8 @@ public class MemberChargesFinancesWrapperBuilder implements GenericBuilder<Membe
             chargeLineListHashMap.put(charge.getChargeID(), chargeLineList);
             Course course = courseService.get(charge.getCourseID());
             courseHashMap.put(charge.getChargeID(), course);
-            hoursBilledHashMap.put(charge.getChargeID(), course.getClassDuration().multiply(BigDecimal.valueOf(chargeLineList.size())));
-            hoursBilledTotal = course.getClassDuration().multiply(BigDecimal.valueOf(chargeLineList.size()));
+            hoursBilledHashMap.put(charge.getChargeID(), charge.getHoursBilled());
+            hoursBilledTotal = hoursBilledTotal.add(charge.getHoursBilled());
             totalChargesAmount = totalChargesAmount.add(charge.getChargeAmount());
             totalDiscountAmount = totalDiscountAmount.add(charge.getDiscountAmount());
         }

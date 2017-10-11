@@ -49,7 +49,7 @@
             });
         }).draw();
 
-        $('.nav-tabs a[href="#tab-members"]').tab('show');
+        $('.nav-tabs a[href="#tab-sessions"]').tab('show');
     });
 
 

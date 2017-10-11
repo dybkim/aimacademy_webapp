@@ -27,17 +27,14 @@
             "lengthMenu": [[50,-1], [50, "All"]]
         });
 
-        var inactiveMemberTable = $('#inactiveMemberTable').DataTable({
+        var paidBalanceMemberTable = $('#paidBalanceMemberTable').DataTable({
             "lengthMenu": [[50,-1], [50, "All"]]
         });
 
         $('.nav-tabs a[href="#tab-members"]').tab('show');
 
         $('#selectMonthBox').change(function(){
-            var date = $.parseJSON($(this).val());
-            var month = date[0];
-            var year = date[1];
-            window.location.replace('/admin/home?month=' + month + '&year=' + year);
+            window.location.replace('/admin/home' + $(this).val());
         });
 
         memberTable.find('tbody tr').on('click', function(){
@@ -55,7 +52,7 @@
             }
         });
 
-        inactiveMemberTable.find('tbody tr').on('click', function(){
+        paidBalanceMemberTable.find('tbody tr').on('click', function(){
             var tr = $(this).closest('tr');
             var row = memberTable.row(tr);
 
@@ -85,7 +82,7 @@
                 <form:select path="cycleStartDate" id="selectMonthBox">
                     <form:option selected="true" value="">Select Month</form:option>
                     <c:forEach items="${monthsList}" var="date">
-                        <form:option value="/admin/home/">${date.month} ${date.year}</form:option>
+                        <form:option value="?month=${date.monthValue}&year=${date.year}">${date.month} ${date.year}</form:option>
                     </c:forEach>
                 </form:select>
 
@@ -94,7 +91,7 @@
 
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation"><a href="#tab-members" aria-controls="tab-members" role="tab" data-toggle="tab">Outstanding Balances</a></li>
-                    <li role="presentation"><a href="#tab-inactiveMembers" aria-controls="tab-inactiveMembers" role="tab" data-toggle="tab">Paid Balances</a></li>
+                    <li role="presentation"><a href="#tab-paidBalanceMembers" aria-controls="tab-paidBalanceMembers" role="tab" data-toggle="tab">Paid Balances</a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -126,8 +123,9 @@
                                     <%--<table class="child">--%>
                                         <%--<thead>--%>
                                         <%--<tr>--%>
-                                            <%--<th>Course</th>--%>
+                                            <%--<th>Charge</th>--%>
                                             <%--<th>Sessions Attended</th>--%>
+                                            <%--<th>Total Hours</th>--%>
                                             <%--<th>Total Charge</th>--%>
                                         <%--</tr>--%>
                                         <%--</thead>--%>
@@ -136,6 +134,7 @@
                                         <%--<tr>--%>
                                             <%--<td>${charge.description}</td>--%>
                                             <%--<td>${charge.numChargeLines}</td>--%>
+                                            <%--<td>${charge.hoursBilled}</td>--%>
                                             <%--<td>${charge.chargeAmount - charge.discountAmount}</td>--%>
                                         <%--</tr>--%>
                                         <%--</tbody>--%>
@@ -147,8 +146,8 @@
                         </table>
                     </div>
 
-                    <div role="tabpanel" class="tab-pane fade in active" id="tab-inactiveMembers">
-                        <table id="inactiveMemberTable" class="table table-striped">
+                    <div role="tabpanel" class="tab-pane fade in active" id="tab-paidBalanceMembers">
+                        <table id="paidBalanceMemberTable" class="table table-striped">
                             <thead>
                             <tr>
                                 <th>ID</th>
@@ -175,8 +174,9 @@
                                         <%--<table class="child">--%>
                                             <%--<thead>--%>
                                             <%--<tr>--%>
-                                                <%--<th>Course</th>--%>
+                                                <%--<th>Charge</th>--%>
                                                 <%--<th>Sessions Attended</th>--%>
+                                                <%--<th>Total Hours</th>--%>
                                                 <%--<th>Total Charge</th>--%>
                                             <%--</tr>--%>
                                             <%--</thead>--%>
@@ -185,6 +185,7 @@
                                                 <%--<tr>--%>
                                                     <%--<td>${charge.description}</td>--%>
                                                     <%--<td>${charge.numChargeLines}</td>--%>
+                                                    <%--<td>${charge.hoursBilled}</td>--%>
                                                     <%--<td>${charge.chargeAmount - charge.discountAmount}</td>--%>
                                                 <%--</tr>--%>
                                             <%--</tbody>--%>

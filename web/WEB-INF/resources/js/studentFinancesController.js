@@ -61,5 +61,9 @@ studentFinancesControllerApp.controller("studentFinancesControl", function($scop
         else{
             alert('To modify course charges, please change modify the attendance on the course page');
         }
-    }
+    };
+
+    $scope.addPayment = function(memberID, paymentAmount){
+
+    };
 });

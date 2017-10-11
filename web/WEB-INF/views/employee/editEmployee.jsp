@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -27,6 +27,8 @@
             <h1 class="page-header">Add Employee</h1>
 
             <form:form action="${pageContext.request.contextPath}/admin/employee/addEmployee" method="POST" modelAttribute="employee">
+
+                <form:hidden path="employeeID" value="${employee.employeeID}"/>
 
                 <div class="form-group"><form:errors path="employeeFirstName" cssStyle="color: #FF0000"/>
                     <label for="employeeFirstName">First Name</label>

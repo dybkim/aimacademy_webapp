@@ -27,6 +27,9 @@ public class ChargeLine implements Serializable{
     @JoinColumn(name="ChargeID")
     private int chargeID;
 
+    @Column(name="HoursBilled")
+    private BigDecimal hoursBilled;
+
     @Column(name="TotalCharge")
     @NumberFormat(style= NumberFormat.Style.CURRENCY)
     private BigDecimal totalCharge;
@@ -61,5 +64,13 @@ public class ChargeLine implements Serializable{
 
     public void setTotalCharge(BigDecimal totalCharge) {
         this.totalCharge = totalCharge;
+    }
+
+    public BigDecimal getHoursBilled() {
+        return hoursBilled;
+    }
+
+    public void setHoursBilled(BigDecimal hoursBilled) {
+        this.hoursBilled = hoursBilled;
     }
 }

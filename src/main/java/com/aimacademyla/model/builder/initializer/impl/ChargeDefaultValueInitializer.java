@@ -47,6 +47,7 @@ public class ChargeDefaultValueInitializer implements GenericDefaultValueInitial
         charge.setSeasonID(season.getSeasonID());
         charge.setNumChargeLines(0);
         charge.setDiscountAmount(BigDecimal.valueOf(0));
+        charge.setHoursBilled(BigDecimal.ZERO);
         return charge;
     }
 
