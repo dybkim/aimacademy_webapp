@@ -17,6 +17,46 @@
 <%@ include file="template/sidebar.jsp"%>
 
 <script>
+
+    function format(memberID){
+        var table = '<table cellpadding="5" cellspacing="0" border="1" style="padding-left:50px;">';
+        $.ajax({
+            url: "/admin/student/rest/studentFinances/getChargeList/" + memberID,
+            type: "GET",
+            async: false,
+            dataType: "json",
+            data: {
+                month: ${cycleStartDate.monthValue},
+                year: ${cycleStartDate.year}
+            },
+            success:function(chargeList){
+                for(var i = 0; i < chargeList.length; i++){
+                    table = table + '<tr>';
+                    var description = JSON.stringify(chargeList[i].description).replace(/\"/g, "");
+                    var chargeAmount = JSON.stringify(chargeList[i].chargeAmount);
+                    var hoursBilled = JSON.stringify(chargeList[i].hoursBilled);
+
+                    table = table + '<td><b>Charge Description:</b></td>' +
+                            '<td>' + description + '</td>' +
+                            '<td><b>Charge Amount:</b></td>' +
+                            '<td>' + chargeAmount + '</td>' +
+                            '<td><b>Hours Billed</b></td>' +
+                            '<td>' + hoursBilled + '</td>' +
+                            '</tr>';
+                }
+
+                table = table + '</table>';
+            },
+            error:function(response){
+                var jsonResponse = JSON.parse(response.responseText);
+                var errorMessage = JSON.stringify(jsonResponse["errorMessage"]);
+                alert("Error: " + errorMessage);
+                table = null;
+            }
+        });
+        return table;
+    }
+
     $(document).ready(function() {
 
         $('a[data-toggle="tabpanel"]').on('shown.bs.tab', function () {
@@ -24,11 +64,13 @@
         });
 
         var memberTable = $('#memberTable').DataTable({
-            "lengthMenu": [[50,-1], [50, "All"]]
+            "lengthMenu": [[50,-1], [50, "All"]],
+            "order": [["1", "desc"]]
         });
 
         var paidBalanceMemberTable = $('#paidBalanceMemberTable').DataTable({
-            "lengthMenu": [[50,-1], [50, "All"]]
+            "lengthMenu": [[50,-1], [50, "All"]],
+            "order": [["1", "desc"]]
         });
 
         $('.nav-tabs a[href="#tab-members"]').tab('show');
@@ -37,9 +79,10 @@
             window.location.replace('/admin/home' + $(this).val());
         });
 
-        memberTable.find('tbody tr').on('click', function(){
+        $('#memberTable tbody').on('click', 'td.details-control', function(){
             var tr = $(this).closest('tr');
             var row = memberTable.row(tr);
+            var id = $(this).closest('tr').find("td").eq(1).text();
 
             if(row.child.isShown()){
                 row.child.hide();
@@ -47,14 +90,15 @@
             }
 
             else{
-                row.child(formatRow(row.data())).show();
+                row.child(format(id)).show();
                 tr.addClass('shown');
             }
         });
 
-        paidBalanceMemberTable.find('tbody tr').on('click', function(){
+        $('#paidBalanceMemberTable tbody').on('click', 'td.details-control', function(){
             var tr = $(this).closest('tr');
-            var row = memberTable.row(tr);
+            var row = paidBalanceMemberTable.row(tr);
+            var id = $(this).closest('tr').find("td").eq(1).text();
 
             if(row.child.isShown()){
                 row.child.hide();
@@ -62,10 +106,10 @@
             }
 
             else{
-                row.child(formatRow(row.data().get(0))).show();
+                row.child(format(id)).show();
                 tr.addClass('shown');
             }
-        });
+        })
     });
 
 </script>
@@ -99,6 +143,7 @@
                         <table id="memberTable" class="table table-striped">
                             <thead>
                             <tr>
+                                <th></th>
                                 <th>ID</th>
                                 <th>Member Name</th>
                                 <th>Outstanding Balance</th>
@@ -111,6 +156,7 @@
                             <tbody>
                             <c:forEach items="${outstandingBalanceMemberList}" var="member">
                                 <tr class="parent">
+                                    <td class="details-control"><span class="glyphicon glyphicon-plus-sign"></span></td>
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                     <td>${balanceAmountHashMap.get(member.memberID)}</td>
@@ -118,29 +164,6 @@
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     <td><a href="<spring:url value="/admin/resources/excel/generateInvoice/student/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
-
-                                <%--<c:forEach items="${chargeListHashMap.get(member.memberID)}" var="charge">--%>
-                                    <%--<table class="child">--%>
-                                        <%--<thead>--%>
-                                        <%--<tr>--%>
-                                            <%--<th>Charge</th>--%>
-                                            <%--<th>Sessions Attended</th>--%>
-                                            <%--<th>Total Hours</th>--%>
-                                            <%--<th>Total Charge</th>--%>
-                                        <%--</tr>--%>
-                                        <%--</thead>--%>
-
-                                        <%--<tbody>--%>
-                                        <%--<tr>--%>
-                                            <%--<td>${charge.description}</td>--%>
-                                            <%--<td>${charge.numChargeLines}</td>--%>
-                                            <%--<td>${charge.hoursBilled}</td>--%>
-                                            <%--<td>${charge.chargeAmount - charge.discountAmount}</td>--%>
-                                        <%--</tr>--%>
-                                        <%--</tbody>--%>
-                                    <%--</table>--%>
-                                <%--</c:forEach>--%>
-
                             </c:forEach>
                             </tbody>
                         </table>
@@ -150,6 +173,7 @@
                         <table id="paidBalanceMemberTable" class="table table-striped">
                             <thead>
                             <tr>
+                                <th></th>
                                 <th>ID</th>
                                 <th>Member Name</th>
                                 <th>Outstanding Balance</th>
@@ -162,6 +186,7 @@
                             <tbody>
                             <c:forEach items="${paidBalanceMemberList}" var="member">
                                 <tr>
+                                    <td class="details-control"><span class="glyphicon glyphicon-plus-sign"></span></td>
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                     <td>${balanceAmountHashMap.get(member.memberID)}</td>
@@ -169,29 +194,6 @@
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
-
-                                    <%--<c:forEach items="${chargeListHashMap.get(member.memberID)}" var="charge">--%>
-                                        <%--<table class="child">--%>
-                                            <%--<thead>--%>
-                                            <%--<tr>--%>
-                                                <%--<th>Charge</th>--%>
-                                                <%--<th>Sessions Attended</th>--%>
-                                                <%--<th>Total Hours</th>--%>
-                                                <%--<th>Total Charge</th>--%>
-                                            <%--</tr>--%>
-                                            <%--</thead>--%>
-
-                                            <%--<tbody>--%>
-                                                <%--<tr>--%>
-                                                    <%--<td>${charge.description}</td>--%>
-                                                    <%--<td>${charge.numChargeLines}</td>--%>
-                                                    <%--<td>${charge.hoursBilled}</td>--%>
-                                                    <%--<td>${charge.chargeAmount - charge.discountAmount}</td>--%>
-                                                <%--</tr>--%>
-                                            <%--</tbody>--%>
-                                        <%--</table>--%>
-                                    <%--</c:forEach>--%>
-
                             </c:forEach>
                             </tbody>
                         </table>

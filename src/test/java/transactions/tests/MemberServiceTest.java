@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
@@ -53,12 +54,7 @@ public class MemberServiceTest extends AbstractTransactionTest {
         member.setMemberLastName("Young");
     }
 
-    @Before
-    public void setUp(){
-        if(memberService.get(member.getMemberID()) != null)
-            memberService.remove(member);
-    }
-
+    @Rollback
     @Test
     public void addMemberTest() throws Exception{
         memberService.add(member);
@@ -67,6 +63,7 @@ public class MemberServiceTest extends AbstractTransactionTest {
         assertEquals("Member1 should persist within the database", memberRetrieved.getMemberID(), member.getMemberID());
     }
 
+    @Rollback
     @Test
     public void removeMemberTest() throws Exception{
         memberService.add(member);

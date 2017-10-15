@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
-@RequestMapping("/admin/student/rest")
-public class StudentResources{
+@RequestMapping("/admin/student/rest/studentFinances")
+public class StudentFinancesResources {
 
     private MemberService memberService;
     private ChargeService chargeService;
@@ -25,11 +26,11 @@ public class StudentResources{
     private SeasonService seasonService;
 
     @Autowired
-    public StudentResources(MemberService memberService,
-                            ChargeService chargeService,
-                            ChargeLineService chargeLineService,
-                            CourseService courseService,
-                            SeasonService seasonService){
+    public StudentFinancesResources(MemberService memberService,
+                                    ChargeService chargeService,
+                                    ChargeLineService chargeLineService,
+                                    CourseService courseService,
+                                    SeasonService seasonService){
         this.memberService = memberService;
         this.chargeService = chargeService;
         this.chargeLineService = chargeLineService;
@@ -37,7 +38,7 @@ public class StudentResources{
         this.seasonService = seasonService;
     }
 
-    @RequestMapping("/studentFinances/{memberID}")
+    @RequestMapping("/{memberID}")
     public @ResponseBody
     MemberChargesFinancesWrapper fetchMemberCharges(@PathVariable("memberID") int memberID,
                                                      @RequestParam(name = "month") int month,
@@ -51,7 +52,7 @@ public class StudentResources{
 
     }
 
-    @RequestMapping(value="/studentFinances/{memberID}/addMiscCharge", method=RequestMethod.PUT)
+    @RequestMapping(value="/{memberID}/addMiscCharge", method=RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addMiscCharge(@PathVariable("memberID") int memberID,
                                                 @RequestParam(name="chargeDescription") String chargeDescription,
@@ -73,18 +74,25 @@ public class StudentResources{
         chargeService.add(charge);
     }
 
-    @RequestMapping(value="/studentFinances/dropMiscCharge/{chargeID}", method=RequestMethod.PUT)
+    @RequestMapping(value="/dropMiscCharge/{chargeID}", method=RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void dropMiscCharges(@PathVariable("chargeID") int chargeID){
         Charge charge = chargeService.get(chargeID);
         chargeService.remove(charge);
     }
 
-    @RequestMapping(value="/studentFinances/discountCharge/{chargeID}", method=RequestMethod.PUT)
+    @RequestMapping(value="/discountCharge/{chargeID}", method=RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void discountCharge(@PathVariable("chargeID") int chargeID, @RequestParam("discount") BigDecimal discountAmount){
         Charge charge = chargeService.get(chargeID);
         charge.setDiscountAmount(discountAmount);
         chargeService.update(charge);
+    }
+
+    @RequestMapping(value="/getChargeList/{memberID}")
+    @ResponseBody
+    public List<Charge> getChargeList(@PathVariable("memberID") int memberID, @RequestParam("month") Integer month, @RequestParam("year") Integer year){
+        LocalDate cycleStartDate = LocalDate.of(year, month, 1);
+        return chargeService.getChargesByMemberByDate(memberID, cycleStartDate);
     }
 }

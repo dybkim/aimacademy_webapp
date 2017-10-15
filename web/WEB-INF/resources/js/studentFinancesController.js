@@ -59,7 +59,7 @@ studentFinancesControllerApp.controller("studentFinancesControl", function($scop
             })
         }
         else{
-            alert('To modify course charges, please change modify the attendance on the course page');
+            alert('To modify course charges, please modify the attendance on the course page.');
         }
     };
 
