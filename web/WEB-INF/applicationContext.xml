@@ -11,10 +11,10 @@
        http://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean id="c3p0DataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/aimacademy?useLegacyDatetimeCode=false&amp;serverTimezone=GMT&amp;autoReconnect=true"/>
-        <property name="user" value="root"/>
-        <property name="password" value=""/>
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
         <property name="maxPoolSize" value="25" />
         <property name="minPoolSize" value="10" />
         <property name="maxStatements" value="100" />
@@ -43,7 +43,7 @@
     </bean>
 
     <security:http auto-config="true">
-        <security:intercept-url pattern="/" access="hasRole('ROLE_ADMIN')"/>
+        <security:intercept-url pattern="/**" access="hasRole('ROLE_ADMIN')"/>
         <security:form-login
             login-page="/login"
             default-target-url="/admin/home"
@@ -52,7 +52,7 @@
             username-parameter="username"
             password-parameter="password"/>
         <security:logout
-            logout-success-url="/login"/>
+            logout-success-url="/login?logout"/>
         <!--<security:csrf token-repository-ref="csrfTokenRepository"/>-->
         <security:csrf disabled="true"/>
     </security:http>

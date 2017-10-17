@@ -2,6 +2,7 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.EmployeeDAO;
 import com.aimacademyla.dao.GenericDAO;
+import com.aimacademyla.model.AIMEntityType;
 import com.aimacademyla.model.Employee;
 import com.aimacademyla.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,16 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Integer> i
 
     private EmployeeDAO employeeDAO;
 
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.EMPLOYEE;
+
     @Autowired
     public EmployeeServiceImpl(@Qualifier("employeeDAO") GenericDAO<Employee, Integer> genericDAO){
         super(genericDAO);
         this.employeeDAO = (EmployeeDAO) genericDAO;
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

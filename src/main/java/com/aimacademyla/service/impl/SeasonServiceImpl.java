@@ -2,6 +2,7 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.SeasonDAO;
+import com.aimacademyla.model.AIMEntityType;
 import com.aimacademyla.model.Season;
 import com.aimacademyla.service.SeasonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class SeasonServiceImpl extends GenericServiceImpl<Season, Integer> imple
 
     private SeasonDAO seasonDAO;
 
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.SEASON;
+
     @Autowired
     public SeasonServiceImpl(@Qualifier("seasonDAO") GenericDAO<Season, Integer> genericDAO){
         super(genericDAO);
@@ -36,4 +39,8 @@ public class SeasonServiceImpl extends GenericServiceImpl<Season, Integer> imple
         return season;
     }
 
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
+    }
 }

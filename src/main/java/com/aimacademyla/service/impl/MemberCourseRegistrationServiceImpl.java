@@ -3,6 +3,7 @@ package com.aimacademyla.service.impl;
 import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.MemberCourseRegistrationDAO;
+import com.aimacademyla.model.AIMEntityType;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
@@ -23,6 +24,8 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
 
     private MemberCourseRegistrationDAO memberCourseRegistrationDAO;
     private CourseDAO courseDAO;
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MEMBER_COURSE_REGISTRATION;
 
     public MemberCourseRegistrationServiceImpl(@Qualifier("memberCourseRegistrationDAO") GenericDAO<MemberCourseRegistration, MemberCourseRegistrationPK> genericDAO,
                                                CourseDAO courseDAO){
@@ -112,5 +115,10 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
     public void update(List<MemberCourseRegistration> memberCourseRegistrationList){
         for(MemberCourseRegistration memberCourseRegistration : memberCourseRegistrationList)
             memberCourseRegistrationDAO.update(memberCourseRegistration);
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

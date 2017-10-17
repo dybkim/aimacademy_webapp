@@ -1,0 +1,16 @@
+package com.aimacademyla.model;
+
+public enum AIMEntityType {
+    ATTENDANCE,
+    CHARGE_LINE,
+    CHARGE,
+    COURSE,
+    COURSE_SESSION,
+    EMPLOYEE,
+    MEMBER_COURSE_REGISTRATION,
+    MEMBER_MONTHLY_REGISTRATION,
+    MEMBER,
+    MONTHLY_FINANCES_SUMMARY,
+    PAYMENT,
+    SEASON
+}

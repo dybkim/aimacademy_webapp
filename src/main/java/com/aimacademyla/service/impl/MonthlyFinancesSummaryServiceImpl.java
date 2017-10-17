@@ -3,6 +3,7 @@ package com.aimacademyla.service.impl;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.MemberMonthlyRegistrationDAO;
 import com.aimacademyla.dao.MonthlyFinancesSummaryDAO;
+import com.aimacademyla.model.AIMEntityType;
 import com.aimacademyla.model.MonthlyFinancesSummary;
 import com.aimacademyla.model.Season;
 import com.aimacademyla.model.builder.initializer.impl.MonthlyFinancesSummaryDefaultValueInitializer;
@@ -31,6 +32,8 @@ public class MonthlyFinancesSummaryServiceImpl extends GenericServiceImpl<Monthl
     private SeasonService seasonService;
     private CourseService courseService;
     private MemberMonthlyRegistrationDAO memberMonthlyRegistrationDAO;
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MONTHLY_FINANCES_SUMMARY;
 
     @Autowired
     public MonthlyFinancesSummaryServiceImpl(@Qualifier("monthlyFinancesSummaryDAO")GenericDAO<MonthlyFinancesSummary, Integer> genericDAO,
@@ -97,5 +100,10 @@ public class MonthlyFinancesSummaryServiceImpl extends GenericServiceImpl<Monthl
         }
 
         return monthlyFinancesSummaryList;
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

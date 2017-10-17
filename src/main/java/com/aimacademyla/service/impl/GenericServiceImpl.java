@@ -1,6 +1,8 @@
 package com.aimacademyla.service.impl;
 
+import com.aimacademyla.api.slack.service.ServiceFactory;
 import com.aimacademyla.dao.GenericDAO;
+import com.aimacademyla.model.AIMEntityType;
 import com.aimacademyla.service.GenericService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,4 +47,7 @@ public abstract class GenericServiceImpl<E, K> implements GenericService<E, K> {
     public List<E> getList(){
         return genericDAO.getList();
     }
+
+    @Override
+    public abstract AIMEntityType getAIMEntityType();
 }

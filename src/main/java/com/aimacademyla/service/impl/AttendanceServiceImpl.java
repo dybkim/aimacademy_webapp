@@ -2,10 +2,7 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.AttendanceDAO;
 import com.aimacademyla.dao.GenericDAO;
-import com.aimacademyla.model.Attendance;
-import com.aimacademyla.model.Course;
-import com.aimacademyla.model.CourseSession;
-import com.aimacademyla.model.Member;
+import com.aimacademyla.model.*;
 import com.aimacademyla.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +22,8 @@ public class AttendanceServiceImpl extends GenericServiceImpl<Attendance, Intege
 
     private AttendanceDAO attendanceDAO;
 
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.ATTENDANCE;
+
     @Autowired
     public AttendanceServiceImpl(@Qualifier("attendanceDAO") GenericDAO<Attendance, Integer> genericDAO){
         super(genericDAO);
@@ -43,7 +42,12 @@ public class AttendanceServiceImpl extends GenericServiceImpl<Attendance, Intege
 
     @Override
     public List<Attendance> getAttendanceForCourseSession(CourseSession courseSession) {
-        return attendanceDAO.getAttendanceForCourseSession(courseSession);
+        return attendanceDAO.getAttendanceForCourseSession(courseSession.getCourseSessionID());
+    }
+
+    @Override
+    public List<Attendance> getAttendanceForCourseSession(int courseSessionID){
+        return attendanceDAO.getAttendanceForCourseSession(courseSessionID);
     }
 
     @Override
@@ -78,5 +82,10 @@ public class AttendanceServiceImpl extends GenericServiceImpl<Attendance, Intege
     public void remove(List<Attendance> attendanceList){
         for(Attendance attendance : attendanceList)
             remove(attendance);
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

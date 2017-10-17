@@ -1,5 +1,8 @@
 package com.aimacademyla.service;
 
+import com.aimacademyla.api.slack.service.ServiceFactory;
+import com.aimacademyla.model.AIMEntityType;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,4 +15,5 @@ public interface GenericService<E,K> {
     void remove(E entity);
     E get(K key);
     List<E> getList();
+    AIMEntityType getAIMEntityType();
 }

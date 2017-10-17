@@ -2,6 +2,7 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.PaymentDAO;
+import com.aimacademyla.model.AIMEntityType;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.Payment;
@@ -18,6 +19,8 @@ import java.util.List;
 public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> implements PaymentService{
 
     private PaymentDAO paymentDAO;
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.PAYMENT;
 
     @Autowired
     public PaymentServiceImpl(@Qualifier("paymentDAO")GenericDAO<Payment, Integer> genericDAO){
@@ -59,5 +62,10 @@ public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> imp
     public void remove(List<Payment> paymentList){
         for(Payment payment : paymentList)
             remove(payment);
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

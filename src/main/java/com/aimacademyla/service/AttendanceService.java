@@ -18,6 +18,7 @@ public interface AttendanceService extends GenericService<Attendance, Integer>{
     List<Attendance> getAttendanceForCourseForDate(Course course, LocalDate date);
 
     List<Attendance> getAttendanceForCourseSession(CourseSession courseSession);
+    List<Attendance> getAttendanceForCourseSession(int courseSessionID);
     List<List<Attendance>> getAttendanceListsForCourseSessionList(List<CourseSession> courseSessionList);
 
     List<Attendance> getAttendanceForMember(Member member);

@@ -38,10 +38,10 @@
 
                     table = table + '<td><b>Charge Description:</b></td>' +
                             '<td>' + description + '</td>' +
-                            '<td><b>Charge Amount:</b></td>' +
-                            '<td>' + chargeAmount + '</td>' +
                             '<td><b>Hours Billed</b></td>' +
                             '<td>' + hoursBilled + '</td>' +
+                            '<td><b>Charge Amount:</b></td>' +
+                            '<td>' + chargeAmount + '</td>' +
                             '</tr>';
                 }
 
@@ -186,7 +186,7 @@
                             <tbody>
                             <c:forEach items="${paidBalanceMemberList}" var="member">
                                 <tr>
-                                    <td class="details-control"><span class="glyphicon glyphicon-plus-sign"></span></td>
+                                    <td class="details-control" border="1"><span class="glyphicon glyphicon-plus-sign"></span></td>
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                     <td>${balanceAmountHashMap.get(member.memberID)}</td>

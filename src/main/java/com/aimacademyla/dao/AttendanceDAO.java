@@ -18,6 +18,7 @@ public interface AttendanceDAO extends GenericDAO<Attendance, Integer>{
     List<Attendance> getAttendanceForCourseForDate(Course course, LocalDate date);
 
     List<Attendance> getAttendanceForCourseSession(CourseSession courseSession);
+    List<Attendance> getAttendanceForCourseSession(int courseSessionID);
 
     List<Attendance> getAttendanceForMember(Member member);
     List<Attendance> getAttendanceForMemberForCourse(Member member, Course course);

@@ -3,6 +3,7 @@ package com.aimacademyla.service.impl;
 import com.aimacademyla.dao.ChargeDAO;
 import com.aimacademyla.dao.ChargeLineDAO;
 import com.aimacademyla.dao.GenericDAO;
+import com.aimacademyla.model.AIMEntityType;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.ChargeLine;
 import com.aimacademyla.model.Course;
@@ -29,6 +30,8 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
     private ChargeLineDAO chargeLineDAO;
     private ChargeService chargeService;
     private CourseService courseService;
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.CHARGE_LINE;
 
     @Autowired
     public ChargeLineServiceImpl(@Qualifier("chargeLineDAO") GenericDAO<ChargeLine, Integer> genericDAO, ChargeService chargeService, CourseService courseService){
@@ -143,5 +146,10 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
             chargeLineList = new ArrayList<>();
 
         return chargeLineList;
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

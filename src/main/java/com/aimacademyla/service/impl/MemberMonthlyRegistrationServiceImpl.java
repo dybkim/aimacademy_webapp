@@ -33,6 +33,8 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
     private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
     private MemberDAO memberDAO;
 
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MEMBER_MONTHLY_REGISTRATION;
+
     @Autowired
     public MemberMonthlyRegistrationServiceImpl(@Qualifier("memberMonthlyRegistrationDAO") GenericDAO<MemberMonthlyRegistration, Integer> genericDAO,
                                                 SeasonService seasonService,
@@ -136,5 +138,10 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
             memberMonthlyRegistrationList.add(new MemberMonthlyRegistrationDefaultValueInitializer(seasonService).setMemberID(memberID).setLocalDate(date).initialize());
 
         return memberMonthlyRegistrationList;
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

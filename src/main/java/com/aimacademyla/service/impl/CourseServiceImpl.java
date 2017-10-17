@@ -3,6 +3,7 @@ package com.aimacademyla.service.impl;
 import com.aimacademyla.dao.ChargeDAO;
 import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.GenericDAO;
+import com.aimacademyla.model.AIMEntityType;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.service.ChargeService;
@@ -24,6 +25,8 @@ public class CourseServiceImpl extends GenericServiceImpl<Course, Integer> imple
 
     private CourseDAO courseDAO;
 
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.COURSE;
+
     @Autowired
     public CourseServiceImpl(@Qualifier("courseDAO") GenericDAO<Course, Integer> genericDAO){
         super(genericDAO);
@@ -43,5 +46,10 @@ public class CourseServiceImpl extends GenericServiceImpl<Course, Integer> imple
     @Override
     public List<Course> getCourseListByDate(LocalDate date){
         return courseDAO.getCourseListByDate(date);
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

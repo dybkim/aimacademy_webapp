@@ -28,6 +28,8 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
     private SeasonService seasonService;
     private CourseDAO courseDAO;
 
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.CHARGE;
+
     @Autowired
     public ChargeServiceImpl(@Qualifier("chargeDAO") GenericDAO<Charge, Integer> genericDAO,
                              MonthlyFinancesSummaryService monthlyFinancesSummaryService,
@@ -166,5 +168,10 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
     public void remove(List<Charge> chargeList){
         for(Charge charge : chargeList)
             remove(charge);
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

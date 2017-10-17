@@ -45,15 +45,20 @@ public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implem
     }
 
     @Override
-    public List<Attendance> getAttendanceForCourseSession(CourseSession courseSession) {
+    public List<Attendance> getAttendanceForCourseSession(int courseSessionID){
         Session session = currentSession();
         Query query = session.createQuery("FROM Attendance WHERE courseSessionID = :courseSessionID");
-        query.setParameter("courseSessionID", courseSession.getCourseSessionID());
+        query.setParameter("courseSessionID", courseSessionID);
         List<Attendance> attendanceList = query.getResultList();
 
         session.flush();
 
         return attendanceList;
+    }
+
+    @Override
+    public List<Attendance> getAttendanceForCourseSession(CourseSession courseSession) {
+        return getAttendanceForCourseSession(courseSession.getCourseSessionID());
     }
 
     @Override

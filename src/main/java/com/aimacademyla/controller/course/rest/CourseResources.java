@@ -1,18 +1,19 @@
 package com.aimacademyla.controller.course.rest;
 
 import com.aimacademyla.controller.GenericResponse;
+import com.aimacademyla.model.Attendance;
+import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
 import com.aimacademyla.model.builder.impl.CourseRegistrationWrapperBuilder;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
-import com.aimacademyla.service.CourseService;
-import com.aimacademyla.service.MemberCourseRegistrationService;
-import com.aimacademyla.service.MemberService;
+import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -30,14 +31,20 @@ public class CourseResources {
     private MemberService memberService;
     private CourseService courseService;
     private MemberCourseRegistrationService memberCourseRegistrationService;
+    private AttendanceService attendanceService;
+    private CourseSessionService courseSessionService;
 
     @Autowired
     public CourseResources(MemberService memberService,
                            CourseService courseService,
-                           MemberCourseRegistrationService memberCourseRegistrationService){
+                           MemberCourseRegistrationService memberCourseRegistrationService,
+                           AttendanceService attendanceService,
+                           CourseSessionService courseSessionService){
         this.memberService = memberService;
         this.courseService = courseService;
         this.memberCourseRegistrationService = memberCourseRegistrationService;
+        this.attendanceService = attendanceService;
+        this.courseSessionService = courseSessionService;
     }
 
     @RequestMapping(value="/{courseID}/getCourseRegistration")
@@ -98,5 +105,26 @@ public class CourseResources {
         }
 
         return "redirect:/admin/courseList/courseInfo/" + courseID;
+    }
+
+    @RequestMapping(value="/getCourseSession/{courseSessionID}")
+    @ResponseBody
+    public List<Member> getCourseSession(@PathVariable("courseSessionID") int courseSessionID) {
+        List<Attendance> attendanceList = attendanceService.getAttendanceForCourseSession(courseSessionID);
+        List<Member> memberList = new ArrayList<>();
+        for(Attendance attendance : attendanceList){
+            if(attendance.getWasPresent()) {
+                Member member = memberService.get(attendance.getMemberID());
+                memberList.add(member);
+            }
+        }
+
+        return memberList;
+    }
+
+    @RequestMapping(value="/getAttendanceList/{memberID}")
+    public List<CourseSession> getAttendanceList(@PathVariable("memberID") int memberID,@RequestParam("courseID") Integer courseID, @RequestParam("month") Integer month, @RequestParam("year") Integer year){
+        List<CourseSession> courseSessionList = courseSessionService.getCourseSessionsForCourse(courseID);
+        return courseSessionList;
     }
 }

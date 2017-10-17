@@ -3,10 +3,7 @@ package com.aimacademyla.service.impl;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.MemberCourseRegistrationDAO;
 import com.aimacademyla.dao.MemberDAO;
-import com.aimacademyla.model.Attendance;
-import com.aimacademyla.model.Course;
-import com.aimacademyla.model.Member;
-import com.aimacademyla.model.MemberCourseRegistration;
+import com.aimacademyla.model.*;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +23,8 @@ public class MemberServiceImpl extends GenericServiceImpl<Member, Integer> imple
 
     private MemberDAO memberDAO;
     private MemberCourseRegistrationDAO memberCourseRegistrationDAO;
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MEMBER;
 
     @Autowired
     public MemberServiceImpl(@Qualifier("memberDAO") GenericDAO<Member, Integer> genericDAO,
@@ -77,5 +76,10 @@ public class MemberServiceImpl extends GenericServiceImpl<Member, Integer> imple
     @Override
     public void updateMemberList(List<Member> memberList){
         memberDAO.updateMemberList(memberList);
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

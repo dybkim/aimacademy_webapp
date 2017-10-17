@@ -10,6 +10,7 @@ import java.util.List;
  */
 public interface CourseSessionDAO extends GenericDAO<CourseSession, Integer>{
     List<CourseSession> getCourseSessionsForCourse(Course course);
+    List<CourseSession> getCourseSessionsForCourse(int courseID);
 
     int generateCourseSessionIDAfterSave(CourseSession courseSession);
 }

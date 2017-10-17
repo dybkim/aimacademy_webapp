@@ -2,6 +2,7 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.CourseSessionDAO;
 import com.aimacademyla.dao.GenericDAO;
+import com.aimacademyla.model.AIMEntityType;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.service.CourseSessionService;
@@ -20,6 +21,8 @@ public class CourseSessionServiceImpl extends GenericServiceImpl<CourseSession, 
 
     private CourseSessionDAO courseSessionDAO;
 
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.COURSE_SESSION;
+
     @Autowired
     public CourseSessionServiceImpl(@Qualifier("courseSessionDAO") GenericDAO<CourseSession, Integer> genericDAO){
         super(genericDAO);
@@ -32,6 +35,11 @@ public class CourseSessionServiceImpl extends GenericServiceImpl<CourseSession, 
     }
 
     @Override
+    public List<CourseSession> getCourseSessionsForCourse(int courseID){
+        return courseSessionDAO.getCourseSessionsForCourse(courseID);
+    }
+
+    @Override
     public int generateCourseSessionIDAfterSave(CourseSession courseSession){
         return courseSessionDAO.generateCourseSessionIDAfterSave(courseSession);
     }
@@ -40,5 +48,10 @@ public class CourseSessionServiceImpl extends GenericServiceImpl<CourseSession, 
     public void remove(List<CourseSession> courseSessionList){
         for(CourseSession courseSession : courseSessionList)
             remove(courseSession);
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType(){
+        return AIM_ENTITY_TYPE;
     }
 }

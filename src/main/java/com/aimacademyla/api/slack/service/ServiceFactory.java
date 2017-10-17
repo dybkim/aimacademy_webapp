@@ -1,72 +1,35 @@
 package com.aimacademyla.api.slack.service;
 
+import com.aimacademyla.model.AIMEntityType;
 import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class ServiceFactory {
 
     @Autowired
-    private static MemberService memberService;
+    private List<GenericService> genericServiceList;
 
-    @Autowired
-    private static CourseService courseService;
+    private static final Map<AIMEntityType, GenericService> genericServiceCache = new HashMap<>();
 
-    @Autowired
-    private static CourseSessionService courseSessionService;
-
-    @Autowired
-    private static EmployeeService employeeService;
-
-    @Autowired
-    private static ChargeService chargeService;
-
-    public enum AIMEntity{
-        MEMBER,
-        COURSE,
-        COURSE_SESSION,
-        EMPLOYEE,
-        CHARGE
-    }
-
-    public static GenericService getService(AIMEntity entity){
-
-        switch(entity){
-            case MEMBER:
-                return memberService;
-            case COURSE:
-                return courseService;
-            case COURSE_SESSION:
-                return courseSessionService;
-            case EMPLOYEE:
-                return employeeService;
-            case CHARGE:
-                return chargeService;
-            default:
-                break;
+    @PostConstruct
+    public void initGenericServiceCache(){
+        for(GenericService genericService : genericServiceList){
+            genericServiceCache.put(genericService.getAIMEntityType(), genericService);
         }
-
-        return null;
     }
 
-    public static void setMemberService(MemberService memberService) {
-        ServiceFactory.memberService = memberService;
+    public GenericService getService(AIMEntityType entityType) {
+        return genericServiceCache.get(entityType);
     }
 
-    public static void setCourseService(CourseService courseService) {
-        ServiceFactory.courseService = courseService;
-    }
-
-    public static void setCourseSessionService(CourseSessionService courseSessionService) {
-        ServiceFactory.courseSessionService = courseSessionService;
-    }
-
-    public static void setEmployeeService(EmployeeService employeeService) {
-        ServiceFactory.employeeService = employeeService;
-    }
-
-    public static void setChargeService(ChargeService chargeService) {
-        ServiceFactory.chargeService = chargeService;
+    public void setGenericServiceList(List<GenericService> genericServiceList){
+        this.genericServiceList = genericServiceList;
     }
 }

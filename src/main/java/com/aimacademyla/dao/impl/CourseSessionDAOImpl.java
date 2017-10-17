@@ -31,9 +31,14 @@ public class CourseSessionDAOImpl extends GenericDAOImpl<CourseSession, Integer>
 
     @Override
     public List<CourseSession> getCourseSessionsForCourse(Course course) {
+        return getCourseSessionsForCourse(course.getCourseID());
+    }
+
+    @Override
+    public List<CourseSession> getCourseSessionsForCourse(int courseID){
         Session session = currentSession();
         Query query = session.createQuery("FROM Course_Session WHERE CourseID = :courseID");
-        query.setParameter("courseID", course.getCourseID());
+        query.setParameter("courseID", courseID);
         List<CourseSession> courseSessionList = query.getResultList();
         session.flush();
 
