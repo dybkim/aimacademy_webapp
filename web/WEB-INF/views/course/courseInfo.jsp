@@ -52,47 +52,6 @@
         return table;
     }
 
-    function formatAttendanceList(memberID, month, year){
-        var table = '<table cellpadding="5" cellspacing="0" border="1" style="padding-left:50px;">';
-        $.ajax({
-            url: "/admin/courseList/rest/getAttendanceList/" + memberID,
-            type: "GET",
-            async: false,
-            dataType: "json",
-            data: {
-                course: ${course.courseID},
-                month: month,
-                year: year
-            },
-            success:function(monthlyHoursList){
-                if(monthlyHoursList.length !== 0){
-                    for(var i = 0; i < monthlyHoursList.length; i++){
-                        table = table + '<tr>';
-                        var date = JSON.stringify(courseSessionList[i].);
-                        var memberName = JSON.stringify(memberList[i].memberFirstName).replace(/\"/g, "") + " " + JSON.stringify(memberList[i].memberLastName).replace(/\"/g, "");
-
-                        table = table +
-                            '<td>' + memberID + '</td>' +
-                            '<td><b>' + memberName + '</b></td>' +
-                            '</tr>';
-                    }
-                }
-
-                else
-                    table = table + '<tr><td><b>No Members Found</b></td></tr>';
-
-                table = table + '</table>';
-            },
-            error:function(response){
-                var jsonResponse = JSON.parse(response.responseText);
-                var errorMessage = JSON.stringify(jsonResponse["errorMessage"]);
-                alert("Error: " + errorMessage);
-                table = null;
-            }
-        });
-        return table;
-    }
-
     $(document).ready(function(){
 
         $('a[data-toggle="tabpanel"]').on( 'shown.bs.tab', function (e) {
@@ -198,7 +157,6 @@
                             <table id="memberListTable" class="table table-striped dt-responsive">
                                 <thead>
                                 <tr>
-                                    <th>Expand</th>
                                     <th>Student ID#</th>
                                     <th>Student Name</th>
                                     <th>Attendance</th>
@@ -208,7 +166,6 @@
                                 <tbody>
                                 <c:forEach items="${memberList}" var="member">
                                     <tr>
-                                        <td></td>
                                         <td>${member.memberID}</td>
                                         <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                         <td>${memberAttendanceCountMap.get(member.memberID)}/${courseSessionList.size()}</td>
@@ -223,7 +180,6 @@
                             <table id="inactiveMemberListTable" class="table table-striped dt-responsive">
                                 <thead>
                                 <tr>
-                                    <th>Expand</th>
                                     <th>Student ID#</th>
                                     <th>Student Name</th>
                                     <th>Attendance</th>
@@ -233,7 +189,6 @@
                                 <tbody>
                                 <c:forEach items="${inactiveMemberList}" var="member">
                                     <tr>
-                                        <td class="details-control" border="1"><span class="glyphicon glyphicon-plus-sign"></span></td>
                                         <td>${member.memberID}</td>
                                         <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
                                         <td>${memberAttendanceCountMap.get(member.memberID)}/${courseSessionList.size()}</td>

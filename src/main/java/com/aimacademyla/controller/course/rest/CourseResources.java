@@ -121,10 +121,4 @@ public class CourseResources {
 
         return memberList;
     }
-
-    @RequestMapping(value="/getAttendanceList/{memberID}")
-    public List<CourseSession> getAttendanceList(@PathVariable("memberID") int memberID,@RequestParam("courseID") Integer courseID, @RequestParam("month") Integer month, @RequestParam("year") Integer year){
-        List<CourseSession> courseSessionList = courseSessionService.getCourseSessionsForCourse(courseID);
-        return courseSessionList;
-    }
 }
