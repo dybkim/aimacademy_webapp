@@ -8,7 +8,7 @@
   Time: 7:31 AM
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <title>AIM Academy</title>
@@ -19,7 +19,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="David Kim">
-    <link rel="icon" href="../../favicon.ico">
+    <link rel="icon" href="../resources/images/favicon.ico">
 
     <title>AIM Academy Portal</title>
 
@@ -31,8 +31,7 @@
 
     <!-- Custom styles for this template -->
     <link href="<spring:url value="/resources/css/dashboard.css"/>" rel="stylesheet">
-    <![endif]-->
-    <html>
+    <!--[endif]-->
 
 <body>
 
@@ -64,6 +63,10 @@
             <form name="loginForm" action="<spring:url value="/login"/>" method="post">
                 <c:if test="${not empty error}">
                     <div class="error" style="color:#ff0000">${error}</div>
+                </c:if>
+
+                <c:if test="${not empty sessionError}">
+                    <div class="error" style="color:#ff0000">${sessionError}</div>
                 </c:if>
 
                 <div class="form-group">

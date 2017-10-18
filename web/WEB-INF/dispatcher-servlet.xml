@@ -22,6 +22,7 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <mvc:resources mapping="/favicon.ico" location="/" />
     <mvc:resources mapping="/resources/**" location="/WEB-INF/resources/"/>
 
     <tx:annotation-driven/>

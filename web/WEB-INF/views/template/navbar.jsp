@@ -6,9 +6,11 @@
   Time: 7:31 AM
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
+
 <!DOCTYPE html>
 <html lang="en">
+<link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/WEB-INF/resources/images/favicon.ico"/>
 <title>AIM Academy</title>
 <head>
     <meta charset="utf-8">
@@ -17,7 +19,6 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="David Kim">
-    <link rel="icon" href="../../favicon.ico">
 
     <title>AIM Academy Portal</title>
 
@@ -63,8 +64,8 @@
 
     <![endif]-->
 </head>
-
 <body>
+
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
@@ -87,7 +88,7 @@
                 <%--<li><a href="#">Profile</a></li>--%>
                 <%--<li><a href="#">Help</a></li>--%>
                 <c:if test="${pageContext.request.userPrincipal.name != null}">
-                    <li><a href="<spring:url value="/login?logout"/>">Logout</a></li>
+                    <li><a href="<c:url value="/logout"/>">Logout</a></li>
                 </c:if>
             </ul>
             <!--

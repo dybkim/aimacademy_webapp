@@ -81,14 +81,6 @@ public class HomeController {
 
         return "home";
     }
-
-    @RequestMapping("/")
-    public String adminPage(Model model){
-        LocalDate selectedDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1);
-        model.addAttribute("selectedDate", selectedDate);
-        return "home";
-    }
-
 }
 
 
