@@ -34,12 +34,13 @@
                     table = table + '<tr>';
                     var description = JSON.stringify(chargeList[i].description).replace(/\"/g, "");
                     var chargeAmount = JSON.stringify(chargeList[i].chargeAmount);
-                    var hoursBilled = JSON.stringify(chargeList[i].hoursBilled);
+                    var billableUnitsBilled = JSON.stringify(chargeList[i].billableUnitsBilled);
+                    var billableUnitType = JSON.stringify(chargeList[i].billableUnitType).replace(/\"/g,"");
 
                     table = table + '<td><b>Charge Description:</b></td>' +
                             '<td>' + description + '</td>' +
-                            '<td><b>Hours Billed</b></td>' +
-                            '<td>' + hoursBilled + '</td>' +
+                            '<td><b>Time Billed (' + billableUnitType + ')</b></td>' +
+                            '<td>' + billableUnitsBilled + '</td>' +
                             '<td><b>Charge Amount:</b></td>' +
                             '<td>' + chargeAmount + '</td>' +
                             '</tr>';
@@ -65,12 +66,12 @@
 
         var memberTable = $('#memberTable').DataTable({
             "lengthMenu": [[50,-1], [50, "All"]],
-            "order": [["1", "desc"]]
+            "order": [["1", "asc"]]
         });
 
         var paidBalanceMemberTable = $('#paidBalanceMemberTable').DataTable({
             "lengthMenu": [[50,-1], [50, "All"]],
-            "order": [["1", "desc"]]
+            "order": [["1", "asc"]]
         });
 
         $('.nav-tabs a[href="#tab-members"]').tab('show');
@@ -154,13 +155,13 @@
                             </thead>
 
                             <tbody>
-                            <c:forEach items="${outstandingBalanceMemberList}" var="member">
+                            <c:forEach items="${outstandingChargesPaymentWrapper.outstandingBalanceMemberList}" var="member">
                                 <tr class="parent">
                                     <td class="details-control"><span class="glyphicon glyphicon-plus-sign"></span></td>
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
-                                    <td>${balanceAmountHashMap.get(member.memberID)}</td>
-                                    <td>${paymentAmountHashMap.get(member.memberID)} / ${chargesAmountHashMap.get(member.memberID)}</td>
+                                    <td>${outstandingChargesPaymentWrapper.balanceAmountHashMap.get(member.memberID)}</td>
+                                    <td>${outstandingChargesPaymentWrapper.paymentAmountHashMap.get(member.memberID)} / ${outstandingChargesPaymentWrapper.chargesAmountHashMap.get(member.memberID)}</td>
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     <td><a href="<spring:url value="/admin/resources/excel/generateInvoice/student/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
@@ -184,13 +185,13 @@
                             </thead>
 
                             <tbody>
-                            <c:forEach items="${paidBalanceMemberList}" var="member">
+                            <c:forEach items="${outstandingChargesPaymentWrapper.paidBalanceMemberList}" var="member">
                                 <tr>
                                     <td class="details-control" border="1"><span class="glyphicon glyphicon-plus-sign"></span></td>
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
-                                    <td>${balanceAmountHashMap.get(member.memberID)}</td>
-                                    <td>${paymentAmountHashMap.get(member.memberID)} / ${chargesAmountHashMap.get(member.memberID)}</td>
+                                    <td>${outstandingChargesPaymentWrapper.balanceAmountHashMap.get(member.memberID)}</td>
+                                    <td>${outstandingChargesPaymentWrapper.paymentAmountHashMap.get(member.memberID)} / ${outstandingChargesPaymentWrapper.chargesAmountHashMap.get(member.memberID)}</td>
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>

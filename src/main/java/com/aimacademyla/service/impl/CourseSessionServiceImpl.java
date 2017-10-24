@@ -2,7 +2,7 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.CourseSessionDAO;
 import com.aimacademyla.dao.GenericDAO;
-import com.aimacademyla.model.AIMEntityType;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.service.CourseSessionService;

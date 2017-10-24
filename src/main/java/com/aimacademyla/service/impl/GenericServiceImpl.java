@@ -1,13 +1,13 @@
 package com.aimacademyla.service.impl;
 
-import com.aimacademyla.api.slack.service.ServiceFactory;
 import com.aimacademyla.dao.GenericDAO;
-import com.aimacademyla.model.AIMEntityType;
+import com.aimacademyla.dao.factory.DAOFactory;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.service.GenericService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -18,9 +18,15 @@ import java.util.List;
 public abstract class GenericServiceImpl<E, K> implements GenericService<E, K> {
 
     private GenericDAO<E,K> genericDAO;
+    private DAOFactory daoFactory;
 
     public GenericServiceImpl(GenericDAO<E, K> genericDAO){
         this.genericDAO = genericDAO;
+    }
+
+    @Autowired
+    public void setDAOFactory(DAOFactory daoFactory){
+        this.daoFactory = daoFactory;
     }
 
     @Override
@@ -50,4 +56,8 @@ public abstract class GenericServiceImpl<E, K> implements GenericService<E, K> {
 
     @Override
     public abstract AIMEntityType getAIMEntityType();
+
+    public DAOFactory getDaoFactory() {
+        return daoFactory;
+    }
 }

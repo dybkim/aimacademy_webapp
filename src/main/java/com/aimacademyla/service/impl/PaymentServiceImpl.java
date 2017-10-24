@@ -2,7 +2,7 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.PaymentDAO;
-import com.aimacademyla.model.AIMEntityType;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.Payment;

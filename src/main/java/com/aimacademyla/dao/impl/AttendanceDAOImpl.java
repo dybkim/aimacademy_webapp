@@ -5,6 +5,7 @@ import com.aimacademyla.model.Attendance;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.Member;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -23,6 +24,8 @@ import java.util.List;
 @Repository("attendanceDAO")
 @Transactional
 public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implements AttendanceDAO{
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.ATTENDANCE;
 
     public AttendanceDAOImpl(){
         super(Attendance.class);
@@ -99,5 +102,7 @@ public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implem
         session.flush();
     }
 
-
+    public AIMEntityType getAIMEntityType() {
+        return AIM_ENTITY_TYPE;
+    }
 }

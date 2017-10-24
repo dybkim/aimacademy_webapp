@@ -4,6 +4,7 @@ import com.aimacademyla.controller.course.CourseHomeController;
 import com.aimacademyla.dao.CourseSessionDAO;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
@@ -24,6 +25,8 @@ import java.util.List;
 public class CourseSessionDAOImpl extends GenericDAOImpl<CourseSession, Integer> implements CourseSessionDAO{
 
     private static final Logger logger = LogManager.getLogger(CourseHomeController.class);
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.COURSE_SESSION;
 
     public CourseSessionDAOImpl(){
         super(CourseSession.class);
@@ -54,5 +57,10 @@ public class CourseSessionDAOImpl extends GenericDAOImpl<CourseSession, Integer>
         id = courseSession.getCourseSessionID();
 
         return id;
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType() {
+        return AIM_ENTITY_TYPE;
     }
 }

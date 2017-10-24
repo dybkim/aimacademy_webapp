@@ -3,10 +3,15 @@ package com.aimacademyla.model.builder.impl;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberMonthlyRegistration;
 import com.aimacademyla.model.builder.GenericBuilder;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.wrapper.MemberListWrapper;
 import com.aimacademyla.service.MemberMonthlyRegistrationService;
 import com.aimacademyla.service.MemberService;
+import com.aimacademyla.service.factory.ServiceFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,21 +19,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public class MemberListWrapperBuilder implements GenericBuilder<MemberListWrapper> {
+public class MemberListWrapperBuilder extends GenericBuilderImpl<MemberListWrapper> implements GenericBuilder<MemberListWrapper> {
 
     private MemberService memberService;
     private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
 
-    private MemberListWrapper memberListWrapper;
     private LocalDate cycleStartDate;
 
-    private MemberListWrapperBuilder(){
-    }
-
-    public MemberListWrapperBuilder(MemberService memberService, MemberMonthlyRegistrationService memberMonthlyRegistrationService) {
-        this.memberService = memberService;
-        this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
-        memberListWrapper = new MemberListWrapper();
+    public MemberListWrapperBuilder(ServiceFactory serviceFactory) {
+        super(serviceFactory);
+        this.memberService = (MemberService) getServiceFactory().getService(AIMEntityType.MEMBER);
+        this.memberMonthlyRegistrationService = (MemberMonthlyRegistrationService) getServiceFactory().getService(AIMEntityType.MEMBER_MONTHLY_REGISTRATION);
     }
 
     public MemberListWrapperBuilder setCycleStartDate(LocalDate cycleStartDate){
@@ -38,6 +39,7 @@ public class MemberListWrapperBuilder implements GenericBuilder<MemberListWrappe
 
     @Override
     public MemberListWrapper build() {
+        MemberListWrapper memberListWrapper = new MemberListWrapper();
         List<Member> memberList = new ArrayList<>();
         List<Member> inactiveMemberList = memberService.getList();
         HashMap<Integer, Boolean> membershipHashMap = new HashMap<>();

@@ -1,6 +1,7 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.GenericDAO;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -82,4 +83,7 @@ public abstract class GenericDAOImpl<E, K extends Serializable> implements Gener
         criteriaQuery.select(root);
         return session.createQuery(criteriaQuery).getResultList();
     }
+
+    @Override
+    public abstract AIMEntityType getAIMEntityType();
 }

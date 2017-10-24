@@ -7,7 +7,9 @@ import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.model.wrapper.MemberCourseFinancesWrapper;
 import com.aimacademyla.model.wrapper.MemberListWrapper;
 import com.aimacademyla.service.*;
+import com.aimacademyla.service.factory.ServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,10 +34,9 @@ public class StudentListController {
     private MemberCourseRegistrationService memberCourseRegistrationService;
     private CourseSessionService courseSessionService;
     private AttendanceService attendanceService;
-    private ChargeService chargeService;
-    private PaymentService paymentService;
     private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
     private SeasonService seasonService;
+    private ServiceFactory serviceFactory;
 
     @Autowired
     public StudentListController(MemberService memberService,
@@ -43,19 +44,17 @@ public class StudentListController {
                                  MemberCourseRegistrationService memberCourseRegistrationService,
                                  CourseSessionService courseSessionService,
                                  AttendanceService attendanceService,
-                                 ChargeService chargeService,
-                                 PaymentService paymentService,
                                  MemberMonthlyRegistrationService memberMonthlyRegistrationService,
-                                 SeasonService seasonService){
+                                 SeasonService seasonService,
+                                 ServiceFactory serviceFactory){
         this.memberService = memberService;
         this.courseService = courseService;
         this.memberCourseRegistrationService = memberCourseRegistrationService;
         this.courseSessionService = courseSessionService;
         this.attendanceService = attendanceService;
-        this.chargeService = chargeService;
-        this.paymentService = paymentService;
         this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
         this.seasonService = seasonService;
+        this.serviceFactory = serviceFactory;
     }
 
     @RequestMapping
@@ -67,8 +66,7 @@ public class StudentListController {
         if(month != null && year != null)
             cycleStartDate = LocalDate.of(year, month ,1);
 
-        MemberListWrapperBuilder memberListWrapperBuilder = new MemberListWrapperBuilder(memberService, memberMonthlyRegistrationService);
-        MemberListWrapper memberListWrapper = memberListWrapperBuilder.setCycleStartDate(cycleStartDate).build();
+        MemberListWrapper memberListWrapper = new MemberListWrapperBuilder(serviceFactory).setCycleStartDate(cycleStartDate).build();
         List<LocalDate> monthsList = TemporalReference.getMonthList();
         Collections.reverse(monthsList);
 
@@ -144,7 +142,7 @@ public class StudentListController {
         return "/student/editStudent";
     }
 
-    @RequestMapping(value = "/editStudent", method = RequestMethod.POST)
+    @RequestMapping(value = "/editStudent", method = RequestMethod.PUT)
     public String editStudent(@Valid @ModelAttribute("member") Member member, BindingResult result, RedirectAttributes redirectAttributes){
         if(result.hasErrors())
         {
@@ -219,8 +217,8 @@ public class StudentListController {
         List<LocalDate> monthsList = TemporalReference.getMonthList();
 
         for(LocalDate cycleStartDate : monthsList){
-            MemberCourseFinancesWrapperBuilder memberCourseFinancesWrapperBuilder = new MemberCourseFinancesWrapperBuilder(paymentService, chargeService);
-            MemberCourseFinancesWrapper memberCourseFinancesWrapper = memberCourseFinancesWrapperBuilder.setCycleStartDate(cycleStartDate)
+            MemberCourseFinancesWrapper memberCourseFinancesWrapper = new MemberCourseFinancesWrapperBuilder(serviceFactory)
+                                                                                                        .setCycleStartDate(cycleStartDate)
                                                                                                         .setMember(member)
                                                                                                         .build();
             memberCourseFinancesWrapperList.add(memberCourseFinancesWrapper);

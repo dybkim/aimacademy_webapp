@@ -5,6 +5,7 @@ import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.Payment;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -18,6 +19,8 @@ import java.util.List;
 @Repository("paymentDAO")
 @Transactional
 public class PaymentDAOImpl extends GenericDAOImpl<Payment, Integer> implements PaymentDAO {
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.ATTENDANCE;
 
     public PaymentDAOImpl() {
         super(Payment.class);
@@ -65,5 +68,10 @@ public class PaymentDAOImpl extends GenericDAOImpl<Payment, Integer> implements 
         session.flush();
 
         return payment;
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType() {
+        return AIM_ENTITY_TYPE;
     }
 }

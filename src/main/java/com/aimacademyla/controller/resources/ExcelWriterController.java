@@ -8,6 +8,7 @@ import com.aimacademyla.service.ChargeLineService;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberService;
+import com.aimacademyla.service.factory.ServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,16 +23,20 @@ import java.time.LocalDate;
 @RequestMapping("/admin/resources/excel")
 public class ExcelWriterController {
 
+    private ServiceFactory serviceFactory;
+
     private MemberService memberService;
     private CourseService courseService;
     private ChargeService chargeService;
     private ChargeLineService chargeLineService;
 
     @Autowired
-    public ExcelWriterController(MemberService memberService,
+    public ExcelWriterController(ServiceFactory serviceFactory,
+                                 MemberService memberService,
                                  CourseService courseService,
                                  ChargeService chargeService,
                                  ChargeLineService chargeLineService) {
+        this.serviceFactory = serviceFactory;
         this.memberService = memberService;
         this.courseService = courseService;
         this.chargeService = chargeService;
@@ -52,8 +57,7 @@ public class ExcelWriterController {
         }
 
         LocalDate selectedDate = LocalDate.of(year, month, 1);
-        MemberChargesFinancesWrapperBuilder memberChargesFinancesWrapperBuilder = new MemberChargesFinancesWrapperBuilder(chargeService, chargeLineService, courseService);
-        MemberChargesFinancesWrapper memberChargesFinancesWrapper = memberChargesFinancesWrapperBuilder.setMember(member).setSelectedDate(selectedDate).build();
+        MemberChargesFinancesWrapper memberChargesFinancesWrapper = new MemberChargesFinancesWrapperBuilder(serviceFactory).setMember(member).setSelectedDate(selectedDate).build();
 
         String selectedMonthString = selectedDate.getMonth().toString().substring(0,1) + selectedDate.getMonth().toString().substring(1).toLowerCase();
         String fileName = member.getMemberID() + "_" + selectedMonthString + selectedDate.getYear() + "_INVOICE.xlsx";

@@ -3,6 +3,7 @@ package com.aimacademyla.service.impl;
 import com.aimacademyla.dao.AttendanceDAO;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.model.*;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

@@ -2,6 +2,7 @@ package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.model.Course;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -20,6 +21,8 @@ import java.util.List;
 @Repository("courseDAO")
 @Transactional
 public class CourseDAOImpl extends GenericDAOImpl<Course, Integer> implements CourseDAO {
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.COURSE;
 
     public CourseDAOImpl(){
         super(Course.class);
@@ -57,4 +60,8 @@ public class CourseDAOImpl extends GenericDAOImpl<Course, Integer> implements Co
         return courseList;
     }
 
+    @Override
+    public AIMEntityType getAIMEntityType() {
+        return AIM_ENTITY_TYPE;
+    }
 }

@@ -1,5 +1,7 @@
 package com.aimacademyla.dao;
 
+import com.aimacademyla.model.enums.AIMEntityType;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,4 +14,5 @@ public interface GenericDAO <E,K> {
     void remove(E entity);
     E get(K key);
     List<E> getList();
+    AIMEntityType getAIMEntityType();
 }

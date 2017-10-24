@@ -1,11 +1,9 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -60,8 +58,11 @@ public class Charge implements Serializable{
     @Column(name="NumChargeLines")
     private int numChargeLines;
 
-    @Column(name="HoursBilled")
-    private BigDecimal hoursBilled;
+    @Column(name="BillableUnitsBilled")
+    private BigDecimal billableUnitsBilled;
+
+    @Column(name="BillableUnitType")
+    private String billableUnitType;
 
     public int getChargeID() {
         return chargeID;
@@ -151,11 +152,19 @@ public class Charge implements Serializable{
         this.numChargeLines = numChargeLines;
     }
 
-    public BigDecimal getHoursBilled() {
-        return hoursBilled;
+    public BigDecimal getBillableUnitsBilled() {
+        return billableUnitsBilled;
     }
 
-    public void setHoursBilled(BigDecimal hoursBilled) {
-        this.hoursBilled = hoursBilled;
+    public void setBillableUnitsBilled(BigDecimal billableUnitsBilled) {
+        this.billableUnitsBilled = billableUnitsBilled;
+    }
+
+    public String getBillableUnitType() {
+        return billableUnitType;
+    }
+
+    public void setBillableUnitType(String billableUnitType) {
+        this.billableUnitType = billableUnitType;
     }
 }

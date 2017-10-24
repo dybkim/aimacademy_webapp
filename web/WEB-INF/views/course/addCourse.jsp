@@ -57,7 +57,7 @@
                 </div>
 
                 <div class="form-group"><form:errors path="course.courseType" cssStyle="color: #FF0000"/>
-                    <label for="courseType">Course Type</label>
+                    <label for="courseType">Course Type: </label>
                     <form:select path="course.courseType" id="courseType" class="form-Control" cssStyle="width: 200px">
                         <form:option value="Supplement"/>
                         <form:option value="Finals Prep"/>
@@ -68,22 +68,30 @@
                 </div>
 
                 <div class="form-group"><span style="color: #FF0000">${startDateErrorMessage}</span>
-                    <label for="startDate">Start Date (MM/DD/YYYY)</label>
+                    <label for="startDate">Start Date (MM/DD/YYYY): </label>
                     <form:input path="course.courseStartDate" id="startDate" class="date"/>
                 </div>
 
                 <div class="form-group"><span style="color: #FF0000">${endDateErrorMessage}</span>
-                    <label for="endDate">End Date (MM/DD/YYYY)</label>
+                    <label for="endDate">End Date (MM/DD/YYYY): </label>
                     <form:input path="course.courseEndDate" id="endDate" class="date"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="coursePrice">Price per hour</label>
-                    <form:input path="course.pricePerHour" id="coursePrice" class="form-control" cssStyle="width: 100px"/>
+                    <label for="billingType">Billing Type: </label>
+                    <form:select path="course.billableUnitType" id="billingType" class="form-Control">
+                        <form:option value="hour">Per Hour</form:option>
+                        <form:option value="session">Per Session</form:option>
+                    </form:select>
                 </div>
 
                 <div class="form-group">
-                    <label for="classDuration">Session length (hours)</label>
+                    <label for="coursePrice">Price per hour/session: </label>
+                    <form:input path="course.pricePerBillableUnit" id="coursePrice" class="form-control" cssStyle="width: 100px"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="classDuration">Session length (hours): </label>
                     <form:input path="course.classDuration" id="classDuration" class="form-control" cssStyle="width: 100px"/>
                 </div>
 

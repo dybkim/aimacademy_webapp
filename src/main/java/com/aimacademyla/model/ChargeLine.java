@@ -3,7 +3,6 @@ package com.aimacademyla.model;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -27,8 +26,8 @@ public class ChargeLine implements Serializable{
     @JoinColumn(name="ChargeID")
     private int chargeID;
 
-    @Column(name="HoursBilled")
-    private BigDecimal hoursBilled;
+    @Column(name="BillableUnitsBilled")
+    private BigDecimal billableUnitsBilled;
 
     @Column(name="TotalCharge")
     @NumberFormat(style= NumberFormat.Style.CURRENCY)
@@ -66,11 +65,11 @@ public class ChargeLine implements Serializable{
         this.totalCharge = totalCharge;
     }
 
-    public BigDecimal getHoursBilled() {
-        return hoursBilled;
+    public BigDecimal getBillableUnitsBilled() {
+        return billableUnitsBilled;
     }
 
-    public void setHoursBilled(BigDecimal hoursBilled) {
-        this.hoursBilled = hoursBilled;
+    public void setBillableUnitsBilled(BigDecimal billableUnitsBilled) {
+        this.billableUnitsBilled = billableUnitsBilled;
     }
 }

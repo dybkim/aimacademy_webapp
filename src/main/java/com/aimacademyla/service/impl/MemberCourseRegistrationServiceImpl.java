@@ -3,11 +3,11 @@ package com.aimacademyla.service.impl;
 import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.MemberCourseRegistrationDAO;
-import com.aimacademyla.model.AIMEntityType;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
-import com.aimacademyla.model.builder.initializer.impl.MemberCourseRegistrationDefaultValueInitializer;
+import com.aimacademyla.model.initializer.impl.MemberCourseRegistrationDefaultValueInitializer;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,7 +39,7 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
         MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationDAO.get(memberCourseRegistrationPK);
 
         if(memberCourseRegistration == null)
-            memberCourseRegistration = new MemberCourseRegistrationDefaultValueInitializer().setMemberID(memberCourseRegistrationPK.getMemberID()).setCourseID(memberCourseRegistrationPK.getCourseID()).initialize();
+            memberCourseRegistration = new MemberCourseRegistrationDefaultValueInitializer(getDaoFactory()).setMemberID(memberCourseRegistrationPK.getMemberID()).setCourseID(memberCourseRegistrationPK.getCourseID()).initialize();
 
         return memberCourseRegistration;
     }
@@ -96,7 +96,7 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
         MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationDAO.get(memberID, courseID);
 
         if(memberCourseRegistration == null)
-            memberCourseRegistration = new MemberCourseRegistrationDefaultValueInitializer().setMemberID(memberID).setCourseID(courseID).initialize();
+            memberCourseRegistration = new MemberCourseRegistrationDefaultValueInitializer(getDaoFactory()).setMemberID(memberID).setCourseID(courseID).initialize();
 
         return memberCourseRegistration;
     }

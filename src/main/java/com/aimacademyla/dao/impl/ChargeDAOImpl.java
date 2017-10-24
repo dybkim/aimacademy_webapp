@@ -4,6 +4,7 @@ import com.aimacademyla.dao.ChargeDAO;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,8 @@ import java.util.List;
 @Repository("chargeDAO")
 @Transactional
 public class ChargeDAOImpl extends GenericDAOImpl<Charge,Integer> implements ChargeDAO {
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.CHARGE;
 
     public ChargeDAOImpl(){
         super(Charge.class);
@@ -118,5 +121,10 @@ public class ChargeDAOImpl extends GenericDAOImpl<Charge,Integer> implements Cha
         session.flush();
 
         return chargeList;
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType() {
+        return AIM_ENTITY_TYPE;
     }
 }

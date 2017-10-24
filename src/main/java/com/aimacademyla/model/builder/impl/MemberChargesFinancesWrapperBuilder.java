@@ -5,35 +5,32 @@ import com.aimacademyla.model.ChargeLine;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.builder.GenericBuilder;
+import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.enums.BillableUnitType;
 import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.model.wrapper.MemberChargesFinancesWrapper;
 import com.aimacademyla.service.ChargeLineService;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.CourseService;
-import org.springframework.beans.factory.annotation.Configurable;
+import com.aimacademyla.service.factory.ServiceFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
-public class MemberChargesFinancesWrapperBuilder implements GenericBuilder<MemberChargesFinancesWrapper>{
+public class MemberChargesFinancesWrapperBuilder extends GenericBuilderImpl<MemberChargesFinancesWrapper> implements GenericBuilder<MemberChargesFinancesWrapper>{
 
-    private MemberChargesFinancesWrapper memberChargesFinancesWrapper;
     private LocalDate selectedDate;
     private Member member;
     private ChargeService chargeService;
     private ChargeLineService chargeLineService;
     private CourseService courseService;
 
-    private MemberChargesFinancesWrapperBuilder(){}
-
-    public MemberChargesFinancesWrapperBuilder(ChargeService chargeService,
-                                               ChargeLineService chargeLineService,
-                                               CourseService courseService){
-        memberChargesFinancesWrapper = new MemberChargesFinancesWrapper();
-        this.chargeService = chargeService;
-        this.chargeLineService = chargeLineService;
-        this.courseService = courseService;
+    public MemberChargesFinancesWrapperBuilder(ServiceFactory serviceFactory){
+        super(serviceFactory);
+        this.chargeService = (ChargeService) getServiceFactory().getService(AIMEntityType.CHARGE);
+        this.chargeLineService = (ChargeLineService) getServiceFactory().getService(AIMEntityType.CHARGE_LINE);
+        this.courseService = (CourseService) getServiceFactory().getService(AIMEntityType.COURSE);
     }
 
     public MemberChargesFinancesWrapperBuilder setSelectedDate(LocalDate selectedDate){
@@ -46,30 +43,17 @@ public class MemberChargesFinancesWrapperBuilder implements GenericBuilder<Membe
         return this;
     }
 
-    public MemberChargesFinancesWrapperBuilder setChargeService(ChargeService chargeService){
-        this.chargeService = chargeService;
-        return this;
-    }
-
-    public MemberChargesFinancesWrapperBuilder setChargeLineService(ChargeLineService chargeLineService){
-        this.chargeLineService = chargeLineService;
-        return this;
-    }
-
-    public MemberChargesFinancesWrapperBuilder setCourseService(CourseService courseService){
-        this.courseService = courseService;
-        return this;
-    }
-
     @Override
     public MemberChargesFinancesWrapper build() {
+        MemberChargesFinancesWrapper memberChargesFinancesWrapper = new MemberChargesFinancesWrapper();
         List<Charge> chargeList = chargeService.getChargesByMemberByDate(member, selectedDate);
 
         HashMap<Integer, Charge> chargeHashMap = new HashMap<>();
         HashMap<Integer, List<ChargeLine>> chargeLineListHashMap = new HashMap<>();
         HashMap<Integer, Course> courseHashMap = new HashMap<>();
-        HashMap<Integer, BigDecimal> hoursBilledHashMap = new HashMap<>();
+        HashMap<Integer, BigDecimal> billableUnitsBilledHashMap = new HashMap<>();
         BigDecimal hoursBilledTotal = BigDecimal.valueOf(0);
+        BigDecimal sessionsBilledTotal = BigDecimal.valueOf(0);
         BigDecimal totalChargesAmount = BigDecimal.valueOf(0);
         BigDecimal totalDiscountAmount = BigDecimal.valueOf(0);
 
@@ -79,10 +63,16 @@ public class MemberChargesFinancesWrapperBuilder implements GenericBuilder<Membe
             chargeLineListHashMap.put(charge.getChargeID(), chargeLineList);
             Course course = courseService.get(charge.getCourseID());
             courseHashMap.put(charge.getChargeID(), course);
-            hoursBilledHashMap.put(charge.getChargeID(), charge.getHoursBilled());
-            hoursBilledTotal = hoursBilledTotal.add(charge.getHoursBilled());
+            billableUnitsBilledHashMap.put(charge.getChargeID(), charge.getBillableUnitsBilled());
             totalChargesAmount = totalChargesAmount.add(charge.getChargeAmount());
             totalDiscountAmount = totalDiscountAmount.add(charge.getDiscountAmount());
+
+
+            if(charge.getBillableUnitType().equals(BillableUnitType.PER_HOUR.toString()))
+                hoursBilledTotal = hoursBilledTotal.add(charge.getBillableUnitsBilled());
+
+            else
+                sessionsBilledTotal = sessionsBilledTotal.add(charge.getBillableUnitsBilled());
         }
 
         List<LocalDate> monthsList =  TemporalReference.getMonthList();
@@ -103,9 +93,10 @@ public class MemberChargesFinancesWrapperBuilder implements GenericBuilder<Membe
         memberChargesFinancesWrapper.setChargeLineListHashMap(chargeLineListHashMap);
         memberChargesFinancesWrapper.setCourseHashMap(courseHashMap);
         memberChargesFinancesWrapper.setCycleStartDate(selectedDate);
-        memberChargesFinancesWrapper.setHoursBilledHashMap(hoursBilledHashMap);
+        memberChargesFinancesWrapper.setBillableUnitsBilledHashMap(billableUnitsBilledHashMap);
         memberChargesFinancesWrapper.setMonthsList(monthsList);
         memberChargesFinancesWrapper.setHoursBilledTotal(hoursBilledTotal);
+        memberChargesFinancesWrapper.setSessionsBilledTotal(sessionsBilledTotal);
         memberChargesFinancesWrapper.setTotalChargesAmount(totalChargesAmount);
         memberChargesFinancesWrapper.setTotalDiscountAmount(totalDiscountAmount);
         return memberChargesFinancesWrapper;

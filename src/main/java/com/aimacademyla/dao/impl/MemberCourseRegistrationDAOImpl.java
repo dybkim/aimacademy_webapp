@@ -5,6 +5,7 @@ import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -21,6 +22,8 @@ import java.util.List;
 @Repository("memberCourseRegistrationDAO")
 @Transactional
 public class MemberCourseRegistrationDAOImpl extends GenericDAOImpl<MemberCourseRegistration, MemberCourseRegistrationPK> implements MemberCourseRegistrationDAO {
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MEMBER_COURSE_REGISTRATION;
 
     public MemberCourseRegistrationDAOImpl(){
         super(MemberCourseRegistration.class);
@@ -59,5 +62,10 @@ public class MemberCourseRegistrationDAOImpl extends GenericDAOImpl<MemberCourse
         session.flush();
 
         return memberCourseRegistrationList;
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType() {
+        return AIM_ENTITY_TYPE;
     }
 }

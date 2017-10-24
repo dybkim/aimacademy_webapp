@@ -5,8 +5,10 @@ import com.aimacademyla.model.builder.impl.OutstandingChargesPaymentWrapperBuild
 import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.model.wrapper.OutstandingChargesPaymentWrapper;
 import com.aimacademyla.service.*;
+import com.aimacademyla.service.factory.ServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,24 +24,13 @@ import java.util.*;
 @Controller
 @RequestMapping("/admin")
 public class HomeController {
-
-    private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
-    private MemberService memberService;
-    private ChargeService chargeService;
-    private PaymentService paymentService;
     private CourseService courseService;
+    private ServiceFactory serviceFactory;
 
     @Autowired
-    public HomeController(MonthlyFinancesSummaryService monthlyFinancesSummaryService,
-                          MemberService memberService,
-                          ChargeService chargeService,
-                          PaymentService paymentService,
-                          CourseService courseService){
-        this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
-        this.memberService = memberService;
-        this.chargeService = chargeService;
-        this.paymentService = paymentService;
+    public HomeController(CourseService courseService, ServiceFactory serviceFactory){
         this.courseService = courseService;
+        this.serviceFactory = serviceFactory;
     }
 
     @RequestMapping("/home")
@@ -52,15 +43,8 @@ public class HomeController {
         if(month != null && year != null)
             cycleStartDate = LocalDate.of(year, month, 1);
 
-        OutstandingChargesPaymentWrapperBuilder outstandingChargesPaymentWrapperBuilder = new OutstandingChargesPaymentWrapperBuilder(memberService, paymentService, chargeService);
-        OutstandingChargesPaymentWrapper outstandingChargesPaymentWrapper = outstandingChargesPaymentWrapperBuilder.setCycleStartDate(cycleStartDate).build();
+        OutstandingChargesPaymentWrapper outstandingChargesPaymentWrapper = new OutstandingChargesPaymentWrapperBuilder(serviceFactory).setCycleStartDate(cycleStartDate).build();
 
-        List<Member> paidBalanceMemberList = outstandingChargesPaymentWrapper.getPaidBalanceMemberList();
-        List<Member> outstandingBalanceMemberList = outstandingChargesPaymentWrapper.getOutstandingBalanceMemberList();
-        HashMap<Integer, BigDecimal> chargesAmountHashMap = outstandingChargesPaymentWrapper.getChargesAmountHashMap();
-        HashMap<Integer, BigDecimal> paymentAmountHashMap = outstandingChargesPaymentWrapper.getPaymentAmountHashMap();
-        HashMap<Integer, BigDecimal> balanceAmountHashMap = outstandingChargesPaymentWrapper.getBalanceAmountHashMap();
-        HashMap<Integer, List<Charge>> chargeListHashMap = outstandingChargesPaymentWrapper.getChargeListHashMap();
         HashMap<Integer, Course> courseHashMap = new HashMap<>();
 
         for(Course course : courseService.getList())
@@ -71,12 +55,7 @@ public class HomeController {
 
         model.addAttribute("cycleStartDate", cycleStartDate);
         model.addAttribute("monthsList", monthsList);
-        model.addAttribute("paidBalanceMemberList", paidBalanceMemberList);
-        model.addAttribute("outstandingBalanceMemberList", outstandingBalanceMemberList);
-        model.addAttribute("chargesAmountHashMap", chargesAmountHashMap);
-        model.addAttribute("paymentAmountHashMap", paymentAmountHashMap);
-        model.addAttribute("balanceAmountHashMap", balanceAmountHashMap);
-        model.addAttribute("chargeListHashMap", chargeListHashMap);
+        model.addAttribute("outstandingChargesPaymentWrapper", outstandingChargesPaymentWrapper);
         model.addAttribute("courseHashMap", courseHashMap);
 
         return "home";

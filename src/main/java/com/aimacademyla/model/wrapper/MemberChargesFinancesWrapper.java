@@ -27,7 +27,7 @@ public class MemberChargesFinancesWrapper implements Serializable{
 
     private HashMap<Integer, List<ChargeLine>> chargeLineListHashMap;
 
-    private HashMap<Integer, BigDecimal> hoursBilledHashMap;
+    private HashMap<Integer, BigDecimal> billableUnitsBilledHashMap;
 
     private List<LocalDate> monthsList;
 
@@ -36,6 +36,8 @@ public class MemberChargesFinancesWrapper implements Serializable{
     private int monthSelectedIndex;
 
     private BigDecimal hoursBilledTotal;
+
+    private BigDecimal sessionsBilledTotal;
 
     private BigDecimal totalChargesAmount;
 
@@ -81,12 +83,12 @@ public class MemberChargesFinancesWrapper implements Serializable{
         this.chargeLineListHashMap = chargeLineListHashMap;
     }
 
-    public HashMap<Integer, BigDecimal> getHoursBilledHashMap() {
-        return hoursBilledHashMap;
+    public HashMap<Integer, BigDecimal> getBillableUnitsBilledHashMap() {
+        return billableUnitsBilledHashMap;
     }
 
-    public void setHoursBilledHashMap(HashMap<Integer, BigDecimal> hoursBilledHashMap) {
-        this.hoursBilledHashMap = hoursBilledHashMap;
+    public void setBillableUnitsBilledHashMap(HashMap<Integer, BigDecimal> billableUnitsBilledHashMap) {
+        this.billableUnitsBilledHashMap = billableUnitsBilledHashMap;
     }
 
     public List<LocalDate> getMonthsList() {
@@ -111,6 +113,14 @@ public class MemberChargesFinancesWrapper implements Serializable{
 
     public void setHoursBilledTotal(BigDecimal hoursBilledTotal) {
         this.hoursBilledTotal = hoursBilledTotal;
+    }
+
+    public BigDecimal getSessionsBilledTotal() {
+        return sessionsBilledTotal;
+    }
+
+    public void setSessionsBilledTotal(BigDecimal sessionsBilledTotal) {
+        this.sessionsBilledTotal = sessionsBilledTotal;
     }
 
     public BigDecimal getTotalChargesAmount() {

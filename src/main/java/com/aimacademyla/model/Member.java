@@ -3,9 +3,11 @@ package com.aimacademyla.model;
 import com.aimacademyla.model.reference.TemporalReference;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDate;
 
@@ -55,6 +57,10 @@ public class Member implements Serializable{
 
     @Column(name="MemberEmailAddress")
     private String memberEmailAddress;
+
+    @Column(name="MembershipRate")
+    @NumberFormat(style= NumberFormat.Style.CURRENCY)
+    private BigDecimal membershipRate;
 
     public int getMemberID() {
         return memberID;
@@ -144,4 +150,11 @@ public class Member implements Serializable{
         this.memberEmailAddress = memberEmailAddress;
     }
 
+    public BigDecimal getMembershipRate() {
+        return membershipRate;
+    }
+
+    public void setMembershipRate(BigDecimal membershipRate) {
+        this.membershipRate = membershipRate;
+    }
 }

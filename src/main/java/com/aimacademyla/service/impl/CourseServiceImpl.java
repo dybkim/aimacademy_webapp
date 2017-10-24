@@ -1,19 +1,15 @@
 package com.aimacademyla.service.impl;
 
-import com.aimacademyla.dao.ChargeDAO;
 import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.GenericDAO;
-import com.aimacademyla.model.AIMEntityType;
-import com.aimacademyla.model.Charge;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.Course;
-import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 /**

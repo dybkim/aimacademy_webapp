@@ -83,6 +83,12 @@
                     <form:input path="memberEntryDate" id="entryDate" class="form-Control"/>
                 </div>
 
+                <div class="form-group">
+                    <span style="color: #FF0000">${membershipRateErrorMessage}</span>
+                    <label for="membershipRate">Membership Rate</label>
+                    <form:input path="membershipRate" id="membershipRate" class="form-Control"/>
+                </div>
+
                 <br><br>
 
                 <input type="submit" value="submit" class="btn btn=default">

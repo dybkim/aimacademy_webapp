@@ -1,18 +1,15 @@
 package com.aimacademyla.api.slack.response.impl;
 
 import com.aimacademyla.api.slack.response.AttachmentBuilder;
-import com.aimacademyla.api.slack.service.ServiceFactory;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.service.CourseService;
-import com.aimacademyla.service.CourseSessionService;
 import com.aimacademyla.service.MemberService;
 import com.ullink.slack.simpleslackapi.SlackAction;
 import com.ullink.slack.simpleslackapi.SlackAttachment;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +40,7 @@ public class CourseSessionAttendanceAttachmentBuilder implements AttachmentBuild
     public SlackAttachment build() {
         Course course = courseService.get(courseSession.getCourseID());
 
-        String title = course.getClassDuration().toString() + " hours";
+        String title = course.getBillableUnitDuration().toString() + " hours";
         String text = "Pick 'No Session' if session was canceled";
 
         List<SlackAction> slackActionList = buildActionList(course);

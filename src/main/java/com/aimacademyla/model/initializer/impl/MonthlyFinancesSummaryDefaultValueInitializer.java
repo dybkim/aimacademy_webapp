@@ -1,42 +1,50 @@
-package com.aimacademyla.model.builder.initializer.impl;
+package com.aimacademyla.model.initializer.impl;
 
+import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.MemberMonthlyRegistrationDAO;
+import com.aimacademyla.dao.SeasonDAO;
+import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.MemberMonthlyRegistration;
 import com.aimacademyla.model.MonthlyFinancesSummary;
 import com.aimacademyla.model.Season;
-import com.aimacademyla.model.builder.initializer.GenericDefaultValueInitializer;
+import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.initializer.GenericDefaultValueInitializer;
 import com.aimacademyla.service.CourseService;
+import com.aimacademyla.service.MemberMonthlyRegistrationService;
 import com.aimacademyla.service.SeasonService;
+import com.aimacademyla.service.factory.ServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class MonthlyFinancesSummaryDefaultValueInitializer implements GenericDefaultValueInitializer<MonthlyFinancesSummary>{
+public class MonthlyFinancesSummaryDefaultValueInitializer extends GenericDefaultValueInitializerImpl<MonthlyFinancesSummary> implements GenericDefaultValueInitializer<MonthlyFinancesSummary>{
 
     private MemberMonthlyRegistrationDAO memberMonthlyRegistrationDAO;
-    private CourseService courseService;
-    private SeasonService seasonService;
+    private CourseDAO courseDAO;
+    private SeasonDAO seasonDAO;
 
     private LocalDate localDate;
-    private MonthlyFinancesSummary monthlyFinancesSummary;
 
-    private MonthlyFinancesSummaryDefaultValueInitializer(){}
-
-    public MonthlyFinancesSummaryDefaultValueInitializer(MemberMonthlyRegistrationDAO memberMonthlyRegistrationDAO, CourseService courseService, SeasonService seasonService) {
-        this.memberMonthlyRegistrationDAO = memberMonthlyRegistrationDAO;
-        this.courseService = courseService;
-        this.seasonService = seasonService;
-        monthlyFinancesSummary = new MonthlyFinancesSummary();
+    public MonthlyFinancesSummaryDefaultValueInitializer(DAOFactory daoFactory){
+        super(daoFactory);
+        this.memberMonthlyRegistrationDAO = (MemberMonthlyRegistrationDAO) getDAOFactory().getDAO(AIMEntityType.MEMBER_MONTHLY_REGISTRATION);
+        this.courseDAO = (CourseDAO) getDAOFactory().getDAO(AIMEntityType.COURSE);
+        this.seasonDAO  = (SeasonDAO) getDAOFactory().getDAO(AIMEntityType.SEASON);
     }
 
     @Override
     public MonthlyFinancesSummary initialize() {
-        Season season = seasonService.getSeason(localDate);
-        int numCourses = courseService.getCourseListByDate(localDate).size();
+        MonthlyFinancesSummary monthlyFinancesSummary = new MonthlyFinancesSummary();
+
+        Season season = seasonDAO.getSeason(localDate);
+        if(season == null)
+            season = seasonDAO.get(Season.NO_SEASON_FOUND);
+
+        int numCourses = courseDAO.getCourseListByDate(localDate).size();
         int numMembers = memberMonthlyRegistrationDAO.getMemberMonthlyRegistrationList(localDate).size();
 
         monthlyFinancesSummary.setCycleStartDate(LocalDate.of(localDate.getYear(), localDate.getMonth(), localDate.getDayOfMonth()));

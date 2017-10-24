@@ -2,6 +2,7 @@ package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.MonthlyFinancesSummaryDAO;
 import com.aimacademyla.model.MonthlyFinancesSummary;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,8 @@ import java.util.List;
 @Repository("monthlyFinancesSummaryDAO")
 @Transactional
 public class MonthlyFinancesSummaryDAOImpl extends GenericDAOImpl<MonthlyFinancesSummary, Integer> implements MonthlyFinancesSummaryDAO {
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MONTHLY_FINANCES_SUMMARY;
 
     public MonthlyFinancesSummaryDAOImpl(){
         super(MonthlyFinancesSummary.class);
@@ -54,5 +57,10 @@ public class MonthlyFinancesSummaryDAOImpl extends GenericDAOImpl<MonthlyFinance
         session.flush();
 
         return monthlyFinancesSummary;
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType() {
+        return AIM_ENTITY_TYPE;
     }
 }

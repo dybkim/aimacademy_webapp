@@ -1,15 +1,14 @@
 package com.aimacademyla.controller.course.rest;
 
 import com.aimacademyla.controller.GenericResponse;
-import com.aimacademyla.model.Attendance;
-import com.aimacademyla.model.CourseSession;
-import com.aimacademyla.model.Member;
-import com.aimacademyla.model.MemberCourseRegistration;
+import com.aimacademyla.model.*;
 import com.aimacademyla.model.builder.impl.CourseRegistrationWrapperBuilder;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
 import com.aimacademyla.service.*;
+import com.aimacademyla.service.factory.ServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,39 +27,48 @@ import java.util.List;
 @RequestMapping("/admin/courseList/rest")
 public class CourseResources {
 
+    private ServiceFactory serviceFactory;
+
     private MemberService memberService;
     private CourseService courseService;
     private MemberCourseRegistrationService memberCourseRegistrationService;
     private AttendanceService attendanceService;
-    private CourseSessionService courseSessionService;
 
     @Autowired
-    public CourseResources(MemberService memberService,
+    public CourseResources(ServiceFactory serviceFactory,
+                           MemberService memberService,
                            CourseService courseService,
                            MemberCourseRegistrationService memberCourseRegistrationService,
-                           AttendanceService attendanceService,
-                           CourseSessionService courseSessionService){
+                           AttendanceService attendanceService){
+        this.serviceFactory = serviceFactory;
         this.memberService = memberService;
         this.courseService = courseService;
         this.memberCourseRegistrationService = memberCourseRegistrationService;
         this.attendanceService = attendanceService;
-        this.courseSessionService = courseSessionService;
     }
 
     @RequestMapping(value="/{courseID}/getCourseRegistration")
     @ResponseBody
     public CourseRegistrationWrapper getCourseRegistrationWrapper(@PathVariable("courseID") int courseID){
-        CourseRegistrationWrapperBuilder courseRegistrationWrapperBuilder = new CourseRegistrationWrapperBuilder(memberService, memberCourseRegistrationService, courseService);
-        return courseRegistrationWrapperBuilder.setCourseID(courseID).build();
+        return new CourseRegistrationWrapperBuilder(serviceFactory).setCourseID(courseID).build();
     }
 
     @RequestMapping(value="/{courseID}/validateAddCourseSession")
-    public @ResponseBody
-    ResponseEntity<GenericResponse> validateAddCourseSession(@PathVariable("courseID") int courseID){
+    @ResponseBody
+    public ResponseEntity<GenericResponse> validateAddCourseSession(@PathVariable("courseID") int courseID){
         List<Member> memberList = memberService.getActiveMembersByCourse(courseService.get(courseID));
         if(memberList.size() == 0)
             return new ResponseEntity<>(new GenericResponse("Unable to create course session", "Cannot add course sessions until members are registered to the course!",HttpStatus.INTERNAL_SERVER_ERROR.value()) {
             }, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new ResponseEntity<>(new GenericResponse("OK", "NO_ERROR", HttpStatus.OK.value()){},HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/deleteCourse/{courseID}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<GenericResponse> deleteCourse(@PathVariable("courseID") int courseID){
+        Course course = courseService.get(courseID);
+        courseService.remove(course);
 
         return new ResponseEntity<>(new GenericResponse("OK", "NO_ERROR", HttpStatus.OK.value()){},HttpStatus.OK);
     }

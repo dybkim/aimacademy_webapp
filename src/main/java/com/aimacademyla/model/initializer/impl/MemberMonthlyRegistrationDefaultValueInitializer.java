@@ -1,39 +1,40 @@
-package com.aimacademyla.model.builder.initializer.impl;
+package com.aimacademyla.model.initializer.impl;
 
+import com.aimacademyla.dao.SeasonDAO;
+import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.MemberMonthlyRegistration;
-import com.aimacademyla.model.MonthlyFinancesSummary;
 import com.aimacademyla.model.Season;
-import com.aimacademyla.model.builder.initializer.GenericDefaultValueInitializer;
-import com.aimacademyla.service.CourseService;
-import com.aimacademyla.service.MonthlyFinancesSummaryService;
+import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.initializer.GenericDefaultValueInitializer;
 import com.aimacademyla.service.SeasonService;
+import com.aimacademyla.service.factory.ServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-public class MemberMonthlyRegistrationDefaultValueInitializer implements GenericDefaultValueInitializer<MemberMonthlyRegistration>{
+public class MemberMonthlyRegistrationDefaultValueInitializer extends GenericDefaultValueInitializerImpl<MemberMonthlyRegistration> implements GenericDefaultValueInitializer<MemberMonthlyRegistration>{
 
-    private SeasonService seasonService;
+    private SeasonDAO seasonDAO;
 
     private int memberID;
     private LocalDate localDate;
-    private MemberMonthlyRegistration memberMonthlyRegistration;
 
-    private MemberMonthlyRegistrationDefaultValueInitializer(){}
-
-    public MemberMonthlyRegistrationDefaultValueInitializer(SeasonService seasonService){
-        this.seasonService = seasonService;
-
-        memberMonthlyRegistration = new MemberMonthlyRegistration();
+    public MemberMonthlyRegistrationDefaultValueInitializer(DAOFactory daoFactory){
+        super(daoFactory);
+        seasonDAO = (SeasonDAO) getDAOFactory().getDAO(AIMEntityType.SEASON);
     }
 
     @Override
     public MemberMonthlyRegistration initialize() {
+        MemberMonthlyRegistration memberMonthlyRegistration = new MemberMonthlyRegistration();
         LocalDate cycleStartDate = LocalDate.of(localDate.getYear(), localDate.getMonthValue(), 1);
-        Season season = seasonService.getSeason(cycleStartDate);
+        Season season = seasonDAO.getSeason(cycleStartDate);
+
+        if(season == null)
+            season = seasonDAO.get(Season.NO_SEASON_FOUND);
+
         memberMonthlyRegistration.setCycleStartDate(cycleStartDate);
         memberMonthlyRegistration.setMemberID(memberID);
         memberMonthlyRegistration.setSeasonID(season.getSeasonID());

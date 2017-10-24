@@ -1,6 +1,5 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.model.reference.TemporalReference;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
@@ -59,14 +58,20 @@ public class Course implements Serializable{
 
     @Column(name="PricePerHour")
     @NumberFormat(style= NumberFormat.Style.CURRENCY)
-    private BigDecimal pricePerHour;
+    private BigDecimal pricePerBillableUnit;
 
     @Column(name="ClassDuration")
     private BigDecimal classDuration;
 
+    @Column(name="BillableUnitDuration")
+    private BigDecimal billableUnitDuration;
+
     //Primary Instructor ID
     @Column(name="EmployeeID")
     private Integer employeeID;
+
+    @Column(name="BillableUnitType")
+    private String billableUnitType;
 
     public int getCourseID() {
         return courseID;
@@ -136,12 +141,12 @@ public class Course implements Serializable{
         this.totalNumSessions = totalNumSessions;
     }
 
-    public BigDecimal getPricePerHour() {
-        return pricePerHour;
+    public BigDecimal getPricePerBillableUnit() {
+        return pricePerBillableUnit;
     }
 
-    public void setPricePerHour(BigDecimal pricePerHour) {
-        this.pricePerHour = pricePerHour;
+    public void setPricePerBillableUnit(BigDecimal pricePerBillableUnit) {
+        this.pricePerBillableUnit = pricePerBillableUnit;
     }
 
     public static long getSerialVersionUID() {
@@ -156,12 +161,12 @@ public class Course implements Serializable{
         this.seasonID = seasonID;
     }
 
-    public BigDecimal getClassDuration() {
-        return classDuration;
+    public BigDecimal getBillableUnitDuration() {
+        return billableUnitDuration;
     }
 
-    public void setClassDuration(BigDecimal classDuration) {
-        this.classDuration = classDuration;
+    public void setBillableUnitDuration(BigDecimal billableUnitDuration) {
+        this.billableUnitDuration = billableUnitDuration;
     }
 
     public Integer getEmployeeID() {
@@ -170,5 +175,21 @@ public class Course implements Serializable{
 
     public void setEmployeeID(Integer employeeID) {
         this.employeeID = employeeID;
+    }
+
+    public BigDecimal getClassDuration() {
+        return classDuration;
+    }
+
+    public void setClassDuration(BigDecimal classDuration) {
+        this.classDuration = classDuration;
+    }
+
+    public String getBillableUnitType() {
+        return billableUnitType;
+    }
+
+    public void setBillableUnitType(String billableUnitType) {
+        this.billableUnitType = billableUnitType;
     }
 }

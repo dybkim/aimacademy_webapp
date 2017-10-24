@@ -33,7 +33,7 @@
         $("#deleteCourseButton").click(function() {
             if(confirm("Deleting this course will delete all related attendance and financial records! Are you sure you want to delete?")){
                     $.ajax({
-                        url: "/admin/courseList/deleteCourse/${courseRegistrationWrapper.course.courseID}/'",
+                        url: "/admin/courseList/rest/deleteCourse/${courseRegistrationWrapper.course.courseID}/",
                         type: "DELETE",
                         dataType: "json",
                         success: function() {
@@ -55,19 +55,19 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Edit Course: ${courseRegistrationWrapper.course.courseName}</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/editCourse/${courseRegistrationWrapper.course.courseID}" method="POST" modelAttribute="courseRegistrationWrapper">
+            <form:form action="${pageContext.request.contextPath}/admin/courseList/editCourse/${courseRegistrationWrapper.course.courseID}" method="PUT" modelAttribute="courseRegistrationWrapper">
                 <form:hidden path="course.courseID" value="${courseRegistrationWrapper.course.courseID}"/>
                 <form:hidden path="course.totalNumSessions" value="${courseRegistrationWrapper.course.totalNumSessions}"/>
-                <form:hidden path="course.pricePerHour" value="${courseRegistrationWrapper.course.pricePerHour}"/>
-                <form:hidden path="course.classDuration" value="${courseRegistrationWrapper.course.classDuration}"/>
+                <form:hidden path="course.pricePerBillableUnit" value="${courseRegistrationWrapper.course.pricePerBillableUnit}"/>
+                <form:hidden path="course.billableUnitDuration" value="${courseRegistrationWrapper.course.billableUnitDuration}"/>
 
                 <div class="form-group"><form:errors path="course.courseName" cssStyle="color: #FF0000"/>
-                    <label for="courseTitle">Course Title</label>
+                    <label for="courseTitle">Course Title: </label>
                     <form:input path="course.courseName" id="courseTitle" class="form-Control" value="${courseRegistrationWrapper.course.courseName}"/>
                 </div>
 
                 <div class="form-group"><form:errors path="course.courseType" cssStyle="color: #FF0000"/>
-                    <label for="courseType">Course Type</label>
+                    <label for="courseType">Course Type: </label>
                     <form:select path="course.courseType" id="courseType" class="form-Control" value="${courseRegistrationWrapper.course.courseType}">
                         <form:option value="Supplement"/>
                         <form:option value="Finals Prep"/>
@@ -79,7 +79,7 @@
 
                 <span style="color: #FF0000">${startDateErrorMessage}</span>
                 <div class="form-group">
-                    <label for="startDate">Start Date (MM/DD/YYYY)</label>
+                    <label for="startDate">Start Date (MM/DD/YYYY): </label>
                     <fmt:parseDate value="${courseRegistrationWrapper.course.courseStartDate}" pattern="yyyy-MM-dd" var="parsedStartDate" type="date" />
                     <fmt:formatDate value="${parsedStartDate}" var="formattedStartDate" type="date" pattern="MM/dd/yyyy"/>
                     <form:input path="course.courseStartDate" id="startDate" class="date" value="${formattedStartDate}"/>
@@ -87,20 +87,28 @@
 
                 <span style="color: #FF0000">${endDateErrorMessage}</span>
                 <div class="form-group">
-                    <label for="endDate">End Date (MM/DD/YYYY)</label>
+                    <label for="endDate">End Date (MM/DD/YYYY): </label>
                     <fmt:parseDate value="${courseRegistrationWrapper.course.courseEndDate}" pattern="yyyy-MM-dd" var="parsedEndDate" type="date" />
                     <fmt:formatDate value="${parsedEndDate}" var="formattedEndDate" type="date" pattern="MM/dd/yyyy"/>
                     <form:input path="course.courseEndDate" id="endDate" class="date" value="${formattedEndDate}"/>
                 </div>
 
                 <div class="form-group">
-                    <label for="coursePrice">Price per hour</label>
-                    <form:input path="course.pricePerHour" id="coursePrice" class="form-control" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.pricePerHour}"/>
+                    <label for="billingType">Billing Type: </label>
+                    <form:select path="course.billableUnitType" id="billingType" class="form-Control" value="${courseRegistrationWrapper.course.billableUnitType}">
+                        <form:option value="hour">Per Hour</form:option>
+                        <form:option value="session">Per Session</form:option>
+                    </form:select>
                 </div>
 
                 <div class="form-group">
-                    <label for="classDuration">Session length (hours)</label>
-                    <form:input path="course.classDuration" id="classDuration" class="form-control" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.classDuration}"/>
+                    <label for="coursePrice">Price per hour/session: </label>
+                    <form:input path="course.pricePerBillableUnit" id="coursePrice" class="form-control" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.pricePerBillableUnit}"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="billableUnitDuration">Session length (hours): </label>
+                    <form:input path="course.billableUnitDuration" id="billableUnitDuration" class="form-control" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.billableUnitDuration}"/>
                 </div>
 
                 <div class="form-group">

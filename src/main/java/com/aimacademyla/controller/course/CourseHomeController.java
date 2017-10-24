@@ -3,9 +3,11 @@ package com.aimacademyla.controller.course;
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.builder.impl.CourseRegistrationWrapperBuilder;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
+import com.aimacademyla.model.enums.BillableUnitType;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapperObject;
 import com.aimacademyla.service.*;
+import com.aimacademyla.service.factory.ServiceFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,48 +19,37 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
 /**
  * Created by davidkim on 2/2/17.
+ *
+ * CourseHomeController handles all requests regarding adding/updating/deleting new courses, as well as displaying info on all courses
  */
 
 @Controller
 @RequestMapping("/admin/courseList")
 public class CourseHomeController {
 
+    private ServiceFactory serviceFactory;
+
     private CourseService courseService;
-    private AttendanceService attendanceService;
-    private MemberService memberService;
-    private CourseSessionService courseSessionService;
     private MemberCourseRegistrationService memberCourseRegistrationService;
     private SeasonService seasonService;
-    private ChargeService chargeService;
-    private ChargeLineService chargeLineService;
-    private PaymentService paymentService;
 
     private static final Logger logger = LogManager.getLogger(CourseHomeController.class);
 
     @Autowired
-    public CourseHomeController(CourseService courseService,
-                                AttendanceService attendanceService,
-                                MemberService memberService,
-                                CourseSessionService courseSessionService,
+    public CourseHomeController(ServiceFactory serviceFactory,
+                                CourseService courseService,
                                 MemberCourseRegistrationService memberCourseRegistrationService,
-                                SeasonService seasonService,
-                                ChargeService chargeService,
-                                ChargeLineService chargeLineService,
-                                PaymentService paymentService){
+                                SeasonService seasonService){
+        this.serviceFactory = serviceFactory;
         this.courseService = courseService;
-        this.attendanceService = attendanceService;
-        this.memberService = memberService;
-        this.courseSessionService = courseSessionService;
         this.memberCourseRegistrationService = memberCourseRegistrationService;
         this.seasonService = seasonService;
-        this.chargeService = chargeService;
-        this.chargeLineService = chargeLineService;
-        this.paymentService = paymentService;
     }
 
     @RequestMapping
@@ -108,20 +99,23 @@ public class CourseHomeController {
             return "/course/addCourse";
         }
 
-//        addMemberCourseRegistrationList(courseRegistrationWrapper);
+        Course course = courseRegistrationWrapper.getCourse();
+
+        setBillableUnitDuration(course);
+
         courseService.add(courseRegistrationWrapper.getCourse());
         return "redirect:/admin/courseList";
     }
 
     @RequestMapping("/editCourse/{courseID}")
     public String editCourse(@PathVariable("courseID") int courseID, Model model){
-        CourseRegistrationWrapper courseRegistrationWrapper = new CourseRegistrationWrapperBuilder(memberService, memberCourseRegistrationService, courseService).setCourseID(courseID).build();
-        model.addAttribute(courseRegistrationWrapper);
+        CourseRegistrationWrapper courseRegistrationWrapper = new CourseRegistrationWrapperBuilder(serviceFactory).setCourseID(courseID).build();
+        model.addAttribute("courseRegistrationWrapper", courseRegistrationWrapper);
 
         return "/course/editCourse";
     }
 
-    @RequestMapping(value="/editCourse/{courseID}", method = RequestMethod.POST)
+    @RequestMapping(value="/editCourse/{courseID}", method = RequestMethod.PUT)
     public String editCourse(@Valid @ModelAttribute("courseRegistrationWrapper") CourseRegistrationWrapper courseRegistrationWrapper, BindingResult result, @PathVariable("courseID") int courseID, Model model){
 
         if(result.hasErrors()) {
@@ -149,6 +143,9 @@ public class CourseHomeController {
         }
         
         course.setNumEnrolled(numEnrolled);
+
+        setBillableUnitDuration(course);
+
         courseService.update(course);
 
         return "redirect:/admin/courseList/courseInfo/" + courseID;
@@ -181,32 +178,6 @@ public class CourseHomeController {
         memberCourseRegistrationService.add(memberCourseRegistration);
 
         return "redirect:/admin/courseList/editCourse/" + courseID;
-    }
-
-    @RequestMapping(value="/deleteCourse/{courseID}", method = RequestMethod.DELETE)
-    public String deleteCourse(@PathVariable("courseID") int courseID){
-        Course course = courseService.get(courseID);
-//        List<CourseSession> courseSessionList = courseSessionService.getCourseSessionsForCourse(course);
-//        List<Attendance> attendanceList = attendanceService.getAttendanceForCourse(course);
-//        List<Charge> chargeList = chargeService.getChargesByCourse(course);
-//        List<ChargeLine> chargeLineList = new ArrayList<>();
-//        List<MemberCourseRegistration> memberCourseRegistrationList = memberCourseRegistrationService.getMemberCourseRegistrationListForCourse(course);
-//
-//        for(Charge charge : chargeList){
-//            List<ChargeLine> chargeLines = chargeLineService.getChargeLinesByCharge(charge);
-//
-//            if(chargeLines != null)
-//                chargeLineList.addAll(chargeLines);
-//        }
-//
-//        chargeLineService.remove(chargeLineList);
-//        memberCourseRegistrationService.remove(memberCourseRegistrationList);
-//        attendanceService.remove(attendanceList);
-//        courseSessionService.remove(courseSessionList);
-//        chargeService.remove(chargeList);
-        courseService.remove(course);
-
-        return "redirect:/admin/courseList";
     }
 
     private Model checkDateErrors(List<FieldError> errorList, Model model){
@@ -252,6 +223,17 @@ public class CourseHomeController {
                 memberCourseRegistration.setIsEnrolled(false);
 
             memberCourseRegistrationService.update(memberCourseRegistration);
+        }
+    }
+
+    private void setBillableUnitDuration(Course course){
+        switch(BillableUnitType.parseString(course.getCourseType())){
+            case PER_HOUR:
+                course.setBillableUnitDuration(course.getClassDuration());
+            case PER_SESSION:
+                course.setBillableUnitDuration(BigDecimal.ONE);
+            default:
+                course.setBillableUnitDuration(BigDecimal.ZERO);
         }
     }
 }

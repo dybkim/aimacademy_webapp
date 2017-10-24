@@ -6,7 +6,9 @@ import com.aimacademyla.model.Member;
 import com.aimacademyla.model.builder.impl.MemberChargesFinancesWrapperBuilder;
 import com.aimacademyla.model.wrapper.MemberChargesFinancesWrapper;
 import com.aimacademyla.service.*;
+import com.aimacademyla.service.factory.ServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,36 +21,32 @@ import java.util.List;
 @RequestMapping("/admin/student/rest/studentFinances")
 public class StudentFinancesResources {
 
+    private ServiceFactory serviceFactory;
+
     private MemberService memberService;
     private ChargeService chargeService;
-    private ChargeLineService chargeLineService;
-    private CourseService courseService;
     private SeasonService seasonService;
 
     @Autowired
-    public StudentFinancesResources(MemberService memberService,
+    public StudentFinancesResources(ServiceFactory serviceFactory,
+                                    MemberService memberService,
                                     ChargeService chargeService,
-                                    ChargeLineService chargeLineService,
-                                    CourseService courseService,
                                     SeasonService seasonService){
+        this.serviceFactory = serviceFactory;
         this.memberService = memberService;
         this.chargeService = chargeService;
-        this.chargeLineService = chargeLineService;
-        this.courseService = courseService;
         this.seasonService = seasonService;
     }
 
     @RequestMapping("/{memberID}")
     public @ResponseBody
     MemberChargesFinancesWrapper fetchMemberCharges(@PathVariable("memberID") int memberID,
-                                                     @RequestParam(name = "month") int month,
-                                                     @RequestParam(name = "year") int year){
+                                                    @RequestParam(name = "month") int month,
+                                                    @RequestParam(name = "year") int year){
         LocalDate selectedDate = LocalDate.of(year, month, 1);
         Member member = memberService.get(memberID);
 
-        return new MemberChargesFinancesWrapperBuilder(chargeService, chargeLineService, courseService).setSelectedDate(selectedDate)
-                                                                                                        .setMember(member)
-                                                                                                        .build();
+        return new MemberChargesFinancesWrapperBuilder(serviceFactory).setSelectedDate(selectedDate).setMember(member).build();
 
     }
 

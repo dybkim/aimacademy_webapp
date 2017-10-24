@@ -1,4 +1,4 @@
-package com.aimacademyla.model;
+package com.aimacademyla.model.enums;
 
 public enum AIMEntityType {
     ATTENDANCE,

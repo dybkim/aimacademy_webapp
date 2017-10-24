@@ -1,9 +1,8 @@
 package com.aimacademyla.service.impl;
 
-import com.aimacademyla.dao.ChargeDAO;
 import com.aimacademyla.dao.ChargeLineDAO;
 import com.aimacademyla.dao.GenericDAO;
-import com.aimacademyla.model.AIMEntityType;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.ChargeLine;
 import com.aimacademyla.model.Course;
@@ -50,12 +49,12 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
         BigDecimal chargeAmount = charge.getChargeAmount().add(chargeLineAmount);
         charge.setChargeAmount(chargeAmount);
 
-        BigDecimal hoursBilled = charge.getHoursBilled();
-        if(hoursBilled == null)
-            hoursBilled = BigDecimal.ZERO;
+        BigDecimal billableUnitsBilled = charge.getBillableUnitsBilled();
+        if(billableUnitsBilled == null)
+            billableUnitsBilled = BigDecimal.ZERO;
 
-        hoursBilled = hoursBilled.add(course.getClassDuration());
-        charge.setHoursBilled(hoursBilled);
+        billableUnitsBilled = billableUnitsBilled.add(course.getBillableUnitDuration());
+        charge.setBillableUnitsBilled(billableUnitsBilled);
 
         int numChargeLines = charge.getNumChargeLines() + 1;
         charge.setNumChargeLines(numChargeLines);
@@ -71,19 +70,19 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
         Charge charge = chargeService.get(chargeLine.getChargeID());
         Course course = courseService.get(charge.getCourseID());
 
-        BigDecimal hoursBilled = charge.getHoursBilled();
-        if(hoursBilled == null)
-            hoursBilled = BigDecimal.ZERO;
-        BigDecimal oldHoursBilled = chargeLine.getHoursBilled();
+        BigDecimal billableUnitsBilled = charge.getBillableUnitsBilled();
+        if(billableUnitsBilled == null)
+            billableUnitsBilled = BigDecimal.ZERO;
+        BigDecimal oldHoursBilled = chargeLine.getBillableUnitsBilled();
         if(oldHoursBilled == null)
             oldHoursBilled = BigDecimal.ZERO;
 
-        hoursBilled = hoursBilled.subtract(oldHoursBilled);
-        hoursBilled = hoursBilled.add(course.getClassDuration());
-        charge.setHoursBilled(hoursBilled);
+        billableUnitsBilled = billableUnitsBilled.subtract(oldHoursBilled);
+        billableUnitsBilled = billableUnitsBilled.add(course.getBillableUnitDuration());
+        charge.setBillableUnitsBilled(billableUnitsBilled);
 
-        if(hoursBilled.equals(BigDecimal.ZERO))
-            charge.setHoursBilled(BigDecimal.ZERO);
+        if(billableUnitsBilled.equals(BigDecimal.ZERO))
+            charge.setBillableUnitsBilled(BigDecimal.ZERO);
 
         BigDecimal chargeAmount = charge.getChargeAmount().subtract(oldChargeLineAmount).add(chargeLine.getTotalCharge());
         charge.setChargeAmount(chargeAmount);
@@ -100,16 +99,16 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
         BigDecimal newChargeAmount = charge.getChargeAmount().subtract(chargeLineAmount);
         charge.setChargeAmount(newChargeAmount);
 
-        BigDecimal hoursBilled = charge.getHoursBilled();
-        if(hoursBilled == null)
-            hoursBilled = BigDecimal.ZERO;
+        BigDecimal billableUnitsBilled = charge.getBillableUnitsBilled();
+        if(billableUnitsBilled == null)
+            billableUnitsBilled = BigDecimal.ZERO;
 
-        BigDecimal chargeLineHoursBilled = chargeLine.getHoursBilled();
-        if(chargeLineHoursBilled == null)
-            chargeLineHoursBilled = BigDecimal.ZERO;
+        BigDecimal chargeLineBillableUnitsBilled = chargeLine.getBillableUnitsBilled();
+        if(chargeLineBillableUnitsBilled == null)
+            chargeLineBillableUnitsBilled = BigDecimal.ZERO;
 
-        hoursBilled = hoursBilled.subtract(chargeLineHoursBilled);
-        charge.setHoursBilled(hoursBilled);
+        billableUnitsBilled = billableUnitsBilled.subtract(chargeLineBillableUnitsBilled);
+        charge.setBillableUnitsBilled(billableUnitsBilled);
 
         int numChargeLines = charge.getNumChargeLines() - 1;
         charge.setNumChargeLines(numChargeLines);

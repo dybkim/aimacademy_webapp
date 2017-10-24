@@ -3,20 +3,17 @@ package com.aimacademyla.service.impl;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.MemberMonthlyRegistrationDAO;
 import com.aimacademyla.dao.MonthlyFinancesSummaryDAO;
-import com.aimacademyla.model.AIMEntityType;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.MonthlyFinancesSummary;
-import com.aimacademyla.model.Season;
-import com.aimacademyla.model.builder.initializer.impl.MonthlyFinancesSummaryDefaultValueInitializer;
+import com.aimacademyla.model.initializer.impl.MonthlyFinancesSummaryDefaultValueInitializer;
 import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.service.CourseService;
-import com.aimacademyla.service.MemberMonthlyRegistrationService;
 import com.aimacademyla.service.MonthlyFinancesSummaryService;
 import com.aimacademyla.service.SeasonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,22 +26,13 @@ import java.util.List;
 public class MonthlyFinancesSummaryServiceImpl extends GenericServiceImpl<MonthlyFinancesSummary, Integer> implements MonthlyFinancesSummaryService {
 
     private MonthlyFinancesSummaryDAO monthlyFinancesSummaryDAO;
-    private SeasonService seasonService;
-    private CourseService courseService;
-    private MemberMonthlyRegistrationDAO memberMonthlyRegistrationDAO;
 
     private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MONTHLY_FINANCES_SUMMARY;
 
     @Autowired
-    public MonthlyFinancesSummaryServiceImpl(@Qualifier("monthlyFinancesSummaryDAO")GenericDAO<MonthlyFinancesSummary, Integer> genericDAO,
-                                             SeasonService seasonService,
-                                             CourseService courseService,
-                                             MemberMonthlyRegistrationDAO memberMonthlyRegistrationDAO){
+    public MonthlyFinancesSummaryServiceImpl(@Qualifier("monthlyFinancesSummaryDAO")GenericDAO<MonthlyFinancesSummary, Integer> genericDAO){
         super(genericDAO);
         this.monthlyFinancesSummaryDAO = (MonthlyFinancesSummaryDAO) genericDAO;
-        this.seasonService = seasonService;
-        this.courseService = courseService;
-        this.memberMonthlyRegistrationDAO = memberMonthlyRegistrationDAO;
     }
 
 
@@ -53,8 +41,7 @@ public class MonthlyFinancesSummaryServiceImpl extends GenericServiceImpl<Monthl
         MonthlyFinancesSummary monthlyFinancesSummary =  monthlyFinancesSummaryDAO.getMonthlyFinancesSummary(date);
 
         if(monthlyFinancesSummary == null){
-            monthlyFinancesSummary = new MonthlyFinancesSummaryDefaultValueInitializer(memberMonthlyRegistrationDAO, courseService, seasonService)
-                                                                                        .setLocalDate(date)
+            monthlyFinancesSummary = new MonthlyFinancesSummaryDefaultValueInitializer(getDaoFactory()).setLocalDate(date)
                                                                                         .initialize();
             monthlyFinancesSummaryDAO.add(monthlyFinancesSummary);
         }
@@ -90,7 +77,7 @@ public class MonthlyFinancesSummaryServiceImpl extends GenericServiceImpl<Monthl
             monthlyFinancesSummary = monthlyFinancesSummaryDAO.getMonthlyFinancesSummary(date);
 
             if(monthlyFinancesSummaryDAO == null){
-                monthlyFinancesSummary = new MonthlyFinancesSummaryDefaultValueInitializer(memberMonthlyRegistrationDAO, courseService, seasonService)
+                monthlyFinancesSummary = new MonthlyFinancesSummaryDefaultValueInitializer(getDaoFactory())
                         .setLocalDate(date)
                         .initialize();
                 monthlyFinancesSummaryDAO.add(monthlyFinancesSummary);

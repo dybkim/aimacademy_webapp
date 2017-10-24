@@ -3,6 +3,7 @@ package com.aimacademyla.dao.impl;
 import com.aimacademyla.dao.MemberMonthlyRegistrationDAO;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberMonthlyRegistration;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -21,6 +22,8 @@ import java.util.List;
 @Repository("memberMonthlyRegistrationDAO")
 @Transactional
 public class MemberMonthlyRegistrationDAOImpl extends GenericDAOImpl<MemberMonthlyRegistration, Integer> implements MemberMonthlyRegistrationDAO{
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MEMBER_MONTHLY_REGISTRATION;
 
     public MemberMonthlyRegistrationDAOImpl() {
         super(MemberMonthlyRegistration.class);
@@ -70,5 +73,10 @@ public class MemberMonthlyRegistrationDAOImpl extends GenericDAOImpl<MemberMonth
         for(MemberMonthlyRegistration memberMonthlyRegistration : memberMonthlyRegistrationList)
             session.remove(memberMonthlyRegistration);
         session.flush();
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType() {
+        return AIM_ENTITY_TYPE;
     }
 }

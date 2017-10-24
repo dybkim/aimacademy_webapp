@@ -3,32 +3,33 @@ package com.aimacademyla.model.builder.impl;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.builder.GenericBuilder;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.wrapper.MemberCourseFinancesWrapper;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.PaymentService;
+import com.aimacademyla.service.factory.ServiceFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 
-public class MemberCourseFinancesWrapperBuilder implements GenericBuilder<MemberCourseFinancesWrapper>{
+public class MemberCourseFinancesWrapperBuilder extends GenericBuilderImpl<MemberCourseFinancesWrapper> implements GenericBuilder<MemberCourseFinancesWrapper>{
 
     private PaymentService paymentService;
     private ChargeService chargeService;
-    private MemberCourseFinancesWrapper memberCourseFinancesWrapper;
 
     private LocalDate cycleStartDate;
     private Member member;
 
-    private MemberCourseFinancesWrapperBuilder(){}
-
-    public MemberCourseFinancesWrapperBuilder(PaymentService paymentService,
-                                              ChargeService chargeService){
-        memberCourseFinancesWrapper = new MemberCourseFinancesWrapper();
-        this.paymentService = paymentService;
-        this.chargeService = chargeService;
+    public MemberCourseFinancesWrapperBuilder(ServiceFactory serviceFactory){
+        super(serviceFactory);
+        this.paymentService = (PaymentService) getServiceFactory().getService(AIMEntityType.PAYMENT);
+        this.chargeService = (ChargeService) getServiceFactory().getService(AIMEntityType.CHARGE);
     }
 
     public MemberCourseFinancesWrapperBuilder setCycleStartDate(LocalDate cycleStartDate) {
@@ -42,6 +43,7 @@ public class MemberCourseFinancesWrapperBuilder implements GenericBuilder<Member
     }
 
     public MemberCourseFinancesWrapper build(){
+        MemberCourseFinancesWrapper memberCourseFinancesWrapper = new MemberCourseFinancesWrapper();
 
         BigDecimal totalChargeAmount = BigDecimal.valueOf(0);
         BigDecimal totalPaymentAmount = paymentService.getPaymentForMemberByDate(member, cycleStartDate).getPaymentAmount();

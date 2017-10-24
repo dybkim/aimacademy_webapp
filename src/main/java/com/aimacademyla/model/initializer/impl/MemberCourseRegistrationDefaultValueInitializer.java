@@ -1,27 +1,27 @@
-package com.aimacademyla.model.builder.initializer.impl;
+package com.aimacademyla.model.initializer.impl;
 
+import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.MemberCourseRegistration;
-import com.aimacademyla.model.builder.initializer.GenericDefaultValueInitializer;
+import com.aimacademyla.model.initializer.GenericDefaultValueInitializer;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
-import org.springframework.beans.factory.annotation.Configurable;
+import com.aimacademyla.service.factory.ServiceFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-public class MemberCourseRegistrationDefaultValueInitializer implements GenericDefaultValueInitializer<MemberCourseRegistration>{
-
-    private MemberCourseRegistration memberCourseRegistration;
+public class MemberCourseRegistrationDefaultValueInitializer extends GenericDefaultValueInitializerImpl<MemberCourseRegistration>{
 
     private int memberID;
     private int courseID;
-    
-    public MemberCourseRegistrationDefaultValueInitializer(){
-        memberCourseRegistration = new MemberCourseRegistration();
+
+    public MemberCourseRegistrationDefaultValueInitializer(DAOFactory daoFactory){
+        super(daoFactory);
     }
 
-    @Override
     public MemberCourseRegistration initialize() {
+        MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
         memberCourseRegistration.setMemberCourseRegistrationPK(new MemberCourseRegistrationPK(memberID, courseID));
         memberCourseRegistration.setMemberID(memberID);
         memberCourseRegistration.setCourseID(courseID);

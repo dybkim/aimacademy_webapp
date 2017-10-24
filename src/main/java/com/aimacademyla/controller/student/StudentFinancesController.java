@@ -19,19 +19,9 @@ import java.util.List;
 public class StudentFinancesController {
 
     private MemberService memberService;
-    private CourseService courseService;
-    private ChargeService chargeService;
-    private ChargeLineService chargeLineService;
-
     @Autowired
-    public StudentFinancesController(MemberService memberService,
-                                     CourseService courseService,
-                                     ChargeService chargeService,
-                                     ChargeLineService chargeLineService){
+    public StudentFinancesController(MemberService memberService){
         this.memberService = memberService;
-        this.courseService = courseService;
-        this.chargeService = chargeService;
-        this.chargeLineService = chargeLineService;
     }
 
     @RequestMapping("/{memberID}")

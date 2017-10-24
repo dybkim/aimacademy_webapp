@@ -5,12 +5,12 @@ import com.aimacademyla.dao.MemberCourseRegistrationDAO;
 import com.aimacademyla.dao.MemberDAO;
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

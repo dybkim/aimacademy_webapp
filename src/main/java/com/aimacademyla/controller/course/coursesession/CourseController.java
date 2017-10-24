@@ -18,6 +18,8 @@ import java.util.*;
 
 /**
  * Created by davidkim on 3/17/17.
+ *
+ * CourseController handles all requests regarding a course's info and coursesessions.
  */
 
 @Controller
@@ -162,7 +164,7 @@ public class CourseController {
             return "redirect:/admin/courseList/courseInfo/" + courseID + "/addCourseSession";
         }
 
-        BigDecimal totalCharge = course.getPricePerHour().multiply(course.getClassDuration());
+        BigDecimal totalCharge = course.getPricePerBillableUnit().multiply(course.getBillableUnitDuration());
         int numAttended = 0;
 
         // Adds new attendance for new coursesession
@@ -196,13 +198,14 @@ public class CourseController {
                 chargeLine.setAttendanceID(attendance.getAttendanceID());
                 chargeLine.setTotalCharge(totalCharge);
                 chargeLine.setChargeID(charge.getChargeID());
-                chargeLine.setHoursBilled(course.getClassDuration());
+                chargeLine.setBillableUnitsBilled(course.getBillableUnitDuration());
                 chargeLineService.add(chargeLine);
             }
         }
 
         return "redirect:/admin/courseList/courseInfo/" + courseID;
     }
+
     @RequestMapping(value="/{courseID}/cancelAddCourseSession/{courseSessionID}")
     public String cancelAddCourseSession(@PathVariable("courseID") int courseID, @PathVariable("courseSessionID") int courseSessionID, @ModelAttribute("courseSessionAttendanceListWrapper") CourseSessionAttendanceListWrapper courseSessionAttendanceListWrapper, Model model){
         return "redirect:/admin/courseList/courseInfo/" + courseID;
@@ -210,7 +213,6 @@ public class CourseController {
 
     @RequestMapping(value="/{courseID}/editCourseSession/{courseSessionID}")
     public String editCourseSession(@PathVariable("courseID") int courseID, @PathVariable("courseSessionID") int courseSessionID, Model model){
-        Course course = courseService.get(courseID);
         CourseSession courseSession = courseSessionService.get(courseSessionID);
         List<Attendance> attendanceList = attendanceService.getAttendanceForCourseSession(courseSession);
         List<Member> memberList = new ArrayList<>();
@@ -250,7 +252,7 @@ public class CourseController {
         List<Attendance> attendanceList = new ArrayList<>(courseSessionAttendanceListWrapper.getAttendanceMap().values());
         CourseSession courseSession = courseSessionAttendanceListWrapper.getCourseSession();
         Course course = courseService.get(courseSession.getCourseID());
-        BigDecimal totalCharge = course.getPricePerHour().multiply(course.getClassDuration());
+        BigDecimal totalCharge = course.getPricePerBillableUnit().multiply(course.getBillableUnitDuration());
 
         int numAttended = 0;
 
@@ -273,13 +275,13 @@ public class CourseController {
                     chargeLine.setChargeID(charge.getChargeID());
                     chargeLine.setAttendanceID(attendance.getAttendanceID());
                     chargeLine.setTotalCharge(totalCharge);
-                    chargeLine.setHoursBilled(course.getClassDuration());
+                    chargeLine.setBillableUnitsBilled(course.getBillableUnitDuration());
                     chargeLineService.add(chargeLine);
                     continue;
                 }
 
                 chargeLine.setTotalCharge(totalCharge);
-                chargeLine.setHoursBilled(course.getClassDuration());
+                chargeLine.setBillableUnitsBilled(course.getBillableUnitDuration());
                 chargeLineService.update(chargeLine);
             }
 

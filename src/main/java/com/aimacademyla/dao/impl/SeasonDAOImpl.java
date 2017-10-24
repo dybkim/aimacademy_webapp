@@ -2,6 +2,7 @@ package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.SeasonDAO;
 import com.aimacademyla.model.Season;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -21,17 +22,24 @@ import java.util.Date;
 @Transactional
 public class SeasonDAOImpl extends GenericDAOImpl<Season, Integer> implements SeasonDAO{
 
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.SEASON;
+
     public SeasonDAOImpl(){
         super(Season.class);
     }
 
     @Override
-    public Season getSeasonByDate(LocalDate date) {
+    public Season getSeason(LocalDate date) {
         Session session = currentSession();
         Query query = session.createQuery("FROM Season WHERE StartDate < :date AND EndDate > :date").setParameter("date", date);
         Season season = (Season) query.uniqueResult();
 
         return season;
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType() {
+        return AIM_ENTITY_TYPE;
     }
 }
 

@@ -71,7 +71,7 @@
                             <tbody>
                                 <tr ng-repeat = "charge in memberChargesFinancesWrapper.chargeHashMap">
                                     <td>{{charge.description}}</td>
-                                    <td>{{memberChargesFinancesWrapper.hoursBilledHashMap[charge.chargeID]}} hours</td>
+                                    <td>{{memberChargesFinancesWrapper.billableUnitsBilledHashMap[charge.chargeID]}} {{charge.billableUnitType}}</td>
                                     <td>{{charge.chargeAmount}}</td>
                                     <td><form ng-submit="addDiscountToCharge(charge.chargeID, charge.discountAmount)"><input ng-model="charge.discountAmount" style="text-align:center; width:50px;" /></form></td>
                                     <td>{{charge.chargeAmount - charge.discountAmount}}</td>
@@ -80,7 +80,7 @@
 
                                 <tr>
                                     <td><b>Total</b></td>
-                                    <td><b>{{memberChargesFinancesWrapper.hoursBilledTotal}} hours</b></td>
+                                    <td><b>{{memberChargesFinancesWrapper.hoursBilledTotal}} hour(s) / {{memberChargesFinancesWrapper.sessionsBilledTotal}} session(s)</b></td>
                                     <td><b>{{memberChargesFinancesWrapper.totalChargesAmount}}</b></td>
                                     <td><b>{{memberChargesFinancesWrapper.totalDiscountAmount}}</b></td>
                                     <td><b>{{memberChargesFinancesWrapper.totalChargesAmount - memberChargesFinancesWrapper.totalDiscountAmount}}</b></td>

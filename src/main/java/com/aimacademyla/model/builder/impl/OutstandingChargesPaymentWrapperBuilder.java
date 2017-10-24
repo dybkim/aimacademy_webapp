@@ -4,11 +4,16 @@ import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.Payment;
 import com.aimacademyla.model.builder.GenericBuilder;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.wrapper.OutstandingChargesPaymentWrapper;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.MemberService;
 import com.aimacademyla.service.PaymentService;
+import com.aimacademyla.service.factory.ServiceFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,24 +21,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class OutstandingChargesPaymentWrapperBuilder implements GenericBuilder<OutstandingChargesPaymentWrapper>{
+public class OutstandingChargesPaymentWrapperBuilder extends GenericBuilderImpl<OutstandingChargesPaymentWrapper> implements GenericBuilder<OutstandingChargesPaymentWrapper>{
 
     private MemberService memberService;
     private PaymentService paymentService;
     private ChargeService chargeService;
 
-    private OutstandingChargesPaymentWrapper outstandingChargesPaymentWrapper;
     private LocalDate cycleStartDate;
 
-    private OutstandingChargesPaymentWrapperBuilder(){}
+    public OutstandingChargesPaymentWrapperBuilder(ServiceFactory serviceFactory){
+        super(serviceFactory);
+        this.memberService = (MemberService) getServiceFactory().getService(AIMEntityType.MEMBER);
+        this.chargeService = (ChargeService) getServiceFactory().getService(AIMEntityType.CHARGE);
+        this.paymentService = (PaymentService) getServiceFactory().getService(AIMEntityType.PAYMENT);
 
-    public OutstandingChargesPaymentWrapperBuilder(MemberService memberService,
-                                                   PaymentService paymentService,
-                                                   ChargeService chargeService){
-        outstandingChargesPaymentWrapper = new OutstandingChargesPaymentWrapper();
-        this.memberService = memberService;
-        this.chargeService = chargeService;
-        this.paymentService = paymentService;
     }
 
     public OutstandingChargesPaymentWrapperBuilder setCycleStartDate(LocalDate cycleStartDate) {
@@ -43,6 +44,7 @@ public class OutstandingChargesPaymentWrapperBuilder implements GenericBuilder<O
 
     @Override
     public OutstandingChargesPaymentWrapper build() {
+        OutstandingChargesPaymentWrapper outstandingChargesPaymentWrapper = new OutstandingChargesPaymentWrapper();
         List<Member> outstandingBalanceMemberList = new ArrayList<>();
         List<Member> paidBalanceMemberList = new ArrayList<>();
 

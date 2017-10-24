@@ -3,6 +3,7 @@ package com.aimacademyla.dao.impl;
 import com.aimacademyla.dao.MemberDAO;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
+import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -19,6 +20,9 @@ import java.util.List;
 @Repository("memberDAO")
 @Transactional
 public class MemberDAOImpl extends GenericDAOImpl<Member,Integer> implements MemberDAO {
+
+    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MEMBER;
+
     public MemberDAOImpl(){
         super(Member.class);
     }
@@ -40,5 +44,10 @@ public class MemberDAOImpl extends GenericDAOImpl<Member,Integer> implements Mem
 
         for(Member member : memberList)
             session.saveOrUpdate(member);
+    }
+
+    @Override
+    public AIMEntityType getAIMEntityType() {
+        return AIM_ENTITY_TYPE;
     }
 }

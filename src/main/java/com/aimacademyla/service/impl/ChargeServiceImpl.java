@@ -4,7 +4,8 @@ import com.aimacademyla.dao.ChargeDAO;
 import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.model.*;
-import com.aimacademyla.model.builder.initializer.impl.ChargeDefaultValueInitializer;
+import com.aimacademyla.model.initializer.impl.ChargeDefaultValueInitializer;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.MonthlyFinancesSummaryService;
 import com.aimacademyla.service.SeasonService;
@@ -25,21 +26,15 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
 
     private ChargeDAO chargeDAO;
     private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
-    private SeasonService seasonService;
-    private CourseDAO courseDAO;
 
     private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.CHARGE;
 
     @Autowired
     public ChargeServiceImpl(@Qualifier("chargeDAO") GenericDAO<Charge, Integer> genericDAO,
-                             MonthlyFinancesSummaryService monthlyFinancesSummaryService,
-                             SeasonService seasonService,
-                             CourseDAO courseDAO){
+                             MonthlyFinancesSummaryService monthlyFinancesSummaryService){
         super(genericDAO);
         this.chargeDAO = (ChargeDAO) genericDAO;
         this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
-        this.seasonService = seasonService;
-        this.courseDAO = courseDAO;
     }
 
     @Override
@@ -142,7 +137,7 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
         Charge charge = chargeDAO.getChargeByMemberForCourseByDate(memberID, courseID, date);
 
         if(charge == null){
-            charge = new ChargeDefaultValueInitializer(courseDAO, seasonService).setCourseID(courseID).setMemberID(memberID).setLocalDate(date).initialize();
+            charge = new ChargeDefaultValueInitializer(getDaoFactory()).setCourseID(courseID).setMemberID(memberID).setLocalDate(date).initialize();
             add(charge);
         }
 

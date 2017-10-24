@@ -1,9 +1,7 @@
 package com.aimacademyla.service;
 
-import com.aimacademyla.api.slack.service.ServiceFactory;
-import com.aimacademyla.model.AIMEntityType;
+import com.aimacademyla.model.enums.AIMEntityType;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**

@@ -1,6 +1,6 @@
-package com.aimacademyla.api.slack.service;
+package com.aimacademyla.service.factory;
 
-import com.aimacademyla.model.AIMEntityType;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,13 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Component("serviceFactory")
 public class ServiceFactory {
 
-    @Autowired
     private List<GenericService> genericServiceList;
 
     private static final Map<AIMEntityType, GenericService> genericServiceCache = new HashMap<>();
+
+    @Autowired
+    public ServiceFactory(List<GenericService> genericServiceList) {
+        this.genericServiceList = genericServiceList;
+    }
 
     @PostConstruct
     public void initGenericServiceCache(){
@@ -27,9 +31,5 @@ public class ServiceFactory {
 
     public GenericService getService(AIMEntityType entityType) {
         return genericServiceCache.get(entityType);
-    }
-
-    public void setGenericServiceList(List<GenericService> genericServiceList){
-        this.genericServiceList = genericServiceList;
     }
 }

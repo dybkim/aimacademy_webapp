@@ -38,7 +38,7 @@ public class ExcelInvoiceView extends AbstractXlsxView {
         Member member = memberChargesFinancesWrapper.getMember();
         LocalDate selectedDate = memberChargesFinancesWrapper.getCycleStartDate();
         List<Charge> chargeList = new ArrayList<>(memberChargesFinancesWrapper.getChargeHashMap().values());
-        HashMap<Integer, BigDecimal> hoursBilledHashMap = memberChargesFinancesWrapper.getHoursBilledHashMap();
+        HashMap<Integer, BigDecimal> hoursBilledHashMap = memberChargesFinancesWrapper.getBillableUnitsBilledHashMap();
 
         String selectedMonthString = selectedDate.getMonth().toString().substring(0,1) + selectedDate.getMonth().toString().substring(1).toLowerCase();
         String fileName = member.getMemberID() + "_" + selectedMonthString + selectedDate.getYear() + "_INVOICE.xlsx";

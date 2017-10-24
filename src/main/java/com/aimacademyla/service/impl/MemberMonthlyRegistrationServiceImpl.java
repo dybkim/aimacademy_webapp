@@ -1,12 +1,12 @@
 package com.aimacademyla.service.impl;
 
-import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.MemberDAO;
 import com.aimacademyla.dao.MemberMonthlyRegistrationDAO;
+import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.*;
-import com.aimacademyla.model.builder.initializer.impl.ChargeDefaultValueInitializer;
-import com.aimacademyla.model.builder.initializer.impl.MemberMonthlyRegistrationDefaultValueInitializer;
+import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.initializer.impl.MemberMonthlyRegistrationDefaultValueInitializer;
 import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,40 +25,22 @@ import java.util.List;
 public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<MemberMonthlyRegistration, Integer> implements MemberMonthlyRegistrationService {
 
     private MemberMonthlyRegistrationDAO memberMonthlyRegistrationDAO;
-    private SeasonService seasonService;
     private ChargeService chargeService;
     private CourseService courseService;
-    private CourseDAO courseDAO;
-    private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
     private MemberDAO memberDAO;
 
     private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MEMBER_MONTHLY_REGISTRATION;
 
     @Autowired
     public MemberMonthlyRegistrationServiceImpl(@Qualifier("memberMonthlyRegistrationDAO") GenericDAO<MemberMonthlyRegistration, Integer> genericDAO,
-                                                SeasonService seasonService,
                                                 ChargeService chargeService,
                                                 CourseService courseService,
-                                                CourseDAO courseDAO,
-                                                MonthlyFinancesSummaryService monthlyFinancesSummaryService,
                                                 MemberDAO memberDAO){
         super(genericDAO);
         this.memberMonthlyRegistrationDAO = (MemberMonthlyRegistrationDAO) genericDAO;
-        this.seasonService = seasonService;
         this.chargeService = chargeService;
         this.courseService = courseService;
-        this.courseDAO = courseDAO;
-        this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
         this.memberDAO = memberDAO;
-    }
-
-    @Override
-    public void add(MemberMonthlyRegistration entity) {
-        super.add(entity);
-        Charge charge = chargeService.getChargeByMemberForCourseByDate(entity.getMemberID(), Course.OPEN_STUDY_ID, entity.getCycleStartDate());
-        Course openStudy = courseService.get(Course.OPEN_STUDY_ID);
-        charge.setChargeAmount(openStudy.getPricePerHour());
-        chargeService.add(charge);
     }
 
     /**
@@ -70,12 +51,24 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
      * TODO: MUST IMPLEMENT A CHECK TO SEE IF OPEN STUDY COURSE ENTITY EXISTS
      */
     @Override
+    public void add(MemberMonthlyRegistration memberMonthlyRegistration) {
+        super.add(memberMonthlyRegistration);
+
+        Charge charge = chargeService.getChargeByMemberForCourseByDate(memberMonthlyRegistration.getMemberID(), Course.OPEN_STUDY_ID, memberMonthlyRegistration.getCycleStartDate());
+        Course openStudy = courseService.get(Course.OPEN_STUDY_ID);
+        charge.setChargeAmount(openStudy.getPricePerBillableUnit());
+        charge.setBillableUnitsBilled(BigDecimal.ONE);
+        chargeService.add(charge);
+    }
+
+    @Override
     public void update(MemberMonthlyRegistration entity) {
         super.update(entity);
 
         Course course = courseService.get(Course.OPEN_STUDY_ID);
         Charge charge = chargeService.getChargeByMemberForCourseByDate(entity.getMemberID(), Course.OPEN_STUDY_ID, entity.getCycleStartDate());
-        charge.setChargeAmount(course.getPricePerHour());
+        charge.setChargeAmount(course.getPricePerBillableUnit());
+        charge.setBillableUnitsBilled(BigDecimal.ONE);
         chargeService.update(charge);
     }
 
@@ -135,7 +128,7 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
         List<MemberMonthlyRegistration> memberMonthlyRegistrationList = new ArrayList<>();
 
         for(int memberID :  memberIDList)
-            memberMonthlyRegistrationList.add(new MemberMonthlyRegistrationDefaultValueInitializer(seasonService).setMemberID(memberID).setLocalDate(date).initialize());
+            memberMonthlyRegistrationList.add(new MemberMonthlyRegistrationDefaultValueInitializer(getDaoFactory()).setMemberID(memberID).setLocalDate(date).initialize());
 
         return memberMonthlyRegistrationList;
     }

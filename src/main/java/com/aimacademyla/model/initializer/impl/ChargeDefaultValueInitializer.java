@@ -1,40 +1,46 @@
-package com.aimacademyla.model.builder.initializer.impl;
+package com.aimacademyla.model.initializer.impl;
 
 import com.aimacademyla.dao.CourseDAO;
+import com.aimacademyla.dao.SeasonDAO;
+import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Season;
-import com.aimacademyla.model.builder.initializer.GenericDefaultValueInitializer;
+import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.initializer.GenericDefaultValueInitializer;
+import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.SeasonService;
+import com.aimacademyla.service.factory.ServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class ChargeDefaultValueInitializer implements GenericDefaultValueInitializer<Charge> {
+public class ChargeDefaultValueInitializer extends GenericDefaultValueInitializerImpl<Charge>{
 
-    private Charge charge;
-    private SeasonService seasonService;
+    private SeasonDAO seasonDAO;
     private CourseDAO courseDAO;
 
     private int memberID;
     private int courseID;
     private LocalDate localDate;
 
-    private ChargeDefaultValueInitializer(){}
-
-    public ChargeDefaultValueInitializer(CourseDAO courseDAO, SeasonService seasonService){
-        this.courseDAO = courseDAO;
-        this.seasonService = seasonService;
-        charge = new Charge();
+    public ChargeDefaultValueInitializer(DAOFactory daoFactory){
+        super(daoFactory);
+        this.courseDAO = (CourseDAO) getDAOFactory().getDAO(AIMEntityType.COURSE);
+        this.seasonDAO= (SeasonDAO) getDAOFactory().getDAO(AIMEntityType.SEASON);
     }
 
     @Override
     public Charge initialize() {
-        Season season = seasonService.getSeason(localDate);
+        Charge charge = new Charge();
+        Season season = seasonDAO.getSeason(localDate);
+
+        if(season == null)
+            season = seasonDAO.get(Season.NO_SEASON_FOUND);
+
         Course course = courseDAO.get(courseID);
 
         if(course.getCourseID() != Course.OTHER_ID)
@@ -47,7 +53,8 @@ public class ChargeDefaultValueInitializer implements GenericDefaultValueInitial
         charge.setSeasonID(season.getSeasonID());
         charge.setNumChargeLines(0);
         charge.setDiscountAmount(BigDecimal.valueOf(0));
-        charge.setHoursBilled(BigDecimal.ZERO);
+        charge.setBillableUnitsBilled(BigDecimal.ZERO);
+        charge.setBillableUnitType(course.getBillableUnitType());
         return charge;
     }
 
