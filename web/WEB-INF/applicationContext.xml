@@ -77,19 +77,19 @@
     <beans profile="development">
         <context:property-placeholder
                 ignore-resource-not-found="true"
-                location="classpath:/development.properties"/>
+                location="WEB-INF/resources/properties/development.properties"/>
     </beans>
 
     <beans profile="production">
         <context:property-placeholder
                 ignore-resource-not-found="true"
-                location="classpath:/production.properties"/>
+                location="WEB-INF/resources/properties/production.properties"/>
     </beans>
 
     <beans profile="localhost">
         <context:property-placeholder
                 ignore-resource-not-found="false"
-                location="classpath:/localhost.properties"/>
+                location="WEB-INF/resources/properties/localhost.properties"/>
     </beans>
 
 </beans>
