@@ -11,10 +11,10 @@
        http://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean id="c3p0DataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/aimacademy?useLegacyDatetimeCode=false&amp;serverTimezone=GMT&amp;autoReconnect=true"/>
-        <property name="user" value="root"/>
-        <property name="password" value=""/>
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
         <property name="maxPoolSize" value="25" />
         <property name="minPoolSize" value="10" />
         <property name="maxStatements" value="100" />
@@ -77,19 +77,19 @@
     <beans profile="development">
         <context:property-placeholder
                 ignore-resource-not-found="true"
-                location="META-INF/development.properties"/>
+                location="classpath:/development.properties"/>
     </beans>
 
     <beans profile="production">
         <context:property-placeholder
                 ignore-resource-not-found="true"
-                location="META-INF/production.properties"/>
+                location="classpath:/production.properties"/>
     </beans>
 
     <beans profile="localhost">
         <context:property-placeholder
                 ignore-resource-not-found="false"
-                location="META-INF/localhost.properties"/>
+                location="classpath:/localhost.properties"/>
     </beans>
 
 </beans>

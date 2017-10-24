@@ -227,7 +227,7 @@ public class CourseHomeController {
     }
 
     private void setBillableUnitDuration(Course course){
-        switch(BillableUnitType.parseString(course.getCourseType())){
+        switch(BillableUnitType.parseString(course.getBillableUnitType())){
             case PER_HOUR:
                 course.setBillableUnitDuration(course.getClassDuration());
             case PER_SESSION:

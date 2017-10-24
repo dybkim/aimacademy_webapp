@@ -5,12 +5,15 @@ import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.builder.impl.CourseRegistrationWrapperBuilder;
+import com.aimacademyla.model.enums.BillableUnitType;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapperObject;
 import com.aimacademyla.service.AttendanceService;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import com.aimacademyla.service.MemberService;
+import com.aimacademyla.service.factory.ServiceFactory;
+import com.aimacademyla.model.enums.BillableUnitType;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,13 +27,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.*;
 
@@ -54,6 +56,9 @@ public class CourseHomeControllerTest {
     @Mock
     private AttendanceService attendanceServiceMock;
 
+    @Mock
+    private ServiceFactory serviceFactory;
+
     @InjectMocks
     private CourseHomeController courseHomeController;
 
@@ -70,6 +75,7 @@ public class CourseHomeControllerTest {
         courseID = 1;
         course = new Course();
         course.setCourseID(courseID);
+        course.setBillableUnitType(BillableUnitType.PER_SESSION.toString());
 
         member = new Member();
         member.setMemberID(1);
@@ -85,17 +91,8 @@ public class CourseHomeControllerTest {
     }
 
     @Test
-    public void testDeleteCourse() throws Exception{
-        when(courseServiceMock.get(courseID)).thenReturn(course);
-        mockMvc.perform(delete("/admin/courseList/deleteCourse/1"))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrl("/admin/courseList"))
-                    .andExpect(view().name("redirect:/admin/courseList"));
-    }
-
-    @Test
     public void testEditCourse() throws Exception{
-        RequestBuilder requestBuilder = post("/admin/courseList/editCourse/1").flashAttr("courseRegistrationWrapper", courseRegistrationWrapper);
+        RequestBuilder requestBuilder = put("/admin/courseList/editCourse/1").flashAttr("courseRegistrationWrapper", courseRegistrationWrapper);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(redirectedUrl("/admin/courseList/courseInfo/1"))

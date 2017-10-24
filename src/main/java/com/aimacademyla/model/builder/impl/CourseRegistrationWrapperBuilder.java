@@ -11,11 +11,6 @@ import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import com.aimacademyla.service.MemberService;
 import com.aimacademyla.service.factory.ServiceFactory;
-import com.aimacademyla.service.impl.GenericServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
