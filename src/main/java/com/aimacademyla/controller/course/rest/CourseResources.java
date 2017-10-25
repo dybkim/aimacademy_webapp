@@ -56,7 +56,8 @@ public class CourseResources {
     @RequestMapping(value="/{courseID}/validateAddCourseSession")
     @ResponseBody
     public ResponseEntity<GenericResponse> validateAddCourseSession(@PathVariable("courseID") int courseID){
-        List<Member> memberList = memberService.getActiveMembersByCourse(courseService.get(courseID));
+        Course course = courseService.get(courseID);
+        List<Member> memberList = memberService.getActiveMembersByCourse(course);
         if(memberList.size() == 0)
             return new ResponseEntity<>(new GenericResponse("Unable to create course session", "Cannot add course sessions until members are registered to the course!",HttpStatus.INTERNAL_SERVER_ERROR.value()) {
             }, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -71,32 +72,6 @@ public class CourseResources {
         courseService.remove(course);
 
         return new ResponseEntity<>(new GenericResponse("OK", "NO_ERROR", HttpStatus.OK.value()){},HttpStatus.OK);
-    }
-
-    @RequestMapping(value="/{courseID}/fetchNonEnrolledMembers", method=RequestMethod.GET)
-    @ResponseBody
-    public List<Member> fetchNonEnrolledMembers (@PathVariable("courseID") int courseID, @RequestParam String memberName) {
-        List<Member> memberList = memberService.getActiveMembersByCourse(courseService.get(courseID));
-        List<Member> resultList = new ArrayList<>();
-        Iterator it = memberList.iterator();
-
-        while(it.hasNext()){
-            Member member = (Member) it.next();
-            MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationService.get(new MemberCourseRegistrationPK(member.getMemberID(), courseID));
-
-            if(memberCourseRegistration == null || !memberCourseRegistration.getIsEnrolled())
-                continue;
-
-            it.remove();
-        }
-
-        for(Member member : memberList){
-            String memberFullName = member.getMemberID() + " " + member.getMemberFirstName() + " " + member.getMemberLastName();
-            if(memberFullName.contains(memberName))
-                resultList.add(member);
-        }
-        System.out.println("SIZE: " + resultList.size());
-        return resultList;
     }
 
     @RequestMapping(value="/{courseID}/submitRegistrationList", method=RequestMethod.POST)
@@ -120,6 +95,7 @@ public class CourseResources {
     public List<Member> getCourseSession(@PathVariable("courseSessionID") int courseSessionID) {
         List<Attendance> attendanceList = attendanceService.getAttendanceForCourseSession(courseSessionID);
         List<Member> memberList = new ArrayList<>();
+
         for(Attendance attendance : attendanceList){
             if(attendance.getWasPresent()) {
                 Member member = memberService.get(attendance.getMemberID());

@@ -159,6 +159,10 @@ public class CourseHomeController {
         return "/course/addStudentToCourse";
     }
 
+    /**
+     * @deprecated Requests to add members to courses is now handled RESTfully by addStudentToCourseController.js
+     */
+    @Deprecated
     @RequestMapping(value="/editCourse/{courseID}/addStudentToCourse", method=RequestMethod.POST)
     public String addStudentToCourse(@PathVariable("courseID") int courseID, @ModelAttribute("memberCourseRegistration") MemberCourseRegistration memberCourseRegistration, BindingResult result, final RedirectAttributes redirectAttributes){
         if(result.hasErrors())

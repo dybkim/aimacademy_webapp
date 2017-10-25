@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
 public class MemberServiceTest extends AbstractTransactionTest {
 
     @Autowired
-    private MemberService memberService;
+    private MemberService memberServiceMock;
 
     private static Member member;
 
@@ -57,8 +57,8 @@ public class MemberServiceTest extends AbstractTransactionTest {
     @Rollback
     @Test
     public void addMemberTest() throws Exception{
-        memberService.add(member);
-        Member memberRetrieved = memberService.get(member.getMemberID());
+        memberServiceMock.add(member);
+        Member memberRetrieved = memberServiceMock.get(member.getMemberID());
 
         assertEquals("Member1 should persist within the database", memberRetrieved.getMemberID(), member.getMemberID());
     }
@@ -66,20 +66,20 @@ public class MemberServiceTest extends AbstractTransactionTest {
     @Rollback
     @Test
     public void removeMemberTest() throws Exception{
-        memberService.add(member);
+        memberServiceMock.add(member);
 
-        Member retrievedMember = memberService.get(member.getMemberID());
+        Member retrievedMember = memberServiceMock.get(member.getMemberID());
 
         assertEquals("Member1 should persist within the database", retrievedMember.getMemberID(), member.getMemberID());
 
-        memberService.remove(member);
+        memberServiceMock.remove(member);
 
-        member = memberService.get(member.getMemberID());
+        member = memberServiceMock.get(member.getMemberID());
         assertNull("Member1 should no longer persist once removed", member);
     }
 
 
-    public void setMemberService(MemberService memberService) {
-        this.memberService = memberService;
+    public void setMemberService(MemberService memberServiceMock) {
+        this.memberServiceMock = memberServiceMock;
     }
 }

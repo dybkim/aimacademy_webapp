@@ -5,11 +5,11 @@ package com.aimacademyla.controller;
  */
 public abstract class GenericResponse {
 
-    protected String statusMessage;
-    protected String errorMessage;
-    protected int errorCode;
+    private String statusMessage;
+    private String errorMessage;
+    private int errorCode;
 
-    public GenericResponse(String statusMessage, String errorMessage, int errorCode) {
+    protected GenericResponse(String statusMessage, String errorMessage, int errorCode) {
         this.statusMessage = statusMessage;
         this.errorMessage = errorMessage;
         this.errorCode = errorCode;
