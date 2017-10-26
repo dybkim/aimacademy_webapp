@@ -50,6 +50,7 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
         charge.setChargeAmount(chargeAmount);
 
         BigDecimal billableUnitsBilled = charge.getBillableUnitsBilled();
+
         if(billableUnitsBilled == null)
             billableUnitsBilled = BigDecimal.ZERO;
 

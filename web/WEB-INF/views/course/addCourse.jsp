@@ -11,7 +11,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 
 <%@ include file="../template/navbar.jsp"%>
 <%@ include file="../template/sidebar.jsp"%>
@@ -86,8 +86,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="coursePrice">Price per hour/session: </label>
-                    <form:input path="course.pricePerBillableUnit" id="coursePrice" class="form-control" cssStyle="width: 100px"/>
+                    <label for="memberCoursePrice">Price per hour/session (for Members): </label>
+                    <form:input path="course.memberPricePerBillableUnit" id="memberCoursePrice" class="form-control" cssStyle="width: 100px"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="nonMemberCoursePrice">Price per hour/session (for Non-Members): </label>
+                    <form:input path="course.nonMemberPricePerBillableUnit" id="nonMemberCoursePrice" class="form-control" cssStyle="width: 100px"/>
                 </div>
 
                 <div class="form-group">

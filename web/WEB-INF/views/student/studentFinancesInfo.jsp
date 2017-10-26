@@ -73,7 +73,7 @@
                                     <td>{{charge.description}}</td>
                                     <td>{{memberChargesFinancesWrapper.billableUnitsBilledHashMap[charge.chargeID]}} {{charge.billableUnitType}}</td>
                                     <td>{{charge.chargeAmount}}</td>
-                                    <td><form ng-submit="addDiscountToCharge(charge.chargeID, charge.discountAmount)"><input ng-model="charge.discountAmount" style="text-align:center; width:50px;" /></form></td>
+                                    <td><form ng-submit="addDiscountToCharge(charge.chargeID, charge.discountAmount)"><input ng-model="charge.discountAmount" style="text-align:center; width:50px;"/></form></td>
                                     <td>{{charge.chargeAmount - charge.discountAmount}}</td>
                                     <td><a class="label label-danger" ng-click="dropMiscCharge(charge)"><span class="glyphicon glyphicon-remove"></span></a></td>
                                 </tr>

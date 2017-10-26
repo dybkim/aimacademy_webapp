@@ -40,6 +40,8 @@ public class CourseController {
 
     private ChargeService chargeService;
 
+    private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
+
     private static Logger logger = LogManager.getLogger(CourseController.class);
 
     @Autowired
@@ -49,7 +51,8 @@ public class CourseController {
                             AttendanceService attendanceService,
                             ChargeLineService chargeLineService,
                             MemberCourseRegistrationService memberCourseRegistrationService,
-                            ChargeService chargeService){
+                            ChargeService chargeService,
+                            MemberMonthlyRegistrationService memberMonthlyRegistrationService){
         this.courseService = courseService;
         this.memberService = memberService;
         this.courseSessionService = courseSessionService;
@@ -57,6 +60,7 @@ public class CourseController {
         this.chargeLineService = chargeLineService;
         this.memberCourseRegistrationService = memberCourseRegistrationService;
         this.chargeService = chargeService;
+        this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
     }
 
     /**
@@ -164,7 +168,6 @@ public class CourseController {
             return "redirect:/admin/courseList/courseInfo/" + courseID + "/addCourseSession";
         }
 
-        BigDecimal totalCharge = course.getPricePerBillableUnit().multiply(course.getBillableUnitDuration());
         int numAttended = 0;
 
         // Adds new attendance for new coursesession
@@ -187,12 +190,21 @@ public class CourseController {
         for(Attendance attendance : attendanceList){
             attendance.setAttendanceDate(courseSession.getCourseSessionDate());
             attendance.setCourseSessionID(courseSession.getCourseSessionID());
-            attendanceService.add(attendance);
-
             attendance.setAttendanceDate(courseSession.getCourseSessionDate());
+            attendanceService.add(attendance);
 
             if(attendance.getWasPresent()){
                 Member member = memberService.get(attendance.getMemberID());
+
+                MemberMonthlyRegistration memberMonthlyRegistration = memberMonthlyRegistrationService.getMemberMonthlyRegistrationForMemberByDate(member, attendance.getAttendanceDate());
+                BigDecimal totalCharge;
+
+                if(memberMonthlyRegistration == null)
+                    totalCharge = course.getNonMemberPricePerBillableUnit().multiply(course.getBillableUnitDuration());
+
+                else
+                    totalCharge = course.getMemberPricePerBillableUnit().multiply(course.getBillableUnitDuration());
+
                 Charge charge = chargeService.getChargeByMemberForCourseByDate(member, course, attendance.getAttendanceDate());
                 ChargeLine chargeLine = new ChargeLine();
                 chargeLine.setAttendanceID(attendance.getAttendanceID());
@@ -252,7 +264,6 @@ public class CourseController {
         List<Attendance> attendanceList = new ArrayList<>(courseSessionAttendanceListWrapper.getAttendanceMap().values());
         CourseSession courseSession = courseSessionAttendanceListWrapper.getCourseSession();
         Course course = courseService.get(courseSession.getCourseID());
-        BigDecimal totalCharge = course.getPricePerBillableUnit().multiply(course.getBillableUnitDuration());
 
         int numAttended = 0;
 
@@ -265,6 +276,15 @@ public class CourseController {
                 numAttended++;
                 Member member = memberService.get(attendance.getMemberID());
                 ChargeLine chargeLine = chargeLineService.getChargeLineByAttendanceID(attendance.getAttendanceID());
+
+                MemberMonthlyRegistration memberMonthlyRegistration = memberMonthlyRegistrationService.getMemberMonthlyRegistrationForMemberByDate(member, attendance.getAttendanceDate());
+                BigDecimal totalCharge;
+
+                if(memberMonthlyRegistration == null)
+                    totalCharge = course.getNonMemberPricePerBillableUnit().multiply(course.getBillableUnitDuration());
+
+                else
+                    totalCharge = course.getMemberPricePerBillableUnit().multiply(course.getBillableUnitDuration());
 
                 // If no chargeline currently exists
                 // create new chargeline with the corresponding attendance instance
@@ -304,13 +324,12 @@ public class CourseController {
     }
 
     @RequestMapping("/{courseID}/removeCourseSession/{courseSessionID}")
-    public String removeCourseSession(@ModelAttribute("courseSessionAttendanceListWrapper") CourseSessionAttendanceListWrapper courseSessionAttendanceListWrapper,
-                                      @PathVariable("courseID") int courseID,
+    public String removeCourseSession(@PathVariable("courseID") int courseID,
                                       @PathVariable("courseSessionID") int courseSessionID){
 
         Course course = courseService.get(courseID);
         CourseSession courseSession = courseSessionService.get(courseSessionID);
-        List<Attendance> attendanceList = new ArrayList<>(courseSessionAttendanceListWrapper.getAttendanceMap().values());
+        List<Attendance> attendanceList = attendanceService.getAttendanceForCourseSession(courseSessionID);
 
         for(Attendance attendance : attendanceList){
             ChargeLine chargeLine = chargeLineService.getChargeLineByAttendanceID(attendance.getAttendanceID());

@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -56,9 +57,14 @@ public class Course implements Serializable{
     @Column(name="SeasonID")
     private int seasonID;
 
-    @Column(name="PricePerHour")
+    @Column(name="MemberPricePerBillableUnit")
     @NumberFormat(style= NumberFormat.Style.CURRENCY)
-    private BigDecimal pricePerBillableUnit;
+    @NotNull
+    private BigDecimal memberPricePerBillableUnit;
+
+    @Column(name="NonMemberPricePerBillableUnit")
+    @NumberFormat(style= NumberFormat.Style.CURRENCY)
+    private BigDecimal nonMemberPricePerBillableUnit;
 
     @Column(name="ClassDuration")
     private BigDecimal classDuration;
@@ -141,12 +147,20 @@ public class Course implements Serializable{
         this.totalNumSessions = totalNumSessions;
     }
 
-    public BigDecimal getPricePerBillableUnit() {
-        return pricePerBillableUnit;
+    public BigDecimal getMemberPricePerBillableUnit() {
+        return memberPricePerBillableUnit;
     }
 
-    public void setPricePerBillableUnit(BigDecimal pricePerBillableUnit) {
-        this.pricePerBillableUnit = pricePerBillableUnit;
+    public void setMemberPricePerBillableUnit(BigDecimal memberPricePerBillableUnit) {
+        this.memberPricePerBillableUnit = memberPricePerBillableUnit;
+    }
+
+    public BigDecimal getNonMemberPricePerBillableUnit() {
+        return nonMemberPricePerBillableUnit;
+    }
+
+    public void setNonMemberPricePerBillableUnit(BigDecimal nonMemberPricePerBillableUnit) {
+        this.nonMemberPricePerBillableUnit = nonMemberPricePerBillableUnit;
     }
 
     public static long getSerialVersionUID() {

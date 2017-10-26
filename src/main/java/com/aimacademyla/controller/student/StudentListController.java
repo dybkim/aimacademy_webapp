@@ -116,7 +116,7 @@ public class StudentListController {
     public String addStudent(Model model){
         Member member = new Member();
         Course openStudy = courseService.get(Course.OPEN_STUDY_ID);
-        model.addAttribute("membershipRate", openStudy.getPricePerBillableUnit());
+        model.addAttribute("membershipRate", openStudy.getMemberPricePerBillableUnit());
         model.addAttribute(member);
         return "/student/addStudent";
     }
@@ -140,7 +140,7 @@ public class StudentListController {
         Course openStudy = courseService.get(Course.OPEN_STUDY_ID);
 
         if(member.getMembershipRate() == null)
-            member.setMembershipRate(openStudy.getPricePerBillableUnit());
+            member.setMembershipRate(openStudy.getMemberPricePerBillableUnit());
 
         memberService.add(member);
         return "redirect:/admin/student/studentList";

@@ -101,6 +101,9 @@ public class CourseHomeController {
 
         Course course = courseRegistrationWrapper.getCourse();
 
+        if(course.getNonMemberPricePerBillableUnit() == null)
+            course.setNonMemberPricePerBillableUnit(course.getMemberPricePerBillableUnit());
+
         setBillableUnitDuration(course);
 
         courseService.add(courseRegistrationWrapper.getCourse());
@@ -144,6 +147,9 @@ public class CourseHomeController {
         
         course.setNumEnrolled(numEnrolled);
         setBillableUnitDuration(course);
+
+        if(course.getNonMemberPricePerBillableUnit() == null)
+            course.setNonMemberPricePerBillableUnit(course.getMemberPricePerBillableUnit());
 
         courseService.update(course);
 
@@ -232,9 +238,16 @@ public class CourseHomeController {
     private void setBillableUnitDuration(Course course){
         switch(BillableUnitType.parseString(course.getBillableUnitType())){
             case PER_HOUR:
-                course.setBillableUnitDuration(course.getClassDuration());
+                if(course.getClassDuration() != null){
+                    course.setBillableUnitDuration(course.getClassDuration());
+                    return;
+                }
+
+                course.setBillableUnitDuration(BigDecimal.ZERO);
+                return;
             case PER_SESSION:
                 course.setBillableUnitDuration(BigDecimal.ONE);
+                return;
             default:
                 course.setBillableUnitDuration(BigDecimal.ZERO);
         }

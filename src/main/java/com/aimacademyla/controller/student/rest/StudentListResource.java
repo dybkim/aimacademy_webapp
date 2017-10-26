@@ -6,9 +6,12 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -30,6 +33,19 @@ public class StudentListResource {
     @ResponseBody
     public String getStudentList(){
         return new Gson().toJson(memberService.getList());
+    }
+
+    @RequestMapping("/getMembershipRates")
+    @ResponseBody
+    public HashMap<Integer, BigDecimal> getMembershipRates(){
+        HashMap<Integer, BigDecimal> membershipRateHashMap = new HashMap<>();
+        List<Member> memberList = memberService.getList();
+
+        for(Member member : memberList){
+            membershipRateHashMap.put(member.getMemberID(), member.getMembershipRate());
+        }
+
+        return membershipRateHashMap;
     }
 
 }
