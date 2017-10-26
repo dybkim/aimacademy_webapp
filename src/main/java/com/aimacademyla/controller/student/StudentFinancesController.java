@@ -43,7 +43,7 @@ public class StudentFinancesController {
         return "/student/studentFinancesInfo";
     }
 
-    @RequestMapping(value="/{memberID}", method=RequestMethod.PUT)
+    @RequestMapping(value="/{memberID}", method=RequestMethod.POST)
     public String getStudentFinances(@PathVariable("memberID") int memberID, @ModelAttribute("chargeListHashMap") HashMap<Integer, List<Charge>> chargeListHashMap,
                                      Model model) {
 

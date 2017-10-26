@@ -23,7 +23,7 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Edit Course Session</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/courseInfo/${courseSessionAttendanceListWrapper.courseSession.courseID}/editCourseSession/${courseSessionAttendanceListWrapper.courseSession.courseSessionID}" method="PUT" modelAttribute="courseSessionAttendanceListWrapper">
+            <form:form action="${pageContext.request.contextPath}/admin/courseList/courseInfo/${courseSessionAttendanceListWrapper.courseSession.courseID}/editCourseSession/${courseSessionAttendanceListWrapper.courseSession.courseSessionID}" method="POST" modelAttribute="courseSessionAttendanceListWrapper">
 
                 <form:hidden path="courseSession.courseSessionID" value="${courseSessionAttendanceListWrapper.courseSession.courseSessionID}"/>
 

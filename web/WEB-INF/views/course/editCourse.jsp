@@ -55,10 +55,9 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Edit Course: ${courseRegistrationWrapper.course.courseName}</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/editCourse/${courseRegistrationWrapper.course.courseID}" method="PUT" modelAttribute="courseRegistrationWrapper">
+            <form:form action="${pageContext.request.contextPath}/admin/courseList/editCourse/${courseRegistrationWrapper.course.courseID}" method="POST" modelAttribute="courseRegistrationWrapper">
                 <form:hidden path="course.courseID" value="${courseRegistrationWrapper.course.courseID}"/>
                 <form:hidden path="course.totalNumSessions" value="${courseRegistrationWrapper.course.totalNumSessions}"/>
-                <form:hidden path="course.pricePerBillableUnit" value="${courseRegistrationWrapper.course.pricePerBillableUnit}"/>
                 <form:hidden path="course.billableUnitDuration" value="${courseRegistrationWrapper.course.billableUnitDuration}"/>
 
                 <div class="form-group"><form:errors path="course.courseName" cssStyle="color: #FF0000"/>
@@ -107,8 +106,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="billableUnitDuration">Session length (hours): </label>
-                    <form:input path="course.billableUnitDuration" id="billableUnitDuration" class="form-control" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.billableUnitDuration}"/>
+                    <label for="classDuration">Session length (hours): </label>
+                    <form:input path="course.classDuration" id="classDuration" class="form-control" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.classDuration}"/>
                 </div>
 
                 <div class="form-group">

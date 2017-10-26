@@ -78,12 +78,13 @@ public class EmployeeHomeController {
     @RequestMapping(value="/editEmployee/{id}")
     public String editEmployee(@PathVariable("id") int employeeID, Model model){
         Employee employee = employeeService.get(employeeID);
+
         model.addAttribute("employee", employee);
 
         return "employee/editEmployee";
     }
 
-    @RequestMapping(value="/editEmployee", method=RequestMethod.PUT)
+    @RequestMapping(value="/editEmployee", method=RequestMethod.POST)
     public String editEmployee(@ModelAttribute("employee") Employee employee, BindingResult result, RedirectAttributes redirectAttributes){
         if(result.hasErrors())
         {

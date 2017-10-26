@@ -50,7 +50,7 @@ public class StudentFinancesResources {
 
     }
 
-    @RequestMapping(value="/{memberID}/addMiscCharge", method=RequestMethod.PUT)
+    @RequestMapping(value="/{memberID}/addMiscCharge", method=RequestMethod.POST)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addMiscCharge(@PathVariable("memberID") int memberID,
                                                 @RequestParam(name="chargeDescription") String chargeDescription,

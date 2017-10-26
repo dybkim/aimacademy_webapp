@@ -115,7 +115,7 @@ public class CourseHomeController {
         return "/course/editCourse";
     }
 
-    @RequestMapping(value="/editCourse/{courseID}", method = RequestMethod.PUT)
+    @RequestMapping(value="/editCourse/{courseID}", method = RequestMethod.POST)
     public String editCourse(@Valid @ModelAttribute("courseRegistrationWrapper") CourseRegistrationWrapper courseRegistrationWrapper, BindingResult result, @PathVariable("courseID") int courseID, Model model){
 
         if(result.hasErrors()) {
@@ -143,7 +143,6 @@ public class CourseHomeController {
         }
         
         course.setNumEnrolled(numEnrolled);
-
         setBillableUnitDuration(course);
 
         courseService.update(course);

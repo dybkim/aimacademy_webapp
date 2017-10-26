@@ -148,7 +148,7 @@ public class CourseController {
 
             for (FieldError error : errors ) {
                 logger.error(error.getDefaultMessage());
-                if(error.getField().equals("coursesession.courseSessionDate"))
+                if(error.getField().equals("courseSession.courseSessionDate"))
                     redirectAttributes.addFlashAttribute("courseSessionDateErrorMessage", "Date must be in valid MM/DD/YYYY format");
             }
             return "redirect:/admin/courseList/courseInfo/" + courseID + "/addCourseSession";
@@ -242,7 +242,7 @@ public class CourseController {
 
             for (FieldError error : errors ) {
                 logger.error(error.getDefaultMessage());
-                if(error.getField().equals("coursesession.courseSessionDate"))
+                if(error.getField().equals("courseSession.courseSessionDate"))
                     redirectAttributes.addFlashAttribute("courseSessionDateErrorMsg", "Date must be in MM/DD/YYYY format");
             }
 

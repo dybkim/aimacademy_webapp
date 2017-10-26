@@ -12,7 +12,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 
 <%@ include file="../template/navbar.jsp"%>
 <%@ include file="../template/sidebar.jsp"%>
@@ -26,7 +26,7 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Add Employee</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/employee/addEmployee" method="PUT" modelAttribute="employee">
+            <form:form action="${pageContext.request.contextPath}/admin/employee/addEmployee" method="POST" modelAttribute="employee">
 
                 <form:hidden path="employeeID" value="${employee.employeeID}"/>
 

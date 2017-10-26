@@ -142,7 +142,7 @@ public class StudentListController {
         return "/student/editStudent";
     }
 
-    @RequestMapping(value = "/editStudent", method = RequestMethod.PUT)
+    @RequestMapping(value = "/editStudent", method = RequestMethod.POST)
     public String editStudent(@Valid @ModelAttribute("member") Member member, BindingResult result, RedirectAttributes redirectAttributes){
         if(result.hasErrors())
         {
