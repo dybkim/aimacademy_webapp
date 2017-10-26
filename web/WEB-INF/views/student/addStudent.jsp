@@ -86,7 +86,7 @@
                 <div class="form-group">
                     <span style="color: #FF0000">${membershipRateErrorMessage}</span>
                     <label for="membershipRate">Membership Rate</label>
-                    <form:input path="membershipRate" id="membershipRate" class="form-Control"/>
+                    <form:input path="membershipRate" id="membershipRate" placeholder="Price is ${membershipRate} if empty" class="form-Control"/>
                 </div>
 
                 <br><br>

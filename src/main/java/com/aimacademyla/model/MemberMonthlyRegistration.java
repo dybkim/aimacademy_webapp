@@ -2,9 +2,11 @@ package com.aimacademyla.model;
 
 import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -30,6 +32,10 @@ public class MemberMonthlyRegistration implements Serializable{
     @Column(name="CycleStartDate")
     @DateTimeFormat(pattern = "MM/dd/yyyy")
     private LocalDate cycleStartDate;
+
+    @Column(name="MembershipCharge")
+    @NumberFormat(style= NumberFormat.Style.CURRENCY)
+    private BigDecimal membershipCharge;
 
     public int getMemberMonthlyRegistrationID() {
         return memberMonthlyRegistrationID;
@@ -61,5 +67,13 @@ public class MemberMonthlyRegistration implements Serializable{
 
     public void setCycleStartDate(LocalDate cycleStartDate) {
         this.cycleStartDate = cycleStartDate;
+    }
+
+    public BigDecimal getMembershipCharge() {
+        return membershipCharge;
+    }
+
+    public void setMembershipCharge(BigDecimal membershipCharge) {
+        this.membershipCharge = membershipCharge;
     }
 }

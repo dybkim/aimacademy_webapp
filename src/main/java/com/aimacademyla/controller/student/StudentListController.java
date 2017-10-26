@@ -98,6 +98,7 @@ public class StudentListController {
                     memberMonthlyRegistration.setMemberID(memberID);
                     memberMonthlyRegistration.setCycleStartDate(cycleStartDate);
                     memberMonthlyRegistration.setSeasonID(seasonService.getSeason(cycleStartDate).getSeasonID());
+                    memberMonthlyRegistration.setMembershipCharge(member.getMembershipRate());
                     memberMonthlyRegistrationService.update(memberMonthlyRegistration);
                 }
             }
@@ -114,6 +115,8 @@ public class StudentListController {
     @RequestMapping("/addStudent")
     public String addStudent(Model model){
         Member member = new Member();
+        Course openStudy = courseService.get(Course.OPEN_STUDY_ID);
+        model.addAttribute("membershipRate", openStudy.getPricePerBillableUnit());
         model.addAttribute(member);
         return "/student/addStudent";
     }
@@ -127,15 +130,23 @@ public class StudentListController {
             for (FieldError error : errors ) {
                 if(error.getField().equals("memberEntryDate"))
                     redirectAttributes.addFlashAttribute("dateJoinedErrorMessage", "Date must be in valid MM/DD/YYYY format");
+
+                if(error.getField().equals("membershipRate"))
+                    redirectAttributes.addFlashAttribute("membershipRateErrorMessage", "Must be a valid amount!");
             }
             return "redirect:/admin/student/studentList/addStudent";
         }
+
+        Course openStudy = courseService.get(Course.OPEN_STUDY_ID);
+
+        if(member.getMembershipRate() == null)
+            member.setMembershipRate(openStudy.getPricePerBillableUnit());
 
         memberService.add(member);
         return "redirect:/admin/student/studentList";
     }
 
-    @RequestMapping(value="/editStudent/{id}", method=RequestMethod.GET)
+    @RequestMapping(value="/editStudent/{id}")
     public String editStudent(@PathVariable("id") int id, Model model){
         Member member = memberService.get(id);
         model.addAttribute(member);
@@ -151,9 +162,17 @@ public class StudentListController {
             for (FieldError error : errors ) {
                 if(error.getField().equals("memberEntryDate"))
                     redirectAttributes.addFlashAttribute("dateJoinedErrorMessage", "Date must be in valid MM/DD/YYYY format");
+
+
+                if(error.getField().equals("membershipRate"))
+                    redirectAttributes.addFlashAttribute("membershipRateErrorMessage", "Must be a valid amount!");
             }
+
             return "redirect:/admin/student/studentList/editStudent/" + member.getMemberID();
         }
+        Member persistedMember = memberService.get(member.getMemberID());
+        if(member.getMembershipRate() == null)
+            member.setMembershipRate(persistedMember.getMembershipRate());
 
         memberService.update(member);
         return "redirect:/admin/student/studentList";

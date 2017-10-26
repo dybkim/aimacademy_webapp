@@ -45,7 +45,7 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
 
     /**
      * Charge is generated if none exists
-     * chargeAmount for openstudy is set as a constant value since it is not calculated per hour
+     * chargeAmount for OpenStudy is set as a constant value since it is not calculated per hour
      *
      * IMPORTANT: AN OPEN STUDY COURSE ENTITY MUST EXIST ALREADY IN THE DATABASE, ELSE NO ENTITY WILL BE RETURNED
      * TODO: MUST IMPLEMENT A CHECK TO SEE IF OPEN STUDY COURSE ENTITY EXISTS
@@ -55,30 +55,29 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
         super.add(memberMonthlyRegistration);
 
         Charge charge = chargeService.getChargeByMemberForCourseByDate(memberMonthlyRegistration.getMemberID(), Course.OPEN_STUDY_ID, memberMonthlyRegistration.getCycleStartDate());
-        Course openStudy = courseService.get(Course.OPEN_STUDY_ID);
-        charge.setChargeAmount(openStudy.getPricePerBillableUnit());
+        charge.setChargeAmount(memberMonthlyRegistration.getMembershipCharge());
         charge.setBillableUnitsBilled(BigDecimal.ONE);
         chargeService.add(charge);
     }
 
     @Override
-    public void update(MemberMonthlyRegistration entity) {
-        super.update(entity);
+    public void update(MemberMonthlyRegistration memberMonthlyRegistration) {
+        super.update(memberMonthlyRegistration);
 
-        Course course = courseService.get(Course.OPEN_STUDY_ID);
-        Charge charge = chargeService.getChargeByMemberForCourseByDate(entity.getMemberID(), Course.OPEN_STUDY_ID, entity.getCycleStartDate());
-        charge.setChargeAmount(course.getPricePerBillableUnit());
+        Charge charge = chargeService.getChargeByMemberForCourseByDate(memberMonthlyRegistration.getMemberID(), Course.OPEN_STUDY_ID, memberMonthlyRegistration.getCycleStartDate());
+        charge.setChargeAmount(memberMonthlyRegistration.getMembershipCharge());
         charge.setBillableUnitsBilled(BigDecimal.ONE);
         chargeService.update(charge);
     }
 
     @Override
-    public void remove(MemberMonthlyRegistration entity) {
-        super.remove(entity);
-        Charge charge = chargeService.getChargeByMemberForCourseByDate(entity.getMemberID(), Course.OPEN_STUDY_ID, entity.getCycleStartDate());
+    public void remove(MemberMonthlyRegistration memberMonthlyRegistration) {
+        Charge charge = chargeService.getChargeByMemberForCourseByDate(memberMonthlyRegistration.getMemberID(), Course.OPEN_STUDY_ID, memberMonthlyRegistration.getCycleStartDate());
 
         if(charge != null)
             chargeService.remove(charge);
+
+        super.remove(memberMonthlyRegistration);
     }
 
     @Override

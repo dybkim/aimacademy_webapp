@@ -78,7 +78,7 @@
 
                 <div class="form-group">
                     <span style="color: #FF0000">${membershipRateErrorMessage}</span>
-                    <label for="membershipRate">MembershipRate: </label>
+                    <label for="membershipRate">Membership Rate: </label>
                     <form:input path="membershipRate" id="membershipRate" class="form-Control" value="${member.membershipRate}"/>
                 </div>
 

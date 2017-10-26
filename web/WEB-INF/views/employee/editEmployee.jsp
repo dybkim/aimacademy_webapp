@@ -58,7 +58,10 @@
                     <form:input path="dateEmployed" id="startDate" class="date" value="${formattedDate}"/>
                 </div>
 
-                <form:hidden path="isActive" value="true"/>
+                <div class="form-group">
+                    <label for="isActiveCheckBox">Is Active:</label>
+                    <form:checkbox path="isActive" value="${employee.isActive}" id="isActiveCheckBox"/>
+                </div>
 
                 <br><br>
 
