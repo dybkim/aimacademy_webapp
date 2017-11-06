@@ -124,4 +124,24 @@ public class MonthlyFinancesSummary implements Serializable{
     public void setTotalPaymentAmount(BigDecimal totalPaymentAmount) {
         this.totalPaymentAmount = totalPaymentAmount;
     }
+
+    public MonthlyFinancesSummary addCharge(Charge charge){
+        totalChargeAmount = totalChargeAmount.add(charge.getChargeAmount());
+        setNumTotalCharges(numTotalCharges + 1);
+        setTotalChargeAmount(totalChargeAmount);
+        return this;
+    }
+
+    public MonthlyFinancesSummary updateCharge(Charge previousCharge, Charge charge){
+        totalChargeAmount = totalChargeAmount.subtract(previousCharge.getChargeAmount()).add(charge.getChargeAmount());
+        setTotalChargeAmount(totalChargeAmount);
+        return this;
+    }
+
+    public MonthlyFinancesSummary removeCharge(Charge charge){
+        totalChargeAmount = totalChargeAmount.subtract(charge.getChargeAmount());
+        setTotalChargeAmount(totalChargeAmount);
+        setNumTotalCharges(numTotalCharges - 1);
+        return this;
+    }
 }

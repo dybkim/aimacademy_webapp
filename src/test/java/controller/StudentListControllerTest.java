@@ -57,13 +57,12 @@ public class StudentListControllerTest {
 
     @Test
     public void testEditStudent() throws Exception{
-        mockMvc.perform(put("/admin/student/studentList/editStudent").param("memberID", Integer.toString(member.getMemberID())))
+        when(memberServiceMock.get(member.getMemberID())).thenReturn(member);
+
+        mockMvc.perform(post("/admin/student/studentList/editStudent").flashAttr("member", member).param("memberID", Integer.toString(member.getMemberID())))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/admin/student/studentList"));
-    }
 
-    @Test
-    public void testGetStudentInfo() throws Exception{
-
+        verify(memberServiceMock, times(1)).update(member);
     }
 }

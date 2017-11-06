@@ -170,6 +170,7 @@ public class StudentListController {
 
             return "redirect:/admin/student/studentList/editStudent/" + member.getMemberID();
         }
+
         Member persistedMember = memberService.get(member.getMemberID());
         if(member.getMembershipRate() == null)
             member.setMembershipRate(persistedMember.getMembershipRate());

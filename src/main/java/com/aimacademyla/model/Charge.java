@@ -4,12 +4,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * Charge Entity represents a cumulation of ChargeLine entities
+ * Charge Entity represents the sum of related ChargeLine entities
  *
  * Created by davidkim on 3/9/17.
  */

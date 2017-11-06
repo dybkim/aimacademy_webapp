@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,7 +42,7 @@ import static org.hamcrest.Matchers.*;
  * Created by davidkim on 2/14/17.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @WebAppConfiguration
 public class CourseHomeControllerTest {
 
@@ -154,7 +155,7 @@ public class CourseHomeControllerTest {
     }
     @Test
     public void testEditCourse() throws Exception{
-        RequestBuilder requestBuilder = put("/admin/courseList/editCourse/1").flashAttr("courseRegistrationWrapper", courseRegistrationWrapper);
+        RequestBuilder requestBuilder = post("/admin/courseList/editCourse/1").flashAttr("courseRegistrationWrapper", courseRegistrationWrapper);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(redirectedUrl("/admin/courseList/courseInfo/1"))

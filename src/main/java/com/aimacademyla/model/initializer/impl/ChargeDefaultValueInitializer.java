@@ -18,6 +18,10 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * ChargeDefaultValueInitializer initializes a charge to have a value of 0 for all its numeric fields.
+ */
+
 public class ChargeDefaultValueInitializer extends GenericDefaultValueInitializerImpl<Charge>{
 
     private SeasonDAO seasonDAO;

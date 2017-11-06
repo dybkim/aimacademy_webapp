@@ -17,8 +17,6 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * Created by davidkim on 3/17/17.
- *
  * CourseController handles all requests regarding a course's info and coursesessions.
  */
 

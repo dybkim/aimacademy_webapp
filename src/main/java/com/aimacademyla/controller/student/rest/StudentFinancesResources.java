@@ -17,6 +17,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * StudentFinancesResources is a resource provider for requests sent to the studentFinancesController
+ */
+
 @Controller
 @RequestMapping("/admin/student/rest/studentFinances")
 public class StudentFinancesResources {

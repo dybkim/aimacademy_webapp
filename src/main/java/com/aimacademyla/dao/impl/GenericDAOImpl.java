@@ -35,7 +35,7 @@ public abstract class GenericDAOImpl<E, K extends Serializable> implements Gener
     private Type type;
 
     /**
-     * Constructor must establish the E at compile time because generics don't exist at runtime
+     * Constructor must establish the entity type E at compile time because generics don't exist at runtime
      */
     public GenericDAOImpl(Class<E> entityClass) {
         this.entityClass = entityClass;
@@ -74,6 +74,10 @@ public abstract class GenericDAOImpl<E, K extends Serializable> implements Gener
         return session.get(entityClass, key);
     }
 
+    /**
+     * getList() uses criteriaQuery instead of HQL due to the generic entity type of GenericDAO (HQL requires the actual entity type)
+     * @return
+     */
     @Override
     public List<E> getList(){
         Session session = currentSession();

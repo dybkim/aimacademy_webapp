@@ -41,9 +41,13 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
     }
 
     @Override
-    public void add(ChargeLine chargeLine){
+    public void add(ChargeLine chargeLine) throws NullPointerException{
         BigDecimal chargeLineAmount = chargeLine.getTotalCharge();
         Charge charge = chargeService.get(chargeLine.getChargeID());
+
+        if(charge == null)
+            throw new NullPointerException("Error in adding chargeLine: Charge cannot be empty!");
+
         Course course = courseService.get(charge.getCourseID());
 
         BigDecimal chargeAmount = charge.getChargeAmount().add(chargeLineAmount);
