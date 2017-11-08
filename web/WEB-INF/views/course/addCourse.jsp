@@ -58,7 +58,7 @@
 
                 <div class="form-group"><form:errors path="course.courseType" cssStyle="color: #FF0000"/>
                     <label for="courseType">Course Type: </label>
-                    <form:select path="course.courseType" id="courseType" class="form-Control" cssStyle="width: 200px">
+                    <form:select path="course.courseType" id="courseType" class="form-control" cssStyle="width: 200px">
                         <form:option value="Supplement"/>
                         <form:option value="Finals Prep"/>
                         <form:option value="Test Prep"/>
@@ -126,7 +126,7 @@
                 </c:choose>
 
                 <div class="form-group">
-                    <label for="classDuration">Session length (hours): </label>
+                    <label for="classDuration">Class Duration (hours): </label>
                     <form:input path="course.classDuration" id="classDuration" class="form-control" cssStyle="width: 100px"/>
                 </div>
 

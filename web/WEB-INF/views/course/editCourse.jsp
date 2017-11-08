@@ -62,12 +62,12 @@
 
                 <div class="form-group"><form:errors path="course.courseName" cssStyle="color: #FF0000"/>
                     <label for="courseTitle">Course Title: </label>
-                    <form:input path="course.courseName" id="courseTitle" class="form-Control" value="${courseRegistrationWrapper.course.courseName}"/>
+                    <form:input path="course.courseName" id="courseTitle" class="form-control" value="${courseRegistrationWrapper.course.courseName}"/>
                 </div>
 
                 <div class="form-group"><form:errors path="course.courseType" cssStyle="color: #FF0000"/>
                     <label for="courseType">Course Type: </label>
-                    <form:select path="course.courseType" id="courseType" class="form-Control" value="${courseRegistrationWrapper.course.courseType}">
+                    <form:select path="course.courseType" id="courseType" class="form-control" value="${courseRegistrationWrapper.course.courseType}">
                         <form:option value="Supplement"/>
                         <form:option value="Finals Prep"/>
                         <form:option value="Test Prep"/>
@@ -137,7 +137,7 @@
                     </c:otherwise>
                 </c:choose>
                 <div class="form-group">
-                    <label for="classDuration">Session length (hours): </label>
+                    <label for="classDuration">Class Duration (hours): </label>
                     <form:input path="course.classDuration" id="classDuration" class="form-control" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.classDuration}"/>
                 </div>
 
