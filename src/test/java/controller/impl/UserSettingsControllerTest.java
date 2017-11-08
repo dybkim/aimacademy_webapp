@@ -22,7 +22,6 @@ public class UserSettingsControllerTest extends AbstractControllerTest{
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
-
     }
 
     @Test
