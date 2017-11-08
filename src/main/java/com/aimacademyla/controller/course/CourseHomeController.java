@@ -98,6 +98,11 @@ public class CourseHomeController {
             List<FieldError> errors = result.getFieldErrors();
             checkDateErrors(errors, model);
 
+            if(BillableUnitType.PER_HOUR.toString().equals(course.getBillableUnitType()) && course.getClassDuration() == null) {
+                model.addAttribute("courseRegistrationWrapper", courseRegistrationWrapper);
+                model.addAttribute("billableUnitTypeError", "Class Duration cannot be empty if billing type is 'per hour'!");
+            }
+
             return "/course/addCourse";
         }
 
@@ -133,7 +138,11 @@ public class CourseHomeController {
             List<FieldError> errors = result.getFieldErrors();
             model = checkDateErrors(errors, model);
 
-            model.addAttribute(courseRegistrationWrapper);
+            if(BillableUnitType.PER_HOUR.toString().equals(course.getBillableUnitType()) && course.getClassDuration() == null) {
+                model.addAttribute("courseRegistrationWrapper", courseRegistrationWrapper);
+                model.addAttribute("billableUnitTypeError", "Class Duration cannot be empty if billing type is 'per hour'!");
+            }
+
             return "/course/editCourse";
         }
 
