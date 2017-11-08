@@ -50,7 +50,7 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Add Course</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/addCourse" method="post" modelAttribute="courseRegistrationWrapper">
+            <form:form action="${pageContext.request.contextPath}/admin/courseList/addCourse" method="POST" modelAttribute="courseRegistrationWrapper">
                 <div class="form-group"><form:errors path="course.courseName" cssStyle="color: #FF0000"/>
                     <label for="courseTitle">Course Title</label>
                     <form:input path="course.courseName" id="courseTitle" class="form-Control" cssStyle="width: 400px"/>
@@ -67,12 +67,32 @@
                     </form:select>
                 </div>
 
-                <div class="form-group"><span style="color: #FF0000">${startDateErrorMessage}</span>
+                <c:choose>
+                    <c:when test="${startDateErrorMessage != null}">
+                        <span style="color: #FF0000">${startDateErrorMessage}</span>
+                    </c:when>
+
+                    <c:otherwise>
+                        <br>
+                    </c:otherwise>
+                </c:choose>
+
+                <div class="form-group">
                     <label for="startDate">Start Date (MM/DD/YYYY): </label>
                     <form:input path="course.courseStartDate" id="startDate" class="date"/>
                 </div>
 
-                <div class="form-group"><span style="color: #FF0000">${endDateErrorMessage}</span>
+                <c:choose>
+                    <c:when test="${endDateErrorMessage != null}">
+                        <span style="color: #FF0000">${endDateErrorMessage}</span>
+                    </c:when>
+
+                    <c:otherwise>
+                        <br>
+                    </c:otherwise>
+                </c:choose>
+
+                <div class="form-group">
                     <label for="endDate">End Date (MM/DD/YYYY): </label>
                     <form:input path="course.courseEndDate" id="endDate" class="date"/>
                 </div>
@@ -94,6 +114,16 @@
                     <label for="nonMemberCoursePrice">Price per hour/session (for Non-Members): </label>
                     <form:input path="course.nonMemberPricePerBillableUnit" id="nonMemberCoursePrice" class="form-control" cssStyle="width: 100px"/>
                 </div>
+
+                <c:choose>
+                    <c:when test="${billableUnitTypeError != null}">
+                        <span style="color: #FF0000">${billableUnitTypeError}</span>
+                    </c:when>
+
+                    <c:otherwise>
+                        <br>
+                    </c:otherwise>
+                </c:choose>
 
                 <div class="form-group">
                     <label for="classDuration">Session length (hours): </label>

@@ -76,7 +76,16 @@
                     </form:select>
                 </div>
 
-                <span style="color: #FF0000">${startDateErrorMessage}</span>
+                <c:choose>
+                    <c:when test="${startDateErrorMessage != null}">
+                        <span style="color: #FF0000">${startDateErrorMessage}</span>
+                    </c:when>
+
+                    <c:otherwise>
+                        <br>
+                    </c:otherwise>
+                </c:choose>
+
                 <div class="form-group">
                     <label for="startDate">Start Date (MM/DD/YYYY): </label>
                     <fmt:parseDate value="${courseRegistrationWrapper.course.courseStartDate}" pattern="yyyy-MM-dd" var="parsedStartDate" type="date" />
@@ -84,7 +93,15 @@
                     <form:input path="course.courseStartDate" id="startDate" class="date" value="${formattedStartDate}"/>
                 </div>
 
-                <span style="color: #FF0000">${endDateErrorMessage}</span>
+                <c:choose>
+                    <c:when test="${endDateErrorMessage != null}">
+                        <span style="color: #FF0000">${endDateErrorMessage}</span>
+                    </c:when>
+
+                    <c:otherwise>
+                        <br>
+                    </c:otherwise>
+                </c:choose>
                 <div class="form-group">
                     <label for="endDate">End Date (MM/DD/YYYY): </label>
                     <fmt:parseDate value="${courseRegistrationWrapper.course.courseEndDate}" pattern="yyyy-MM-dd" var="parsedEndDate" type="date" />
@@ -110,6 +127,15 @@
                     <form:input path="course.nonMemberPricePerBillableUnit" id="nonMemberCoursePrice" class="form-control" placeholder="Default: Member Rate If Empty" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.nonMemberPricePerBillableUnit}"/>
                 </div>
 
+                <c:choose>
+                    <c:when test="${billableUnitTypeError != null}">
+                        <span style="color: #FF0000">${billableUnitTypeError}</span>
+                    </c:when>
+
+                    <c:otherwise>
+                        <br>
+                    </c:otherwise>
+                </c:choose>
                 <div class="form-group">
                     <label for="classDuration">Session length (hours): </label>
                     <form:input path="course.classDuration" id="classDuration" class="form-control" cssStyle="width: 100px" value="${courseRegistrationWrapper.course.classDuration}"/>
