@@ -1,10 +1,11 @@
-package controller;
+package controller.impl;
 
 import com.aimacademyla.controller.student.StudentListController;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberService;
 import com.aimacademyla.service.MemberCourseRegistrationService;
+import controller.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-public class StudentListControllerTest {
+public class StudentListControllerTest extends AbstractControllerTest{
 
     @Mock
     private CourseService courseServiceMock;

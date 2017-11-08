@@ -1,22 +1,14 @@
-package transactions.tests.integration;
+package transactions.service.integration;
 
-import com.aimacademyla.dao.ChargeDAO;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MonthlyFinancesSummary;
-import com.aimacademyla.model.initializer.impl.MonthlyFinancesSummaryDefaultValueInitializer;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.MonthlyFinancesSummaryService;
-import com.aimacademyla.service.impl.ChargeServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +16,9 @@ import transactions.AbstractTransactionTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

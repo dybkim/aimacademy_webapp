@@ -61,13 +61,20 @@
             </c:if>
 
             <form name="loginForm" action="<spring:url value="/login"/>" method="post">
-                <c:if test="${not empty error}">
-                    <div class="error" style="color:#ff0000">${error}</div>
-                </c:if>
 
-                <c:if test="${not empty sessionError}">
-                    <div class="error" style="color:#ff0000">${sessionError}</div>
-                </c:if>
+                <c:choose>
+                    <c:when test="${not empty error}">
+                        <div class="error" style="color:#ff0000">${error}</div>
+                    </c:when>
+
+                    <c:when test="${not empty sessionError}">
+                        <div class="error" style="color:#ff0000">${sessionError}</div>
+                    </c:when>
+
+                    <c:otherwise>
+                        <br>
+                    </c:otherwise>
+                </c:choose>
 
                 <div class="form-group">
                     <label for="username">Username: </label>

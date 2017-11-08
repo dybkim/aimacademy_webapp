@@ -209,7 +209,7 @@ public class CourseController {
                 chargeLine.setTotalCharge(totalCharge);
                 chargeLine.setChargeID(charge.getChargeID());
                 chargeLine.setBillableUnitsBilled(course.getBillableUnitDuration());
-                chargeLineService.add(chargeLine);
+                chargeService.addChargeLine(chargeLine);
             }
         }
 
@@ -294,19 +294,19 @@ public class CourseController {
                     chargeLine.setAttendanceID(attendance.getAttendanceID());
                     chargeLine.setTotalCharge(totalCharge);
                     chargeLine.setBillableUnitsBilled(course.getBillableUnitDuration());
-                    chargeLineService.add(chargeLine);
+                    chargeService.addChargeLine(chargeLine);
                     continue;
                 }
 
                 chargeLine.setTotalCharge(totalCharge);
                 chargeLine.setBillableUnitsBilled(course.getBillableUnitDuration());
-                chargeLineService.update(chargeLine);
+                chargeService.updateChargeLine(chargeLine);
             }
 
             else{
                 ChargeLine chargeLine = chargeLineService.getChargeLineByAttendanceID(attendance.getAttendanceID());
                 if(chargeLine != null){
-                    chargeLineService.remove(chargeLine);
+                    chargeService.removeChargeLine(chargeLine);
                 }
 
             attendanceService.update(attendance);
@@ -333,7 +333,7 @@ public class CourseController {
             ChargeLine chargeLine = chargeLineService.getChargeLineByAttendanceID(attendance.getAttendanceID());
 
             if(chargeLine != null)
-                chargeLineService.remove(chargeLine);
+                chargeService.removeChargeLine(chargeLine);
 
             attendanceService.remove(attendance);
         }
@@ -345,5 +345,4 @@ public class CourseController {
         courseService.update(course);
         return "redirect:/admin/courseList/courseInfo/" + courseID;
     }
-
 }

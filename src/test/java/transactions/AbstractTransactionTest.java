@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ContextConfiguration(
         /*
-         * Unit tests only work right now if the locations for the resources are set in the following below formats for both the
+         * Unit service only work right now if the locations for the resources are set in the following below formats for both the
          * context and the sql initialization scripts
          */
         locations = "file:src/test/java/resources/testContext.xml"

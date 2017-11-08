@@ -1,4 +1,4 @@
-package transactions.tests.integration;
+package transactions.service.integration;
 
 import com.aimacademyla.model.*;
 import com.aimacademyla.service.ChargeLineService;
@@ -84,7 +84,7 @@ public class ChargeLineServiceTest extends AbstractTransactionTest{
     public void testAddChargeLine() throws Exception{
         monthlyFinancesSummaryService.add(monthlyFinancesSummary);
         chargeService.add(charge);
-        chargeLineService.add(chargeLine);
+        chargeService.addChargeLine(chargeLine);
 
         Charge retrievedCharge = chargeService.get(charge.getChargeID());
         assertNotNull(retrievedCharge);

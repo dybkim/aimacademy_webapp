@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by davidkim on 7/17/17.
  */
-public class CourseRegistrationWrapperObject implements Serializable {
+public class CourseRegistrationWrapperListItem implements Serializable {
 
     private static final long serialVersionUID = 4767686080695400542L;
 

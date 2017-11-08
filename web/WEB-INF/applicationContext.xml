@@ -64,8 +64,8 @@
     <security:authentication-manager>
         <security:authentication-provider>
             <security:jdbc-user-service data-source-ref="c3p0DataSource"
-                                        authorities-by-username-query="SELECT username, authority FROM Authorities WHERE username = ?"
-                                        users-by-username-query="SELECT username, password, enabled FROM Users WHERE username = ?"/>
+                                        authorities-by-username-query="SELECT username, authority FROM Authority WHERE username = ?"
+                                        users-by-username-query="SELECT username, password, enabled FROM User WHERE username = ?"/>
         </security:authentication-provider>
     </security:authentication-manager>
 

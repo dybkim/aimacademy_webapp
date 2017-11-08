@@ -1,7 +1,6 @@
 package com.aimacademyla.model.wrapper;
 
 import com.aimacademyla.model.Course;
-import com.aimacademyla.model.Member;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +14,7 @@ public class CourseRegistrationWrapper implements Serializable{
 
     private Course course;
 
-    private List<CourseRegistrationWrapperObject> courseRegistrationWrapperObjectList;
+    private List<CourseRegistrationWrapperListItem> courseRegistrationWrapperObjectList;
 
     public Course getCourse() {
         return course;
@@ -25,11 +24,11 @@ public class CourseRegistrationWrapper implements Serializable{
         this.course = course;
     }
 
-    public List<CourseRegistrationWrapperObject> getCourseRegistrationWrapperObjectList() {
+    public List<CourseRegistrationWrapperListItem> getCourseRegistrationWrapperObjectList() {
         return courseRegistrationWrapperObjectList;
     }
 
-    public void setCourseRegistrationWrapperObjectList(List<CourseRegistrationWrapperObject> courseRegistrationWrapperObjectList) {
+    public void setCourseRegistrationWrapperObjectList(List<CourseRegistrationWrapperListItem> courseRegistrationWrapperObjectList) {
         this.courseRegistrationWrapperObjectList = courseRegistrationWrapperObjectList;
     }
 }

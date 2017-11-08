@@ -1,19 +1,17 @@
-package controller;
+package controller.impl;
 
 import com.aimacademyla.controller.course.CourseHomeController;
 import com.aimacademyla.model.Course;
-import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.Member;
-import com.aimacademyla.model.builder.impl.CourseRegistrationWrapperBuilder;
 import com.aimacademyla.model.enums.BillableUnitType;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
-import com.aimacademyla.model.wrapper.CourseRegistrationWrapperObject;
+import com.aimacademyla.model.wrapper.CourseRegistrationWrapperListItem;
 import com.aimacademyla.service.AttendanceService;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import com.aimacademyla.service.MemberService;
 import com.aimacademyla.service.factory.ServiceFactory;
-import com.aimacademyla.model.enums.BillableUnitType;
+import controller.AbstractControllerTest;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,9 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -31,7 +27,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -42,9 +37,8 @@ import static org.hamcrest.Matchers.*;
  * Created by davidkim on 2/14/17.
  */
 
-@RunWith(MockitoJUnitRunner.class)
-@WebAppConfiguration
-public class CourseHomeControllerTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+public class CourseHomeControllerTest extends AbstractControllerTest{
 
     @Mock
     private CourseService courseServiceMock;
@@ -107,8 +101,8 @@ public class CourseHomeControllerTest {
         member = new Member();
         member.setMemberID(1);
 
-        List<CourseRegistrationWrapperObject> courseRegistrationWrapperObjectList = new ArrayList<>();
-        CourseRegistrationWrapperObject courseRegistrationWrapperObject = new CourseRegistrationWrapperObject();
+        List<CourseRegistrationWrapperListItem> courseRegistrationWrapperObjectList = new ArrayList<>();
+        CourseRegistrationWrapperListItem courseRegistrationWrapperObject = new CourseRegistrationWrapperListItem();
         courseRegistrationWrapperObject.setMember(member);
         courseRegistrationWrapperObjectList.add(courseRegistrationWrapperObject);
 
@@ -153,6 +147,7 @@ public class CourseHomeControllerTest {
 
         verify(courseServiceMock, times(1)).getList();
     }
+
     @Test
     public void testEditCourse() throws Exception{
         RequestBuilder requestBuilder = post("/admin/courseList/editCourse/1").flashAttr("courseRegistrationWrapper", courseRegistrationWrapper);

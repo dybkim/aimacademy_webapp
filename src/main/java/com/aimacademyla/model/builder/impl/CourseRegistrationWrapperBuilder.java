@@ -6,7 +6,7 @@ import com.aimacademyla.model.MemberCourseRegistration;
 import com.aimacademyla.model.builder.GenericBuilder;
 import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
-import com.aimacademyla.model.wrapper.CourseRegistrationWrapperObject;
+import com.aimacademyla.model.wrapper.CourseRegistrationWrapperListItem;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import com.aimacademyla.service.MemberService;
@@ -39,7 +39,7 @@ public class CourseRegistrationWrapperBuilder extends GenericBuilderImpl<CourseR
     public CourseRegistrationWrapper build() {
         CourseRegistrationWrapper courseRegistrationWrapper = new CourseRegistrationWrapper();
         Course course = courseService.get(courseID);
-        List<CourseRegistrationWrapperObject> courseRegistrationWrapperObjectList = new ArrayList<>();
+        List<CourseRegistrationWrapperListItem> courseRegistrationWrapperObjectList = new ArrayList<>();
         List<MemberCourseRegistration> memberCourseRegistrationList = memberCourseRegistrationService.getMemberCourseRegistrationListForCourse(course);
 
         for(MemberCourseRegistration memberCourseRegistration : memberCourseRegistrationList){
@@ -47,7 +47,7 @@ public class CourseRegistrationWrapperBuilder extends GenericBuilderImpl<CourseR
                 continue;
 
             Member member = memberService.get(memberCourseRegistration.getMemberID());
-            CourseRegistrationWrapperObject courseRegistrationWrapperObject = new CourseRegistrationWrapperObject();
+            CourseRegistrationWrapperListItem courseRegistrationWrapperObject = new CourseRegistrationWrapperListItem();
             courseRegistrationWrapperObject.setIsDropped(false);
             courseRegistrationWrapperObject.setMember(member);
             courseRegistrationWrapperObjectList.add(courseRegistrationWrapperObject);

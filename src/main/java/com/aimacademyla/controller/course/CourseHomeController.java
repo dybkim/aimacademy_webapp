@@ -5,7 +5,7 @@ import com.aimacademyla.model.builder.impl.CourseRegistrationWrapperBuilder;
 import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
 import com.aimacademyla.model.enums.BillableUnitType;
 import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
-import com.aimacademyla.model.wrapper.CourseRegistrationWrapperObject;
+import com.aimacademyla.model.wrapper.CourseRegistrationWrapperListItem;
 import com.aimacademyla.service.*;
 import com.aimacademyla.service.factory.ServiceFactory;
 import org.apache.logging.log4j.LogManager;
@@ -92,6 +92,8 @@ public class CourseHomeController {
     @RequestMapping(value = "/addCourse", method = RequestMethod.POST)
     public String addCourse(@Valid @ModelAttribute("courseRegistrationWrapper") CourseRegistrationWrapper courseRegistrationWrapper, BindingResult result, Model model){
 
+        Course course = courseRegistrationWrapper.getCourse();
+
         if(result.hasErrors()) {
             List<FieldError> errors = result.getFieldErrors();
             checkDateErrors(errors, model);
@@ -99,7 +101,11 @@ public class CourseHomeController {
             return "/course/addCourse";
         }
 
-        Course course = courseRegistrationWrapper.getCourse();
+        if(BillableUnitType.PER_HOUR.toString().equals(course.getBillableUnitType()) && course.getClassDuration() == null){
+            model.addAttribute("courseRegistrationWrapper", courseRegistrationWrapper);
+            model.addAttribute("billableUnitTypeError", "Class Duration cannot be empty if billing type is 'per hour'!");
+            return "/course/addCourse";
+        }
 
         if(course.getNonMemberPricePerBillableUnit() == null)
             course.setNonMemberPricePerBillableUnit(course.getMemberPricePerBillableUnit());
@@ -121,6 +127,8 @@ public class CourseHomeController {
     @RequestMapping(value="/editCourse/{courseID}", method = RequestMethod.POST)
     public String editCourse(@Valid @ModelAttribute("courseRegistrationWrapper") CourseRegistrationWrapper courseRegistrationWrapper, BindingResult result, @PathVariable("courseID") int courseID, Model model){
 
+        Course course = courseRegistrationWrapper.getCourse();
+
         if(result.hasErrors()) {
             List<FieldError> errors = result.getFieldErrors();
             model = checkDateErrors(errors, model);
@@ -129,7 +137,12 @@ public class CourseHomeController {
             return "/course/editCourse";
         }
 
-        Course course = courseRegistrationWrapper.getCourse();
+        if(BillableUnitType.PER_HOUR.toString().equals(course.getBillableUnitType()) && course.getClassDuration() == null){
+            model.addAttribute("courseRegistrationWrapper", courseRegistrationWrapper);
+            model.addAttribute("billableUnitTypeError", "Class Duration cannot be empty if billing type is 'per hour'!");
+            return "/course/editCourse";
+        }
+
 
         if(course.getCourseStartDate() != null)
             course.setSeasonID(seasonService.getSeason(course.getCourseStartDate()).getSeasonID());
@@ -138,7 +151,7 @@ public class CourseHomeController {
 
         // Have to check for null list instead of empty list because JSP returns null list if list is empty
         if(courseRegistrationWrapper.getCourseRegistrationWrapperObjectList() != null){
-            for(CourseRegistrationWrapperObject courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList())
+            for(CourseRegistrationWrapperListItem courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList())
                 if(!courseRegistrationWrapperObject.getIsDropped())
                     numEnrolled++;
 
@@ -206,7 +219,7 @@ public class CourseHomeController {
         int courseID = courseRegistrationWrapper.getCourse().getCourseID();
         Member member;
 
-        for(CourseRegistrationWrapperObject courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList()){
+        for(CourseRegistrationWrapperListItem courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList()){
             member = courseRegistrationWrapperObject.getMember();
             MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
             memberCourseRegistration.setMemberID(member.getMemberID());
@@ -224,7 +237,7 @@ public class CourseHomeController {
         int courseID = courseRegistrationWrapper.getCourse().getCourseID();
         Member member;
 
-        for(CourseRegistrationWrapperObject courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList()){
+        for(CourseRegistrationWrapperListItem courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList()){
             member = courseRegistrationWrapperObject.getMember();
             MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationService.get(member.getMemberID(), courseID);
 

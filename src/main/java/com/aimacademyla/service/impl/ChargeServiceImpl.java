@@ -6,9 +6,7 @@ import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.initializer.impl.ChargeDefaultValueInitializer;
 import com.aimacademyla.model.enums.AIMEntityType;
-import com.aimacademyla.service.ChargeService;
-import com.aimacademyla.service.MonthlyFinancesSummaryService;
-import com.aimacademyla.service.SeasonService;
+import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -28,15 +26,21 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
 
     private ChargeDAO chargeDAO;
     private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
+    private ChargeLineService chargeLineService;
+    private CourseService courseService;
 
     private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.CHARGE;
 
     @Autowired
     public ChargeServiceImpl(@Qualifier("chargeDAO") GenericDAO<Charge, Integer> genericDAO,
-                             MonthlyFinancesSummaryService monthlyFinancesSummaryService){
+                             CourseService courseService,
+                             MonthlyFinancesSummaryService monthlyFinancesSummaryService,
+                             ChargeLineService chargeLineService){
         super(genericDAO);
         this.chargeDAO = (ChargeDAO) genericDAO;
+        this.courseService = courseService;
         this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
+        this.chargeLineService = chargeLineService;
     }
 
     @Override
@@ -125,6 +129,7 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
 
     @Override
     public Charge getChargeByMemberForCourseByDate(Member member, Course course, LocalDate date){
+
         return getChargeByMemberForCourseByDate(member.getMemberID(), course.getCourseID(), date);
     }
 
@@ -159,6 +164,92 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
     public void remove(List<Charge> chargeList){
         for(Charge charge : chargeList)
             remove(charge);
+    }
+
+    @Override
+    public void addChargeLine(ChargeLine chargeLine){
+        BigDecimal chargeLineAmount = chargeLine.getTotalCharge();
+        Charge charge = chargeDAO.get(chargeLine.getChargeID());
+
+        Course course = courseService.get(charge.getCourseID());
+
+        BigDecimal chargeAmount = charge.getChargeAmount().add(chargeLineAmount);
+        charge.setChargeAmount(chargeAmount);
+
+        BigDecimal billableUnitsBilled = charge.getBillableUnitsBilled();
+
+        if(billableUnitsBilled == null)
+            billableUnitsBilled = BigDecimal.ZERO;
+
+        billableUnitsBilled = billableUnitsBilled.add(course.getBillableUnitDuration());
+        charge.setBillableUnitsBilled(billableUnitsBilled);
+
+        int numChargeLines = charge.getNumChargeLines() + 1;
+        charge.setNumChargeLines(numChargeLines);
+        update(charge);
+
+        chargeLineService.add(chargeLine);
+    }
+
+    @Override
+    public void updateChargeLine(ChargeLine chargeLine){
+        ChargeLine oldChargeLine = chargeLineService.get(chargeLine.getChargeLineID());
+        BigDecimal oldChargeLineAmount = oldChargeLine.getTotalCharge();
+        Charge charge = get(chargeLine.getChargeID());
+        Course course = courseService.get(charge.getCourseID());
+
+        BigDecimal billableUnitsBilled = charge.getBillableUnitsBilled();
+        if(billableUnitsBilled == null)
+            billableUnitsBilled = BigDecimal.ZERO;
+        BigDecimal oldHoursBilled = chargeLine.getBillableUnitsBilled();
+        if(oldHoursBilled == null)
+            oldHoursBilled = BigDecimal.ZERO;
+
+        billableUnitsBilled = billableUnitsBilled.subtract(oldHoursBilled);
+        billableUnitsBilled = billableUnitsBilled.add(course.getBillableUnitDuration());
+        charge.setBillableUnitsBilled(billableUnitsBilled);
+
+        if(billableUnitsBilled.equals(BigDecimal.ZERO))
+            charge.setBillableUnitsBilled(BigDecimal.ZERO);
+
+        BigDecimal chargeAmount = charge.getChargeAmount().subtract(oldChargeLineAmount).add(chargeLine.getTotalCharge());
+        charge.setChargeAmount(chargeAmount);
+        update(charge);
+        chargeLineService.update(chargeLine);
+    }
+
+    @Override
+    public void removeChargeLine(ChargeLine chargeLine){
+        BigDecimal chargeLineAmount = chargeLineService.get(chargeLine.getChargeLineID()).getTotalCharge();
+        Charge charge = get(chargeLine.getChargeID());
+
+        BigDecimal newChargeAmount = charge.getChargeAmount().subtract(chargeLineAmount);
+        charge.setChargeAmount(newChargeAmount);
+
+        BigDecimal billableUnitsBilled = charge.getBillableUnitsBilled();
+        if(billableUnitsBilled == null)
+            billableUnitsBilled = BigDecimal.ZERO;
+
+        BigDecimal chargeLineBillableUnitsBilled = chargeLine.getBillableUnitsBilled();
+        if(chargeLineBillableUnitsBilled == null)
+            chargeLineBillableUnitsBilled = BigDecimal.ZERO;
+
+        billableUnitsBilled = billableUnitsBilled.subtract(chargeLineBillableUnitsBilled);
+        charge.setBillableUnitsBilled(billableUnitsBilled);
+
+        int numChargeLines = charge.getNumChargeLines() - 1;
+        charge.setNumChargeLines(numChargeLines);
+
+        if(numChargeLines > 0){
+            update(charge);
+            chargeLineService.remove(chargeLine);
+        }
+
+        /*
+         * chargeLine entities are deleted when charges are deleted due to cascading settings
+         */
+        else
+           remove(charge);
     }
 
     @Override

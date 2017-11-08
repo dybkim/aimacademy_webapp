@@ -12,5 +12,7 @@ public enum AIMEntityType {
     MEMBER,
     MONTHLY_FINANCES_SUMMARY,
     PAYMENT,
-    SEASON
+    SEASON,
+    USER,
+    AUTHORITY
 }

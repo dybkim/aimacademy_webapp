@@ -16,6 +16,8 @@ public enum BillableUnitType{
     }
 
     public static BillableUnitType parseString(String type){
+        type = type.toLowerCase();
+
         switch(type){
             case "hour":
                 return PER_HOUR;

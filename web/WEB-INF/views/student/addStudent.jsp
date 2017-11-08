@@ -91,7 +91,7 @@
 
                 <br><br>
 
-                <input type="submit" value="submit" class="btn btn=default">
+                <input type="submit" value="Submit" class="btn btn=default">
 
                 <input action="action" onclick="history.go(-1);" value="Cancel" class="btn btn-default">
 

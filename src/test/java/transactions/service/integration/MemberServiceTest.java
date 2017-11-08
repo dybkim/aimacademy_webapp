@@ -1,4 +1,4 @@
-package transactions.tests.integration;
+package transactions.service.integration;
 
 import com.aimacademyla.model.Member;
 import com.aimacademyla.service.MemberService;
@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;

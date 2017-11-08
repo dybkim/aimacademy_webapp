@@ -1,6 +1,7 @@
 package com.aimacademyla.service;
 
 import com.aimacademyla.model.Charge;
+import com.aimacademyla.model.ChargeLine;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 
@@ -24,4 +25,7 @@ public interface ChargeService extends GenericService<Charge, Integer>{
     List<Charge> getChargesByCourse(Course course);
     List<Charge> getChargesByDate(LocalDate localDate);
     void remove(List<Charge> chargeList);
+    void addChargeLine(ChargeLine chargeLine);
+    void updateChargeLine(ChargeLine chargeLine);
+    void removeChargeLine(ChargeLine chargeLine);
 }
