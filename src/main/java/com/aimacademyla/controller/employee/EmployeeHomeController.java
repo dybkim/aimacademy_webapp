@@ -1,6 +1,7 @@
 package com.aimacademyla.controller.employee;
 
 
+import com.aimacademyla.dao.EmployeeDAO;
 import com.aimacademyla.model.Employee;
 import com.aimacademyla.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,18 +33,7 @@ public class EmployeeHomeController {
     @RequestMapping
     public String getEmployeeList(Model model){
         List<Employee> employeeList = employeeService.getList();
-        List<Employee> inactiveEmployeeList = new ArrayList<>();
-
-        Iterator it = employeeList.iterator();
-
-        while(it.hasNext()){
-            Employee employee = (Employee) it.next();
-
-            if(!employee.getIsActive()){
-                inactiveEmployeeList.add(employee);
-                it.remove();
-            }
-        }
+        List<Employee> inactiveEmployeeList = employeeService.getInactiveList();
 
         model.addAttribute("employeeList", employeeList);
         model.addAttribute("inactiveEmployeeList", inactiveEmployeeList);
@@ -60,14 +50,8 @@ public class EmployeeHomeController {
 
     @RequestMapping(value="/addEmployee", method= RequestMethod.POST)
     public String addEmployee(@ModelAttribute("employee") Employee employee, BindingResult result, RedirectAttributes redirectAttributes){
-        if(result.hasErrors())
-        {
-            List<FieldError> errors = result.getFieldErrors();
-
-            for (FieldError error : errors ) {
-                if(error.getField().equals("dateEmployed"))
-                    redirectAttributes.addFlashAttribute("dateEmployedErrorMessage", "Date must be in valid MM/DD/YYYY format");
-            }
+        if(hasErrors(result)) {
+            addErrorMessages(result.getFieldErrors(), redirectAttributes);
             return "redirect:/admin/employee/addEmployee";
         }
 
@@ -86,14 +70,8 @@ public class EmployeeHomeController {
 
     @RequestMapping(value="/editEmployee", method=RequestMethod.POST)
     public String editEmployee(@ModelAttribute("employee") Employee employee, BindingResult result, RedirectAttributes redirectAttributes){
-        if(result.hasErrors())
-        {
-            List<FieldError> errors = result.getFieldErrors();
-
-            for (FieldError error : errors ) {
-                if(error.getField().equals("dateEmployed"))
-                    redirectAttributes.addFlashAttribute("dateEmployedErrorMessage", "Date must be in valid MM/DD/YYYY format");
-            }
+        if(hasErrors(result)) {
+            addErrorMessages(result.getFieldErrors(), redirectAttributes);
             return "redirect:/admin/employee/editEmployee" + employee.getEmployeeID();
         }
 
@@ -109,6 +87,38 @@ public class EmployeeHomeController {
         model.addAttribute("employee", employee);
 
         return "employee/employeeInfo";
+    }
+
+    private boolean hasErrors(BindingResult result){
+        if(result.hasErrors()) {
+            List<FieldError> errors = result.getFieldErrors();
+
+            for (FieldError error : errors) {
+                if (error.getField().equals("dateEmployed"))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasDateFormatErrors(List<FieldError> errorList){
+        for (FieldError error : errorList) {
+            if (error.getField().equals("dateEmployed"))
+                return true;
+        }
+        return false;
+    }
+
+    private RedirectAttributes addErrorMessages(List<FieldError> errorList, RedirectAttributes redirectAttributes){
+        if(hasDateFormatErrors(errorList))
+            addDateFormateErrorMessage(redirectAttributes);
+
+        return redirectAttributes;
+    }
+
+    private RedirectAttributes addDateFormateErrorMessage(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("dateEmployedErrorMessage", "Date must be in valid MM/DD/YYYY format");
+        return redirectAttributes;
     }
 
 }
