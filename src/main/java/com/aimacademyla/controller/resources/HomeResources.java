@@ -1,11 +1,8 @@
 package com.aimacademyla.controller.resources;
 
-import com.aimacademyla.model.builder.impl.OutstandingChargesPaymentWrapperBuilder;
-import com.aimacademyla.model.wrapper.OutstandingChargesPaymentWrapper;
-import com.aimacademyla.service.ChargeService;
-import com.aimacademyla.service.MemberService;
-import com.aimacademyla.service.PaymentService;
-import com.aimacademyla.service.factory.ServiceFactory;
+import com.aimacademyla.dao.factory.DAOFactory;
+import com.aimacademyla.model.builder.dto.OutstandingChargesPaymentDTOBuilder;
+import com.aimacademyla.model.dto.OutstandingChargesPaymentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,19 +15,19 @@ import java.time.LocalDate;
 @RequestMapping("/admin/home/rest")
 public class HomeResources {
 
-    private ServiceFactory serviceFactory;
+    private DAOFactory daoFactory;
 
     @Autowired
-    public HomeResources(ServiceFactory serviceFactory){
-        this.serviceFactory = serviceFactory;
+    public HomeResources(DAOFactory daoFactory){
+        this.daoFactory = daoFactory;
     }
 
     @RequestMapping("/memberChargesList")
     @ResponseBody
-    public OutstandingChargesPaymentWrapper getMemberChargesList(@RequestParam("month") int month,
-                                                                 @RequestParam("year") int year){
+    public OutstandingChargesPaymentDTO getMemberChargesList(@RequestParam("month") int month,
+                                                             @RequestParam("year") int year){
         LocalDate cycleStartDate = LocalDate.of(year, month, 1);
-        return new OutstandingChargesPaymentWrapperBuilder(serviceFactory).setCycleStartDate(cycleStartDate).build();
+        return new OutstandingChargesPaymentDTOBuilder(daoFactory).setCycleStartDate(cycleStartDate).build();
     }
 }
 
