@@ -1,19 +1,17 @@
 package com.aimacademyla.controller;
 
+import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.*;
-import com.aimacademyla.model.builder.impl.OutstandingChargesPaymentWrapperBuilder;
+import com.aimacademyla.model.builder.dto.OutstandingChargesPaymentDTOBuilder;
+import com.aimacademyla.model.dto.OutstandingChargesPaymentDTO;
 import com.aimacademyla.model.reference.TemporalReference;
-import com.aimacademyla.model.wrapper.OutstandingChargesPaymentWrapper;
 import com.aimacademyla.service.*;
-import com.aimacademyla.service.factory.ServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -25,12 +23,12 @@ import java.util.*;
 @RequestMapping("/admin")
 public class HomeController {
     private CourseService courseService;
-    private ServiceFactory serviceFactory;
+    private DAOFactory daoFactory;
 
     @Autowired
-    public HomeController(CourseService courseService, ServiceFactory serviceFactory){
+    public HomeController(CourseService courseService, DAOFactory daoFactory){
         this.courseService = courseService;
-        this.serviceFactory = serviceFactory;
+        this.daoFactory = daoFactory;
     }
 
     @RequestMapping("/home")
@@ -43,7 +41,9 @@ public class HomeController {
         if(month != null && year != null)
             cycleStartDate = LocalDate.of(year, month, 1);
 
-        OutstandingChargesPaymentWrapper outstandingChargesPaymentWrapper = new OutstandingChargesPaymentWrapperBuilder(serviceFactory).setCycleStartDate(cycleStartDate).build();
+        OutstandingChargesPaymentDTO outstandingChargesPaymentDTO = new OutstandingChargesPaymentDTOBuilder(daoFactory)
+                                                                        .setCycleStartDate(cycleStartDate)
+                                                                        .build();
 
         HashMap<Integer, Course> courseHashMap = new HashMap<>();
 
@@ -55,7 +55,7 @@ public class HomeController {
 
         model.addAttribute("cycleStartDate", cycleStartDate);
         model.addAttribute("monthsList", monthsList);
-        model.addAttribute("outstandingChargesPaymentWrapper", outstandingChargesPaymentWrapper);
+        model.addAttribute("outstandingChargesPaymentDTO", outstandingChargesPaymentDTO);
         model.addAttribute("courseHashMap", courseHashMap);
 
         return "home";
