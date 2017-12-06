@@ -1,15 +1,17 @@
 package com.aimacademyla.controller.student;
 
+import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.*;
-import com.aimacademyla.model.builder.impl.MemberCourseFinancesWrapperBuilder;
-import com.aimacademyla.model.builder.impl.MemberListWrapperBuilder;
+import com.aimacademyla.model.builder.dto.MemberCourseFinancesDTOBuilder;
+import com.aimacademyla.model.builder.dto.MemberListDTOBuilder;
+import com.aimacademyla.model.dto.MemberCourseFinancesDTO;
+import com.aimacademyla.model.dto.MemberListDTO;
 import com.aimacademyla.model.reference.TemporalReference;
-import com.aimacademyla.model.wrapper.MemberCourseFinancesWrapper;
-import com.aimacademyla.model.wrapper.MemberListWrapper;
 import com.aimacademyla.service.*;
 import com.aimacademyla.service.factory.ServiceFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,30 +33,19 @@ public class StudentListController {
 
     private MemberService memberService;
     private CourseService courseService;
-    private MemberCourseRegistrationService memberCourseRegistrationService;
-    private CourseSessionService courseSessionService;
-    private AttendanceService attendanceService;
     private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
-    private SeasonService seasonService;
-    private ServiceFactory serviceFactory;
+    private DAOFactory daoFactory;
 
+    private static final Logger logger = LogManager.getLogger(StudentListController.class.getName());
     @Autowired
     public StudentListController(MemberService memberService,
                                  CourseService courseService,
-                                 MemberCourseRegistrationService memberCourseRegistrationService,
-                                 CourseSessionService courseSessionService,
-                                 AttendanceService attendanceService,
                                  MemberMonthlyRegistrationService memberMonthlyRegistrationService,
-                                 SeasonService seasonService,
-                                 ServiceFactory serviceFactory){
+                                 DAOFactory daoFactory){
         this.memberService = memberService;
         this.courseService = courseService;
-        this.memberCourseRegistrationService = memberCourseRegistrationService;
-        this.courseSessionService = courseSessionService;
-        this.attendanceService = attendanceService;
         this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
-        this.seasonService = seasonService;
-        this.serviceFactory = serviceFactory;
+        this.daoFactory = daoFactory;
     }
 
     @RequestMapping
@@ -66,49 +57,24 @@ public class StudentListController {
         if(month != null && year != null)
             cycleStartDate = LocalDate.of(year, month ,1);
 
-        MemberListWrapper memberListWrapper = new MemberListWrapperBuilder(serviceFactory).setCycleStartDate(cycleStartDate).build();
+        MemberListDTO memberListDTO = new MemberListDTOBuilder(daoFactory).setCycleStartDate(cycleStartDate).build();
         List<LocalDate> monthsList = TemporalReference.getMonthList();
         Collections.reverse(monthsList);
 
         model.addAttribute("cycleStartDate", cycleStartDate);
         model.addAttribute("monthsList", monthsList);
-        model.addAttribute("memberListWrapper", memberListWrapper);
+        model.addAttribute("memberListDTO", memberListDTO);
         return "/student/studentList";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String getStudentList(@ModelAttribute("memberListWrapper") MemberListWrapper memberListWrapper,
+    public String updateStudentList(@ModelAttribute("memberListWrapper") MemberListDTO memberListDTO,
                                  @RequestParam("month") int month,
                                  @RequestParam("year") int year){
-        HashMap<Integer, Boolean> membershipHashMap = memberListWrapper.getMembershipHashMap();
+
         LocalDate cycleStartDate = LocalDate.of(year, month, 1);
+        memberMonthlyRegistrationService.updateMemberMonthlyRegistrationList(memberListDTO);
 
-        for(int memberID : membershipHashMap.keySet()){
-            Member member = memberService.get(memberID);
-            MemberMonthlyRegistration memberMonthlyRegistration = memberMonthlyRegistrationService.getMemberMonthlyRegistrationForMemberByDate(member, cycleStartDate);
-
-            Boolean memberIsRegistered = membershipHashMap.get(memberID);
-
-            if(memberIsRegistered == null)
-                memberIsRegistered = false;
-
-            if(memberIsRegistered){
-                if(memberMonthlyRegistration == null){
-                    memberMonthlyRegistration = new MemberMonthlyRegistration();
-                    memberMonthlyRegistration.setMemberID(memberID);
-                    memberMonthlyRegistration.setCycleStartDate(cycleStartDate);
-                    memberMonthlyRegistration.setSeasonID(seasonService.getSeason(cycleStartDate).getSeasonID());
-                    memberMonthlyRegistration.setMembershipCharge(member.getMembershipRate());
-                    memberMonthlyRegistrationService.update(memberMonthlyRegistration);
-                }
-            }
-
-            else{
-                if(memberMonthlyRegistration != null){
-                    memberMonthlyRegistrationService.remove(memberMonthlyRegistration);
-                }
-            }
-        }
         return "redirect:/admin/student/studentList?month=" + cycleStartDate.getMonthValue() + "&year=" + cycleStartDate.getYear();
     }
 
@@ -123,18 +89,9 @@ public class StudentListController {
 
     @RequestMapping(value = "/addStudent", method = RequestMethod.POST)
     public String addStudent(@Valid @ModelAttribute("member") Member member, BindingResult result, RedirectAttributes redirectAttributes){
-        if(result.hasErrors())
-        {
-            List<FieldError> errors = result.getFieldErrors();
-
-            for (FieldError error : errors ) {
-                if(error.getField().equals("memberEntryDate"))
-                    redirectAttributes.addFlashAttribute("dateJoinedErrorMessage", "Date must be in valid MM/DD/YYYY format");
-
-                if(error.getField().equals("membershipRate"))
-                    redirectAttributes.addFlashAttribute("membershipRateErrorMessage", "Must be a valid amount!");
-            }
-            return "redirect:/admin/student/studentList/addStudent";
+        if(hasErrors(result)){
+            addErrorMessages(result.getFieldErrors(),redirectAttributes);
+            return "redirect:/admin/student/studentList/editStudent/" + member.getMemberID();
         }
 
         Course openStudy = courseService.get(Course.OPEN_STUDY_ID);
@@ -155,23 +112,13 @@ public class StudentListController {
 
     @RequestMapping(value = "/editStudent", method = RequestMethod.POST)
     public String editStudent(@Valid @ModelAttribute("member") Member member, BindingResult result, RedirectAttributes redirectAttributes){
-        if(result.hasErrors())
-        {
-            List<FieldError> errors = result.getFieldErrors();
-
-            for (FieldError error : errors ) {
-                if(error.getField().equals("memberEntryDate"))
-                    redirectAttributes.addFlashAttribute("dateJoinedErrorMessage", "Date must be in valid MM/DD/YYYY format");
-
-
-                if(error.getField().equals("membershipRate"))
-                    redirectAttributes.addFlashAttribute("membershipRateErrorMessage", "Must be a valid amount!");
-            }
-
+        if(hasErrors(result)){
+            addErrorMessages(result.getFieldErrors(),redirectAttributes);
             return "redirect:/admin/student/studentList/editStudent/" + member.getMemberID();
         }
 
         Member persistedMember = memberService.get(member.getMemberID());
+
         if(member.getMembershipRate() == null)
             member.setMembershipRate(persistedMember.getMembershipRate());
 
@@ -182,68 +129,98 @@ public class StudentListController {
     @RequestMapping("/{memberID}")
     public String getStudentInfo(@PathVariable("memberID") int memberID, Model model){
         Member member = memberService.get(memberID);
-        List<MemberCourseRegistration> memberCourseRegistrationList = memberCourseRegistrationService.getMemberCourseRegistrationListForMember(member);
-        List<Course> allCourseList;
+        member = memberService.loadCollection(member, MemberCourseRegistration.class);
+
+        List<MemberCourseRegistration> memberCourseRegistrationList = new ArrayList<>(member.getMemberCourseRegistrationMap().values());
+        List<Course> allCourseList = new ArrayList<>();
         List<Course> activeCourseList = new ArrayList<>();
         List<Course> inactiveCourseList = new ArrayList<>();
-        HashMap<Integer, List<CourseSession>> courseSessionListHashMap = new HashMap<>();
-        HashMap<Integer, List<Attendance>> courseAttendanceListHashMap = new HashMap<>();
-        HashMap<Integer, Integer> courseAttendanceCountHashMap = new HashMap<>();
+        HashMap<Integer, Integer> numCourseSessionsHashMap = new HashMap<>();
 
-        List<MemberCourseFinancesWrapper> memberCourseFinancesWrapperList = generateMemberCourseFinancesWrapperList(member);
+        List<MemberCourseFinancesDTO> memberCourseFinancesDTOList = generateMemberCourseFinancesDTOList(member);
 
         for(MemberCourseRegistration memberCourseRegistration : memberCourseRegistrationList){
-            Course course = courseService.get(memberCourseRegistration.getCourseID());
-            courseSessionListHashMap.put(course.getCourseID(),courseSessionService.getCourseSessionsForCourse(course));
-            courseAttendanceListHashMap.put(course.getCourseID(), attendanceService.getAttendanceForMemberForCourse(member,course));
+            Course course = memberCourseRegistration.getCourse();
+            int numCourseSessions = course.getCourseSessionSet().size();
+
+            numCourseSessionsHashMap.put(course.getCourseID(), numCourseSessions);
+            allCourseList.add(course);
 
             if(!course.getIsActive() || !memberCourseRegistration.getIsEnrolled()){
                 inactiveCourseList.add(course);
                 continue;
             }
-
             activeCourseList.add(course);
+
         }
-
-        allCourseList = new ArrayList<>(activeCourseList);
-        allCourseList.addAll(inactiveCourseList);
-
-        for(Course course : allCourseList){
-            List<Attendance> attendanceList = courseAttendanceListHashMap.get(course.getCourseID());
-            Iterator it = attendanceList.iterator();
-            int attendanceCount = 0;
-
-            while(it.hasNext()){
-                Attendance attendance = (Attendance) it.next();
-                if(attendance.getWasPresent())
-                    attendanceCount++;
-            }
-
-            courseAttendanceCountHashMap.put(course.getCourseID(), attendanceCount);
-        }
+        HashMap<Integer, Integer> courseAttendanceCountHashMap = generateCourseAttendanceCountHashMap(allCourseList, member);
 
         model.addAttribute("activeCourseList", activeCourseList);
         model.addAttribute("inactiveCourseList", inactiveCourseList);
-        model.addAttribute("courseAttendanceListHashMap", courseAttendanceListHashMap);
         model.addAttribute("courseAttendanceCountHashMap", courseAttendanceCountHashMap);
-        model.addAttribute("courseSessionListHashMap", courseSessionListHashMap);
-        model.addAttribute("memberCourseFinancesWrapperList", memberCourseFinancesWrapperList);
+        model.addAttribute("numCourseSessionsHashMap", numCourseSessionsHashMap);
+        model.addAttribute("memberCourseFinancesDTOList", memberCourseFinancesDTOList);
         model.addAttribute("member", member);
         return "/student/studentInfo";
     }
 
-    private List<MemberCourseFinancesWrapper> generateMemberCourseFinancesWrapperList(Member member){
-        List<MemberCourseFinancesWrapper> memberCourseFinancesWrapperList= new ArrayList<>();
+    private HashMap<Integer, Integer> generateCourseAttendanceCountHashMap(List<Course> allCourseList, Member member){
+        HashMap<Integer, Integer> courseAttendanceCountHashMap = new HashMap<>();
+
+        for(Course course : allCourseList){
+            int numAttendance = course.getNumAttendanceForMember(member);
+            courseAttendanceCountHashMap.put(course.getCourseID(), numAttendance);
+        }
+
+        return courseAttendanceCountHashMap;
+    }
+
+    private List<MemberCourseFinancesDTO> generateMemberCourseFinancesDTOList(Member member){
+        List<MemberCourseFinancesDTO> memberCourseFinancesDTOList = new ArrayList<>();
         List<LocalDate> monthsList = TemporalReference.getMonthList();
 
         for(LocalDate cycleStartDate : monthsList){
-            MemberCourseFinancesWrapper memberCourseFinancesWrapper = new MemberCourseFinancesWrapperBuilder(serviceFactory)
-                                                                                                        .setCycleStartDate(cycleStartDate)
-                                                                                                        .setMember(member)
-                                                                                                        .build();
-            memberCourseFinancesWrapperList.add(memberCourseFinancesWrapper);
+            MemberCourseFinancesDTO memberCourseFinancesDTO = new MemberCourseFinancesDTOBuilder(daoFactory)
+                                                                    .setCycleStartDate(cycleStartDate)
+                                                                    .setMember(member)
+                                                                    .build();
+            memberCourseFinancesDTOList.add(memberCourseFinancesDTO);
         }
 
-        return memberCourseFinancesWrapperList;
+        return memberCourseFinancesDTOList;
+    }
+
+    private boolean hasErrors(BindingResult result){
+        return hasDateFormatErrors(result.getFieldErrors()) || hasMembershipRateErrors(result.getFieldErrors());
+    }
+
+    private boolean hasDateFormatErrors(List<FieldError> errorList){
+        for (FieldError error : errorList)
+            if(error.getField().equals("memberEntryDate"))
+                return true;
+        return false;
+    }
+
+    private boolean hasMembershipRateErrors(List<FieldError> errorList){
+        for (FieldError error : errorList)
+            if(error.getField().equals("membershipRate"))
+             return true;
+        return false;
+    }
+
+    private void addErrorMessages(List<FieldError> errorList, RedirectAttributes redirectAttributes){
+        if(hasDateFormatErrors(errorList))
+            addDateFormatErrorMessage(redirectAttributes);
+
+        if(hasMembershipRateErrors(errorList))
+            addMembershipRateErrorMessage(redirectAttributes);
+    }
+
+    private void addDateFormatErrorMessage(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("dateJoinedErrorMessage", "Date must be in valid MM/DD/YYYY format");
+    }
+
+    private void addMembershipRateErrorMessage(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("membershipRateErrorMessage", "Membership Rate must be a valid amount!");
     }
 }
