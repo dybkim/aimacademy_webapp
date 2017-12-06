@@ -22,19 +22,10 @@ import java.util.List;
 @RequestMapping("/admin/finances")
 public class FinanceHomeController {
 
-    private CourseService courseService;
-
-    private MemberService memberService;
-
-    private ChargeLineService chargeLineService;
-
     private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
 
     @Autowired
-    public FinanceHomeController(CourseService courseService, MemberService memberService, ChargeLineService chargeLineService, MonthlyFinancesSummaryService monthlyFinancesSummaryService){
-        this.courseService = courseService;
-        this.memberService = memberService;
-        this.chargeLineService = chargeLineService;
+    public FinanceHomeController(MonthlyFinancesSummaryService monthlyFinancesSummaryService){
         this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
     }
 
@@ -43,7 +34,7 @@ public class FinanceHomeController {
         List<MonthlyFinancesSummary> monthlyFinancesSummaryList = monthlyFinancesSummaryService.getList();
         HashMap<Integer, String> seasonDescriptionHashMap = new HashMap<>();
         for(MonthlyFinancesSummary monthlyFinancesSummary : monthlyFinancesSummaryList)
-            seasonDescriptionHashMap.put(monthlyFinancesSummary.getMonthlyFinancesSummaryID(), Season.SeasonDescription.toString(monthlyFinancesSummary.getCycleStartDate()));
+            seasonDescriptionHashMap.put(monthlyFinancesSummary.getMonthlyFinancesSummaryID(), Season.SeasonDescription.getSeasonDescription(monthlyFinancesSummary.getCycleStartDate()).toString(monthlyFinancesSummary.getCycleStartDate()));
 
         model.addAttribute("monthlyFinancesSummaryList", monthlyFinancesSummaryList);
         model.addAttribute("seasonDescriptionHashMap", seasonDescriptionHashMap);
