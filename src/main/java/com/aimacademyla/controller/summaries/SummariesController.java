@@ -24,6 +24,6 @@ public class SummariesController {
 
     @RequestMapping("/viewSummary/{id}")
     public String viewSummaries(@PathVariable("id") int id, Model model ){
-        return "/summaries/viewMonthlyFinancesSummary";
+        return "/summaries/viewMonthlyChargesSummary";
     }
 }
