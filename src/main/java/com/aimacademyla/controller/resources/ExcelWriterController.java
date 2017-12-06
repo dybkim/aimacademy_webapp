@@ -1,9 +1,10 @@
 package com.aimacademyla.controller.resources;
 
 import com.aimacademyla.api.excel.impl.ExcelInvoiceView;
+import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.Member;
-import com.aimacademyla.model.builder.impl.MemberChargesFinancesWrapperBuilder;
-import com.aimacademyla.model.wrapper.MemberChargesFinancesWrapper;
+import com.aimacademyla.model.builder.dto.MemberChargesFinancesDTOBuilder;
+import com.aimacademyla.model.dto.MemberChargesFinancesDTO;
 import com.aimacademyla.service.ChargeLineService;
 import com.aimacademyla.service.ChargeService;
 import com.aimacademyla.service.CourseService;
@@ -23,7 +24,7 @@ import java.time.LocalDate;
 @RequestMapping("/admin/resources/excel")
 public class ExcelWriterController {
 
-    private ServiceFactory serviceFactory;
+    private DAOFactory daoFactory;
 
     private MemberService memberService;
     private CourseService courseService;
@@ -31,12 +32,12 @@ public class ExcelWriterController {
     private ChargeLineService chargeLineService;
 
     @Autowired
-    public ExcelWriterController(ServiceFactory serviceFactory,
+    public ExcelWriterController(DAOFactory daoFactory,
                                  MemberService memberService,
                                  CourseService courseService,
                                  ChargeService chargeService,
                                  ChargeLineService chargeLineService) {
-        this.serviceFactory = serviceFactory;
+        this.daoFactory = daoFactory;
         this.memberService = memberService;
         this.courseService = courseService;
         this.chargeService = chargeService;
@@ -57,7 +58,7 @@ public class ExcelWriterController {
         }
 
         LocalDate selectedDate = LocalDate.of(year, month, 1);
-        MemberChargesFinancesWrapper memberChargesFinancesWrapper = new MemberChargesFinancesWrapperBuilder(serviceFactory).setMember(member).setSelectedDate(selectedDate).build();
+        MemberChargesFinancesDTO memberChargesFinancesDTO = new MemberChargesFinancesDTOBuilder(daoFactory).setMember(member).setSelectedDate(selectedDate).build();
 
         String selectedMonthString = selectedDate.getMonth().toString().substring(0,1) + selectedDate.getMonth().toString().substring(1).toLowerCase();
         String fileName = member.getMemberID() + "_" + selectedMonthString + selectedDate.getYear() + "_INVOICE.xlsx";
@@ -65,6 +66,6 @@ public class ExcelWriterController {
         httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         httpServletResponse.setHeader("Content-Disposition", "attachment;filename=" + fileName);
 
-        return new ModelAndView(new ExcelInvoiceView(), "memberChargesFinancesWrapper", memberChargesFinancesWrapper);
+        return new ModelAndView(new ExcelInvoiceView(), "memberChargesFinancesWrapper", memberChargesFinancesDTO);
     }
 }
