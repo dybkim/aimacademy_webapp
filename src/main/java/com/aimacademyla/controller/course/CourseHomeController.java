@@ -1,13 +1,11 @@
 package com.aimacademyla.controller.course;
 
+import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.*;
-import com.aimacademyla.model.builder.impl.CourseRegistrationWrapperBuilder;
-import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
+import com.aimacademyla.model.builder.dto.CourseRegistrationDTOBuilder;
 import com.aimacademyla.model.enums.BillableUnitType;
-import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
-import com.aimacademyla.model.wrapper.CourseRegistrationWrapperListItem;
+import com.aimacademyla.model.dto.CourseRegistrationDTO;
 import com.aimacademyla.service.*;
-import com.aimacademyla.service.factory.ServiceFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -33,44 +28,22 @@ import java.util.*;
 @RequestMapping("/admin/courseList")
 public class CourseHomeController {
 
-    private ServiceFactory serviceFactory;
-
+    private DAOFactory daoFactory;
     private CourseService courseService;
-    private MemberCourseRegistrationService memberCourseRegistrationService;
-    private SeasonService seasonService;
 
     private static final Logger logger = LogManager.getLogger(CourseHomeController.class);
 
     @Autowired
-    public CourseHomeController(ServiceFactory serviceFactory,
-                                CourseService courseService,
-                                MemberCourseRegistrationService memberCourseRegistrationService,
-                                SeasonService seasonService){
-        this.serviceFactory = serviceFactory;
+    public CourseHomeController(DAOFactory daoFactory,
+                                CourseService courseService){
+        this.daoFactory = daoFactory;
         this.courseService = courseService;
-        this.memberCourseRegistrationService = memberCourseRegistrationService;
-        this.seasonService = seasonService;
     }
 
     @RequestMapping
     public String getCourseList(Model model){
-        List<Course> courseList = courseService.getList();
-        List<Course> inactiveCourseList = new ArrayList<>();
-        Iterator it = courseList.iterator();
-
-        while(it.hasNext()){
-            Course course = (Course)it.next();
-
-            if(course.getCourseID() == Course.OPEN_STUDY_ID || course.getCourseID() == Course.OTHER_ID){
-                it.remove();
-                continue;
-            }
-
-            if(!course.getIsActive()) {
-                inactiveCourseList.add(course);
-                it.remove();
-            }
-        }
+        List<Course> courseList = courseService.getActiveList();
+        List<Course> inactiveCourseList = courseService.getInactiveList();
 
         model.addAttribute("inactiveCourseList", inactiveCourseList);
         model.addAttribute("courseList", courseList);
@@ -80,101 +53,50 @@ public class CourseHomeController {
     @RequestMapping("/addCourse")
     public String addCourse(Model model){
         Course course = new Course();
-        CourseRegistrationWrapper courseRegistrationWrapper = new CourseRegistrationWrapper();
-        courseRegistrationWrapper.setCourse(course);
-
-        model.addAttribute(courseRegistrationWrapper);
+        model.addAttribute(course);
 
         return "/course/addCourse";
     }
 
-
     @RequestMapping(value = "/addCourse", method = RequestMethod.POST)
-    public String addCourse(@Valid @ModelAttribute("courseRegistrationWrapper") CourseRegistrationWrapper courseRegistrationWrapper, BindingResult result, Model model){
+    public String addCourse(@Valid @ModelAttribute("course") Course course, BindingResult result, Model model){
+        List<FieldError> errorList = result.getFieldErrors();
 
-        Course course = courseRegistrationWrapper.getCourse();
-
-        if(result.hasErrors()) {
-            List<FieldError> errors = result.getFieldErrors();
-            checkDateErrors(errors, model);
-
-            if(BillableUnitType.PER_HOUR.toString().equals(course.getBillableUnitType()) && course.getClassDuration() == null) {
-                model.addAttribute("courseRegistrationWrapper", courseRegistrationWrapper);
-                model.addAttribute("billableUnitTypeError", "Class Duration cannot be empty if billing type is 'per hour'!");
-            }
-
+        if(hasErrors(errorList, course)){
+            addErrorMessages(errorList, model, course);
+            logger.error("ERROR: CourseHomeController.addCourse - Formatting error!");
+            model.addAttribute("course", course);
             return "/course/addCourse";
         }
 
-        if(BillableUnitType.PER_HOUR.toString().equals(course.getBillableUnitType()) && course.getClassDuration() == null){
-            model.addAttribute("courseRegistrationWrapper", courseRegistrationWrapper);
-            model.addAttribute("billableUnitTypeError", "Class Duration cannot be empty if billing type is 'per hour'!");
-            return "/course/addCourse";
-        }
-
-        if(course.getNonMemberPricePerBillableUnit() == null)
-            course.setNonMemberPricePerBillableUnit(course.getMemberPricePerBillableUnit());
-
-        setBillableUnitDuration(course);
-
-        courseService.add(courseRegistrationWrapper.getCourse());
+        courseService.addCourse(course);
+        logger.info("INFO: CourseHomeController.addCourse - Successfully added new course: " + course.getCourseName());
         return "redirect:/admin/courseList";
     }
 
     @RequestMapping("/editCourse/{courseID}")
     public String editCourse(@PathVariable("courseID") int courseID, Model model){
-        CourseRegistrationWrapper courseRegistrationWrapper = new CourseRegistrationWrapperBuilder(serviceFactory).setCourseID(courseID).build();
-        model.addAttribute("courseRegistrationWrapper", courseRegistrationWrapper);
+        Course course = courseService.get(courseID);
+        CourseRegistrationDTO courseRegistrationDTO = new CourseRegistrationDTOBuilder(daoFactory).setCourse(course).build();
+        model.addAttribute("courseRegistrationDTO", courseRegistrationDTO);
 
         return "/course/editCourse";
     }
 
     @RequestMapping(value="/editCourse/{courseID}", method = RequestMethod.POST)
-    public String editCourse(@Valid @ModelAttribute("courseRegistrationWrapper") CourseRegistrationWrapper courseRegistrationWrapper, BindingResult result, @PathVariable("courseID") int courseID, Model model){
+    public String editCourse(@Valid @ModelAttribute("courseRegistrationDTO") CourseRegistrationDTO courseRegistrationDTO, BindingResult result, @PathVariable("courseID") int courseID, Model model){
+        List<FieldError> errorList = result.getFieldErrors();
+        Course course = courseRegistrationDTO.getCourse();
 
-        Course course = courseRegistrationWrapper.getCourse();
-
-        if(result.hasErrors()) {
-            List<FieldError> errors = result.getFieldErrors();
-            model = checkDateErrors(errors, model);
-
-            if(BillableUnitType.PER_HOUR.toString().equals(course.getBillableUnitType()) && course.getClassDuration() == null) {
-                model.addAttribute("courseRegistrationWrapper", courseRegistrationWrapper);
-                model.addAttribute("billableUnitTypeError", "Class Duration cannot be empty if billing type is 'per hour'!");
-            }
-
+        if(hasErrors(errorList, course)){
+            addErrorMessages(errorList, model, course);
+            logger.error("ERROR: CourseHomeController.addCourse - Formatting error!");
+            model.addAttribute("course", course);
             return "/course/editCourse";
         }
 
-        if(BillableUnitType.PER_HOUR.toString().equals(course.getBillableUnitType()) && course.getClassDuration() == null){
-            model.addAttribute("courseRegistrationWrapper", courseRegistrationWrapper);
-            model.addAttribute("billableUnitTypeError", "Class Duration cannot be empty if billing type is 'per hour'!");
-            return "/course/editCourse";
-        }
-
-
-        if(course.getCourseStartDate() != null)
-            course.setSeasonID(seasonService.getSeason(course.getCourseStartDate()).getSeasonID());
-
-        int numEnrolled = 0;
-
-        // Have to check for null list instead of empty list because JSP returns null list if list is empty
-        if(courseRegistrationWrapper.getCourseRegistrationWrapperObjectList() != null){
-            for(CourseRegistrationWrapperListItem courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList())
-                if(!courseRegistrationWrapperObject.getIsDropped())
-                    numEnrolled++;
-
-            updateMemberCourseRegistrationList(courseRegistrationWrapper);
-        }
-        
-        course.setNumEnrolled(numEnrolled);
-        setBillableUnitDuration(course);
-
-        if(course.getNonMemberPricePerBillableUnit() == null)
-            course.setNonMemberPricePerBillableUnit(course.getMemberPricePerBillableUnit());
-
-        courseService.update(course);
-
+        courseService.updateCourse(courseRegistrationDTO);
+        logger.info("INFO: CourseHomeController.addCourse - Successfully edited course: " + course.getCourseName());
         return "redirect:/admin/courseList/courseInfo/" + courseID;
     }
 
@@ -186,32 +108,39 @@ public class CourseHomeController {
         return "/course/addStudentToCourse";
     }
 
-    /**
-     * @deprecated Requests to add members to courses is now handled RESTfully by addStudentToCourseController.js
-     */
-    @Deprecated
-    @RequestMapping(value="/editCourse/{courseID}/addStudentToCourse", method=RequestMethod.POST)
-    public String addStudentToCourse(@PathVariable("courseID") int courseID, @ModelAttribute("memberCourseRegistration") MemberCourseRegistration memberCourseRegistration, BindingResult result, final RedirectAttributes redirectAttributes){
-        if(result.hasErrors())
-        {
-            List<FieldError> errors = result.getFieldErrors();
-
-            for (FieldError error : errors ) {
-                logger.error(error.getDefaultMessage());
-                if(error.getField().equals("memberCourseRegistration.dateEnrolled"))
-                    redirectAttributes.addFlashAttribute("dateEnrolledErrorMessage", "Date must be in MM/DD/YYYY format");
-            }
-            return "redirect:/admin/courseList/editCourse/" + courseID + "/addStudentToCourse";
-        }
-
-        MemberCourseRegistrationPK memberCourseRegistrationPK = new MemberCourseRegistrationPK(memberCourseRegistration.getMemberID(), memberCourseRegistration.getCourseID());
-        memberCourseRegistration.setMemberCourseRegistrationPK(memberCourseRegistrationPK);
-        memberCourseRegistrationService.add(memberCourseRegistration);
-
-        return "redirect:/admin/courseList/editCourse/" + courseID;
+    private boolean hasErrors(List<FieldError> errorList, Course course){
+        return (hasDateErrors(errorList) || hasClassDurationFieldError(course));
     }
 
-    private Model checkDateErrors(List<FieldError> errorList, Model model){
+    private boolean hasDateErrors(List<FieldError> errorList){
+        for (FieldError error : errorList) {
+            if(error.getField().equals("course.courseStartDate") || error.getField().equals("course.courseEndDate"))
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean hasClassDurationFieldError(Course course){
+        return BillableUnitType.PER_HOUR.toString().equals(course.getBillableUnitType()) && course.getClassDuration() == null;
+    }
+
+    private Model addErrorMessages(List<FieldError> errorList, Model model, Course course){
+        if(hasDateErrors(errorList))
+            model = addDateErrorMessages(errorList, model);
+
+        if(hasClassDurationFieldError(course))
+            model = addClassDurationFieldErrorMessages(model);
+
+        return model;
+    }
+
+    private Model addClassDurationFieldErrorMessages(Model model){
+        model.addAttribute("billableUnitTypeError", "Class Duration cannot be empty if billing type is 'per hour'!");
+        return model;
+    }
+
+    private Model addDateErrorMessages(List<FieldError> errorList, Model model){
         for (FieldError error : errorList) {
             if(error.getField().equals("course.courseStartDate"))
                 model.addAttribute("startDateErrorMessage", "Date must be in MM/DD/YYYY format");
@@ -223,55 +152,7 @@ public class CourseHomeController {
         return model;
     }
 
-    private void addMemberCourseRegistrationList(CourseRegistrationWrapper courseRegistrationWrapper){
-        List<MemberCourseRegistration> memberCourseRegistrationList = new ArrayList<>();
-        int courseID = courseRegistrationWrapper.getCourse().getCourseID();
-        Member member;
 
-        for(CourseRegistrationWrapperListItem courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList()){
-            member = courseRegistrationWrapperObject.getMember();
-            MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
-            memberCourseRegistration.setMemberID(member.getMemberID());
-            memberCourseRegistration.setCourseID(courseID);
-            memberCourseRegistration.setIsEnrolled(true);
-            memberCourseRegistration.setDateRegistered(LocalDate.now());
-            memberCourseRegistration.setMemberCourseRegistrationPK(new MemberCourseRegistrationPK(member.getMemberID(), courseID));
-            memberCourseRegistrationList.add(memberCourseRegistration);
-        }
 
-        memberCourseRegistrationService.update(memberCourseRegistrationList);
-    }
 
-    private void updateMemberCourseRegistrationList(CourseRegistrationWrapper courseRegistrationWrapper){
-        int courseID = courseRegistrationWrapper.getCourse().getCourseID();
-        Member member;
-
-        for(CourseRegistrationWrapperListItem courseRegistrationWrapperObject : courseRegistrationWrapper.getCourseRegistrationWrapperObjectList()){
-            member = courseRegistrationWrapperObject.getMember();
-            MemberCourseRegistration memberCourseRegistration = memberCourseRegistrationService.get(member.getMemberID(), courseID);
-
-            if(courseRegistrationWrapperObject.getIsDropped())
-                memberCourseRegistration.setIsEnrolled(false);
-
-            memberCourseRegistrationService.update(memberCourseRegistration);
-        }
-    }
-
-    private void setBillableUnitDuration(Course course){
-        switch(BillableUnitType.parseString(course.getBillableUnitType())){
-            case PER_HOUR:
-                if(course.getClassDuration() != null){
-                    course.setBillableUnitDuration(course.getClassDuration());
-                    return;
-                }
-
-                course.setBillableUnitDuration(BigDecimal.ZERO);
-                return;
-            case PER_SESSION:
-                course.setBillableUnitDuration(BigDecimal.ONE);
-                return;
-            default:
-                course.setBillableUnitDuration(BigDecimal.ZERO);
-        }
-    }
 }
