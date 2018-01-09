@@ -26,12 +26,12 @@ public class UserSettingsController {
 
     @RequestMapping()
     public String getSettings(Model model){
-        model.addAttribute("newPasswordFormWrapper", new NewPasswordFormDTO());
+        model.addAttribute("newPasswordFormDTO", new NewPasswordFormDTO());
         return "settings";
     }
 
     @RequestMapping(method= RequestMethod.POST)
-    public String setSettings(@ModelAttribute("newPasswordFormWrapper") NewPasswordFormDTO newPasswordFormDTO, final RedirectAttributes redirectAttributes){
+    public String setSettings(@ModelAttribute("newPasswordFormDTO") NewPasswordFormDTO newPasswordFormDTO, final RedirectAttributes redirectAttributes){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userService.get(userDetails.getUsername());
         String currentPassword = user.getPassword();
