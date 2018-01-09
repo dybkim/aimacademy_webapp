@@ -76,6 +76,9 @@ public class CourseHomeController {
 
     @RequestMapping("/editCourse/{courseID}")
     public String editCourse(@PathVariable("courseID") int courseID, Model model){
+        if(courseID == Course.OPEN_STUDY_ID || courseID == Course.OTHER_ID)
+            return "/course/courseList";
+
         Course course = courseService.get(courseID);
         course = courseService.loadCollection(course, MemberCourseRegistration.class);
         CourseRegistrationDTO courseRegistrationDTO = new CourseRegistrationDTOBuilder(daoFactory).setCourse(course).build();
@@ -86,6 +89,9 @@ public class CourseHomeController {
 
     @RequestMapping(value="/editCourse/{courseID}", method = RequestMethod.POST)
     public String editCourse(@Valid @ModelAttribute("courseRegistrationDTO") CourseRegistrationDTO courseRegistrationDTO, BindingResult result, @PathVariable("courseID") int courseID, Model model){
+        if(courseID == Course.OPEN_STUDY_ID || courseID == Course.OTHER_ID)
+            return "/course/courseList";
+
         List<FieldError> errorList = result.getFieldErrors();
         Course course = courseRegistrationDTO.getCourse();
 
@@ -103,6 +109,9 @@ public class CourseHomeController {
 
     @RequestMapping("/editCourse/{courseID}/addStudentToCourse")
     public String addStudentToCourse(@PathVariable("courseID") int courseID, Model model){
+        if(courseID == Course.OPEN_STUDY_ID || courseID == Course.OTHER_ID)
+            return "/course/courseList";
+
         Course course = courseService.get(courseID);
         model.addAttribute("course", course);
 
@@ -152,8 +161,4 @@ public class CourseHomeController {
 
         return model;
     }
-
-
-
-
 }
