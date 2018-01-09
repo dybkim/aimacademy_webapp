@@ -11,9 +11,9 @@ studentFinancesControllerApp.controller("studentFinancesControl", function($scop
 
     $scope.refreshChargesList = function(){
         $http.get('/admin/student/rest/studentFinances/' + $scope.memberID + '?month=' + $scope.month + '&year=' + $scope.year).success(function (data){
-            $scope.memberChargesFinancesWrapper = data;
-            $scope.monthsList = $scope.memberChargesFinancesWrapper.monthsList;
-            $scope.monthSelected = $scope.memberChargesFinancesWrapper.monthSelectedIndex;
+            $scope.memberChargesFinancesDTO = data;
+            $scope.monthsList = $scope.memberChargesFinancesDTO.monthsList;
+            $scope.monthSelected = $scope.memberChargesFinancesDTO.monthSelectedIndex;
             $scope.selectedOptions = $scope.monthsList[$scope.monthSelected];
             $scope.chargeDescription = "";
             $scope.chargeAmount = 0;
@@ -21,7 +21,7 @@ studentFinancesControllerApp.controller("studentFinancesControl", function($scop
         });
     };
 
-    $scope.initChargesWrapper = function(memberID, month, year){
+    $scope.initChargesDTO = function(memberID, month, year){
         $scope.memberID = memberID;
         $scope.month = month;
         $scope.year = year;
@@ -53,7 +53,7 @@ studentFinancesControllerApp.controller("studentFinancesControl", function($scop
     };
 
     $scope.dropMiscCharge = function(charge){
-        if(charge.courseID === 1){
+        if(charge.course.courseID === 1){
             $http.put('/admin/student/rest/studentFinances/dropMiscCharge/' + charge.chargeID).then(function(){
                 $scope.refreshChargesList();
             })
