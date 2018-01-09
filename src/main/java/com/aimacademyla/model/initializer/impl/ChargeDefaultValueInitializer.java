@@ -1,19 +1,13 @@
 package com.aimacademyla.model.initializer.impl;
 
 import com.aimacademyla.dao.CourseDAO;
+import com.aimacademyla.dao.MonthlyFinancesSummaryDAO;
 import com.aimacademyla.dao.SeasonDAO;
 import com.aimacademyla.dao.factory.DAOFactory;
-import com.aimacademyla.model.Charge;
-import com.aimacademyla.model.Course;
-import com.aimacademyla.model.Season;
-import com.aimacademyla.model.enums.AIMEntityType;
-import com.aimacademyla.model.initializer.GenericDefaultValueInitializer;
-import com.aimacademyla.service.CourseService;
-import com.aimacademyla.service.SeasonService;
-import com.aimacademyla.service.factory.ServiceFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import com.aimacademyla.dao.flow.impl.MonthlyFinancesSummaryDAOAccessFlow;
+import com.aimacademyla.dao.flow.impl.PaymentDAOAccessFlow;
+import com.aimacademyla.model.*;
+import com.aimacademyla.model.builder.entity.ChargeBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,51 +18,54 @@ import java.time.LocalDate;
 
 public class ChargeDefaultValueInitializer extends GenericDefaultValueInitializerImpl<Charge>{
 
-    private SeasonDAO seasonDAO;
-    private CourseDAO courseDAO;
 
-    private int memberID;
-    private int courseID;
+    private Member member;
+    private Course course;
     private LocalDate localDate;
 
     public ChargeDefaultValueInitializer(DAOFactory daoFactory){
         super(daoFactory);
-        this.courseDAO = (CourseDAO) getDAOFactory().getDAO(AIMEntityType.COURSE);
-        this.seasonDAO= (SeasonDAO) getDAOFactory().getDAO(AIMEntityType.SEASON);
     }
 
     @Override
     public Charge initialize() {
         Charge charge = new Charge();
-        Season season = seasonDAO.getSeason(localDate);
+        MonthlyFinancesSummary monthlyFinancesSummary = (MonthlyFinancesSummary) new MonthlyFinancesSummaryDAOAccessFlow(getDAOFactory())
+                                                                                    .addQueryParameter(localDate)
+                                                                                    .get();
 
-        if(season == null)
-            season = seasonDAO.get(Season.NO_SEASON_FOUND);
-
-        Course course = courseDAO.get(courseID);
+        Payment payment = (Payment) new PaymentDAOAccessFlow(getDAOFactory())
+                                        .addQueryParameter(member)
+                                        .addQueryParameter(LocalDate.of(localDate.getYear(), localDate.getMonthValue(), 1))
+                                        .get();
 
         if(course.getCourseID() != Course.OTHER_ID)
             charge.setDescription(course.getCourseName() + " (" + course.getCourseType()+")");
 
-        charge.setMemberID(memberID);
-        charge.setCourseID(courseID);
-        charge.setCycleStartDate(LocalDate.of(localDate.getYear(), localDate.getMonth(), 1));
-        charge.setChargeAmount(BigDecimal.valueOf(0));
-        charge.setSeasonID(season.getSeasonID());
-        charge.setNumChargeLines(0);
-        charge.setDiscountAmount(BigDecimal.valueOf(0));
-        charge.setBillableUnitsBilled(BigDecimal.ZERO);
-        charge.setBillableUnitType(course.getBillableUnitType());
+        charge = new ChargeBuilder()
+                                .setMember(member)
+                                .setCourse(course)
+                                .setChargeAmount(BigDecimal.ZERO)
+                                .setCycleStartDate(LocalDate.of(localDate.getYear(), localDate.getMonth(), 1))
+                                .setDiscountAmount(BigDecimal.ZERO)
+                                .setBillableUnitsType(course.getBillableUnitType())
+                                .setBillableUnitsBilled(BigDecimal.ZERO)
+                                .setPayment(payment)
+                                .setMonthlyFinancesSummary(monthlyFinancesSummary)
+                                .setNumChargeLines(0)
+                                .setDiscountAmount(BigDecimal.ZERO)
+                                .setDescription(course.getCourseName() + " (" + course.getCourseType() +")")
+                                .build();
         return charge;
     }
 
-    public ChargeDefaultValueInitializer setMemberID(int memberID) {
-        this.memberID = memberID;
+    public ChargeDefaultValueInitializer setMember(Member member){
+        this.member = member;
         return this;
     }
 
-    public ChargeDefaultValueInitializer setCourseID(int courseID) {
-        this.courseID = courseID;
+    public ChargeDefaultValueInitializer setCourse(Course course){
+        this.course = course;
         return this;
     }
 
