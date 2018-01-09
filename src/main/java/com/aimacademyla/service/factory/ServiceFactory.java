@@ -15,7 +15,7 @@ public class ServiceFactory {
 
     private List<GenericService> genericServiceList;
 
-    private static final Map<AIMEntityType, GenericService> genericServiceCache = new HashMap<>();
+    private static final Map<Class, GenericService> genericServiceCache = new HashMap<>();
 
     @Autowired
     public ServiceFactory(List<GenericService> genericServiceList) {
@@ -25,11 +25,11 @@ public class ServiceFactory {
     @PostConstruct
     public void initGenericServiceCache(){
         for(GenericService genericService : genericServiceList){
-            genericServiceCache.put(genericService.getAIMEntityType(), genericService);
+            genericServiceCache.put(genericService.getEntityClass(), genericService);
         }
     }
 
-    public GenericService getService(AIMEntityType entityType) {
-        return genericServiceCache.get(entityType);
+    public GenericService getService(Class classType) {
+        return genericServiceCache.get(classType);
     }
 }
