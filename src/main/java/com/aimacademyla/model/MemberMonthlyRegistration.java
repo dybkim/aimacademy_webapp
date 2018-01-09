@@ -1,5 +1,6 @@
 package com.aimacademyla.model;
 
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
@@ -17,17 +18,20 @@ import java.time.LocalDate;
 public class MemberMonthlyRegistration implements Serializable{
 
     private static final long serialVersionUID = -1918184776043140894L;
+    public static final int INACTIVE = -1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="MemberMonthlyRegistrationID")
     private int memberMonthlyRegistrationID;
 
-    @Column(name="MemberID")
-    private int memberID;
+    @ManyToOne
+    @JoinColumn(name="MemberID")
+    private Member member;
 
-    @Column(name="SeasonID")
-    private int seasonID;
+    @ManyToOne
+    @JoinColumn(name="SeasonID")
+    private Season season;
 
     @Column(name="CycleStartDate")
     @DateTimeFormat(pattern = "MM/dd/yyyy")
@@ -37,6 +41,9 @@ public class MemberMonthlyRegistration implements Serializable{
     @NumberFormat(style= NumberFormat.Style.CURRENCY)
     private BigDecimal membershipCharge;
 
+    @OneToOne(cascade = {CascadeType.MERGE,CascadeType.REFRESH})
+    private Charge charge;
+
     public int getMemberMonthlyRegistrationID() {
         return memberMonthlyRegistrationID;
     }
@@ -45,20 +52,20 @@ public class MemberMonthlyRegistration implements Serializable{
         this.memberMonthlyRegistrationID = memberMonthlyRegistrationID;
     }
 
-    public int getMemberID() {
-        return memberID;
+    public Member getMember() {
+        return member;
     }
 
-    public void setMemberID(int memberID) {
-        this.memberID = memberID;
+    public void setMember(Member member) {
+        this.member = member;
     }
 
-    public int getSeasonID() {
-        return seasonID;
+    public Season getSeason() {
+        return season;
     }
 
-    public void setSeasonID(int seasonID) {
-        this.seasonID = seasonID;
+    public void setSeason(Season season) {
+        this.season = season;
     }
 
     public LocalDate getCycleStartDate() {
@@ -75,5 +82,13 @@ public class MemberMonthlyRegistration implements Serializable{
 
     public void setMembershipCharge(BigDecimal membershipCharge) {
         this.membershipCharge = membershipCharge;
+    }
+
+    public Charge getCharge() {
+        return charge;
+    }
+
+    public void setCharge(Charge charge) {
+        this.charge = charge;
     }
 }

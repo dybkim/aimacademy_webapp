@@ -1,13 +1,20 @@
 package com.aimacademyla.model;
 
+import com.aimacademyla.model.enums.AIMEntityType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.*;
 
 @Entity
 public class Payment implements Serializable {
@@ -16,13 +23,18 @@ public class Payment implements Serializable {
 
     public static final int NO_PAYMENT = 1;
 
+    public Payment(){
+        chargeSet = new HashSet<>();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="PaymentID")
     private int paymentID;
 
-    @Column(name="MemberID")
-    private int memberID;
+    @ManyToOne
+    @JoinColumn(name="MemberID")
+    private Member member;
 
     @Column(name="CycleStartDate")
     @DateTimeFormat(pattern = "MM/dd/yyyy")
@@ -36,6 +48,49 @@ public class Payment implements Serializable {
     @DateTimeFormat(pattern="MM/dd/yyyy")
     private LocalDate datePaymentReceived;
 
+    @ManyToOne
+    @JoinColumn(name="MonthlyFinancesSummaryID")
+    private MonthlyFinancesSummary monthlyFinancesSummary;
+
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy="payment")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Set<Charge> chargeSet;
+
+    public void removeCharge(Charge charge){
+        Iterator it = chargeSet.iterator();
+        while(it.hasNext()){
+            Charge iteratedCharge = (Charge) it.next();
+            if(iteratedCharge.equals(charge)){
+                it.remove();
+                return;
+            }
+        }
+    }
+
+    public void addCharge(Charge charge) {
+        if(chargeSet == null)
+            return;
+
+        chargeSet.add(charge);
+        charge.setPayment(this);
+    }
+
+    public void updateCharge(Charge charge){
+        removeCharge(charge);
+        addCharge(charge);
+    }
+
+    @JsonIgnore
+    public BigDecimal getBalance(){
+        BigDecimal balance = BigDecimal.ZERO;
+
+        for(Charge charge : chargeSet)
+            balance = balance.add(charge.getChargeAmount()).subtract(charge.getDiscountAmount());
+
+        balance = balance.subtract(paymentAmount);
+        return balance;
+    }
+
     public int getPaymentID() {
         return paymentID;
     }
@@ -44,12 +99,12 @@ public class Payment implements Serializable {
         this.paymentID = paymentID;
     }
 
-    public int getMemberID() {
-        return memberID;
+    public Member getMember() {
+        return member;
     }
 
-    public void setMemberID(int memberID) {
-        this.memberID = memberID;
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     public LocalDate getCycleStartDate() {
@@ -75,4 +130,21 @@ public class Payment implements Serializable {
     public void setDatePaymentReceived(LocalDate datePaymentReceived) {
         this.datePaymentReceived = datePaymentReceived;
     }
+
+    public MonthlyFinancesSummary getMonthlyFinancesSummary() {
+        return monthlyFinancesSummary;
+    }
+
+    public void setMonthlyFinancesSummary(MonthlyFinancesSummary monthlyFinancesSummary) {
+        this.monthlyFinancesSummary = monthlyFinancesSummary;
+    }
+
+    public Set<Charge> getChargeSet(){
+        return chargeSet;
+    }
+
+    public void setChargeSet(Set<Charge> chargeSet){
+        this.chargeSet = chargeSet;
+    }
+
 }

@@ -1,6 +1,6 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.model.composite.MemberCourseRegistrationPK;
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.reference.TemporalReference;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -17,20 +17,21 @@ public class MemberCourseRegistration implements Serializable{
 
     private static final long serialVersionUID = 4571615710752919588L;
 
-    @EmbeddedId
+    @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private MemberCourseRegistrationPK memberCourseRegistrationPK;
+    @Column(name="MemberCourseRegistrationID")
+    private int memberCourseRegistrationID;
 
-    @MapsId("MemberID")
-    @Column(insertable=false, updatable=false)
-    private Integer memberID;
+    @ManyToOne
+    @JoinColumn(name="MemberID")
+    private Member member;
 
-    @MapsId("CourseID")
-    @Column(insertable=false, updatable=false)
-    private int courseID;
+    @ManyToOne
+    @JoinColumn(name="CourseID")
+    private Course course;
 
-    @Column(name="ReferMemberID")
-    private Integer referMemberID;
+    @JoinColumn(name="ReferMemberID")
+    private Member referMember;
 
     @Column(name="DateRegistered")
     @DateTimeFormat(pattern="MM/dd/yyyy")
@@ -39,32 +40,28 @@ public class MemberCourseRegistration implements Serializable{
     @Column(name="IsEnrolled")
     private boolean isEnrolled;
 
-    public MemberCourseRegistrationPK getMemberCourseRegistrationPK() {
-        return memberCourseRegistrationPK;
+    public int getMemberCourseRegistrationID() {
+        return memberCourseRegistrationID;
     }
 
-    public void setMemberCourseRegistrationPK(MemberCourseRegistrationPK memberCourseRegistrationPK) {
-        this.memberCourseRegistrationPK = memberCourseRegistrationPK;
+    public void setMemberCourseRegistrationID(int memberCourseRegistrationID) {
+        this.memberCourseRegistrationID = memberCourseRegistrationID;
     }
 
-    public Integer getMemberID(){return memberID;}
-
-    public void setMemberID(Integer memberID){this.memberID = memberID;}
-
-    public Integer getReferMemberID() {
-        return referMemberID;
+    public Member getMember() {
+        return member;
     }
 
-    public void setReferMemberID(int referMemberID) {
-        this.referMemberID = referMemberID;
+    public void setMember(Member member) {
+        this.member = member;
     }
 
-    public int getCourseID() {
-        return courseID;
+    public Course getCourse() {
+        return course;
     }
 
-    public void setCourseID(int courseID) {
-        this.courseID = courseID;
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
     public LocalDate getDateRegistered(){return dateRegistered;}
@@ -78,4 +75,13 @@ public class MemberCourseRegistration implements Serializable{
     public void setIsEnrolled(boolean enrolled) {
         isEnrolled = enrolled;
     }
+
+    public Member getReferMember() {
+        return referMember;
+    }
+
+    public void setReferMember(Member referMember) {
+        this.referMember = referMember;
+    }
+
 }

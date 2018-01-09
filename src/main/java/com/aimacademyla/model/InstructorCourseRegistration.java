@@ -1,6 +1,4 @@
 package com.aimacademyla.model;
-
-import com.aimacademyla.model.composite.InstructorCourseRegistrationPK;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -13,17 +11,20 @@ public class InstructorCourseRegistration implements Serializable{
 
     private static final long serialVersionUID = 6943663109872941964L;
 
-    @EmbeddedId
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private InstructorCourseRegistrationPK instructorCourseRegistrationPK;
+    @Column(name="InstructorCourseRegistrationID")
+    private int instructorCourseRegistrationID;
 
+    @ManyToOne
     @MapsId("EmployeeID")
-    @Column(insertable=false, updatable=false)
-    private int employeeID;
+    @JoinColumn(insertable=false, updatable=false)
+    private Employee employee;
 
+    @ManyToOne
     @MapsId("CourseID")
-    @Column(insertable=false, updatable=false)
-    private int courseID;
+    @JoinColumn(insertable=false, updatable=false)
+    private Course course;
 
     @Column(name="HourlyRate")
     private BigDecimal hourlyRate;
@@ -32,20 +33,28 @@ public class InstructorCourseRegistration implements Serializable{
     @DateTimeFormat(pattern = "MM/dd/yyyy")
     private LocalDate dateRegistered;
 
-    public int getEmployeeID() {
-        return employeeID;
+    public int getInstructorCourseRegistrationID() {
+        return instructorCourseRegistrationID;
     }
 
-    public void setEmployeeID(int employeeID) {
-        this.employeeID = employeeID;
+    public void setInstructorCourseRegistrationID(int instructorCourseRegistrationID) {
+        this.instructorCourseRegistrationID = instructorCourseRegistrationID;
     }
 
-    public int getCourseID() {
-        return courseID;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setCourseID(int courseID) {
-        this.courseID = courseID;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
     public BigDecimal getHourlyRate() {

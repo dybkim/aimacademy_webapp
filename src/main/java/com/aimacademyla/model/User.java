@@ -1,5 +1,8 @@
 package com.aimacademyla.model;
 
+import com.aimacademyla.model.enums.AIMEntityType;
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,9 +17,11 @@ public class User implements Serializable{
     @Id
     @Column(name="username")
     @NotNull
+    @Length(max = 30)
     private String username;
 
     @Column(name="password")
+    @Length(max = 30)
     private String password;
 
     @Column(name="enabled")

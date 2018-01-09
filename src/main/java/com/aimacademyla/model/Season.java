@@ -1,11 +1,20 @@
 package com.aimacademyla.model;
 
+import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.reference.TemporalReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.type.LocalDateType;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Created by davidkim on 5/22/17.
@@ -26,7 +35,7 @@ public class Season implements Serializable {
 
         SeasonDescription(){}
 
-        public static String toString(LocalDate date){
+        public String toString(LocalDate date){
             switch(date.getMonthValue()){
                 case 1: case 2:
                     return "Winter " + date.getYear();
@@ -57,6 +66,39 @@ public class Season implements Serializable {
                     return NONE;
             }
         }
+
+        public static LocalDate getSeasonStartDate(LocalDate date){
+            switch(date.getMonthValue()){
+                case 1: case 2: case 12:
+                    return LocalDate.of(date.getYear(), 12, 1);
+                case 3: case 4: case 5:
+                    return LocalDate.of(date.getYear(), 3, 1);
+                case 6: case 7: case 8:
+                    return LocalDate.of(date.getYear(), 6, 1);
+                case 9: case 10: case 11:
+                    return LocalDate.of(date.getYear(), 9, 1);
+                default:
+                    return null;
+            }
+        }
+
+        public static LocalDate getSeasonEndDate(LocalDate date){
+            switch(date.getMonthValue()){
+                case 1: case 2: case 12:
+                    LocalDate localDate = LocalDate.of(date.getYear() + 1, 2, 28);
+                    if(localDate.isLeapYear())
+                        localDate = LocalDate.of(localDate.getYear(), 2, 29);
+                    return localDate;
+                case 3: case 4: case 5:
+                    return LocalDate.of(date.getYear(), 5, 31);
+                case 6: case 7: case 8:
+                    return LocalDate.of(date.getYear(), 8, 31);
+                case 9: case 10: case 11:
+                    return LocalDate.of(date.getYear(), 11, 30);
+                default:
+                    return null;
+            }
+        }
     }
 
     @Id
@@ -65,6 +107,7 @@ public class Season implements Serializable {
     private int seasonID;
 
     @Column(name="SeasonTitle")
+    @Length(max=20)
     private String seasonTitle;
 
     @Column(name="StartDate")
@@ -76,7 +119,18 @@ public class Season implements Serializable {
     private LocalDate endDate;
 
     @Column(name="SeasonDescription")
+    @Length(max=30)
     private String seasonDescription;
+
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy="season")
+    @MapKey(name="courseID")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Map<Integer, Course> courseMap;
+
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "season")
+    @MapKey(name="monthlyFinancesSummaryID")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Map<Integer, MonthlyFinancesSummary> monthlyFinancesSummaryMap;
 
     public int getSeasonID() {
         return seasonID;
@@ -116,5 +170,21 @@ public class Season implements Serializable {
 
     public void setSeasonDescription(String seasonDescription) {
         this.seasonDescription = seasonDescription;
+    }
+
+    public Map<Integer, Course> getCourseMap() {
+        return courseMap;
+    }
+
+    public void setCourseMap(Map<Integer, Course> courseMap) {
+        this.courseMap = courseMap;
+    }
+
+    public Map<Integer, MonthlyFinancesSummary> getMonthlyFinancesSummaryMap() {
+        return monthlyFinancesSummaryMap;
+    }
+
+    public void setMonthlyFinancesSummaryMap(Map<Integer, MonthlyFinancesSummary> monthlyFinancesSummaryMap) {
+        this.monthlyFinancesSummaryMap = monthlyFinancesSummaryMap;
     }
 }

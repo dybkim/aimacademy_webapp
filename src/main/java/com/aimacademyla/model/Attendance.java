@@ -1,6 +1,8 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.model.reference.TemporalReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -21,11 +23,20 @@ public class Attendance implements Serializable{
     @Column(name="AttendanceID")
     private int attendanceID;
 
-    @Column(name="MemberID")
-    private int memberID;
+    @ManyToOne
+    @JoinColumn(name="MemberID")
+    private Member member;
 
-    @Column(name="CourseSessionID")
-    private int courseSessionID;
+    @ManyToOne
+    @JoinColumn(name="CourseSessionID")
+    private CourseSession courseSession;
+
+    //ZeroToOne mapping workaround
+    @ManyToOne
+    @JoinColumn(name="ChargeLineID")
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JsonBackReference
+    private ChargeLine chargeLine;
 
     @Column(name="AttendanceDate")
     @DateTimeFormat(pattern="MM/dd/yyyy")
@@ -33,6 +44,15 @@ public class Attendance implements Serializable{
 
     @Column(name="WasPresent")
     private boolean wasPresent;
+
+    @Override
+    public boolean equals(Object object) {
+        if(!(object instanceof Attendance))
+            throw new IllegalArgumentException("Argument must be of type Attendance!");
+
+        Attendance attendance = (Attendance) object;
+        return attendance.getAttendanceID() == attendanceID;
+    }
 
     public int getAttendanceID() {
         return attendanceID;
@@ -42,20 +62,24 @@ public class Attendance implements Serializable{
         this.attendanceID = attendanceID;
     }
 
-    public int getMemberID() {
-        return memberID;
+    public Member getMember() {
+        return member;
     }
 
-    public void setMemberID(int memberID) {
-        this.memberID = memberID;
+    public void setMember(Member member) {
+        this.member = member;
     }
 
-    public int getCourseSessionID() {
-        return courseSessionID;
+    public CourseSession getCourseSession() {
+        return courseSession;
     }
 
-    public void setCourseSessionID(int courseSessionID) {
-        this.courseSessionID = courseSessionID;
+    public void setCourseSession(CourseSession courseSession) {
+        this.courseSession = courseSession;
+    }
+
+    public boolean isWasPresent() {
+        return wasPresent;
     }
 
     public LocalDate getAttendanceDate() {
@@ -72,4 +96,11 @@ public class Attendance implements Serializable{
 
     public void setWasPresent(boolean wasPresent){this.wasPresent = wasPresent;}
 
+    public ChargeLine getChargeLine() {
+        return chargeLine;
+    }
+
+    public void setChargeLine(ChargeLine chargeLine) {
+        this.chargeLine = chargeLine;
+    }
 }

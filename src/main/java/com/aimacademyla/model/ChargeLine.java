@@ -1,10 +1,16 @@
 package com.aimacademyla.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * Created by davidkim on 3/21/17.
@@ -20,18 +26,26 @@ public class ChargeLine implements Serializable{
     @Column(name="ChargeLineID")
     private int chargeLineID;
 
-    @Column(name="AttendanceID")
-    private int attendanceID;
-
+    @ManyToOne
     @JoinColumn(name="ChargeID")
-    private int chargeID;
+    @JsonBackReference
+    private Charge charge;
+
+    @OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "chargeLine")
+    @NotFound(action= NotFoundAction.IGNORE)
+    @JsonManagedReference
+    private Attendance attendance;
 
     @Column(name="BillableUnitsBilled")
     private BigDecimal billableUnitsBilled;
 
-    @Column(name="TotalCharge")
+    @Column(name="ChargeAmount")
     @NumberFormat(style= NumberFormat.Style.CURRENCY)
-    private BigDecimal totalCharge;
+    private BigDecimal chargeAmount;
+
+    @Column(name="dateCharged")
+    @DateTimeFormat(pattern="MM/dd/yyyy")
+    private LocalDate dateCharged;
 
     public int getChargeLineID() {
         return chargeLineID;
@@ -41,28 +55,28 @@ public class ChargeLine implements Serializable{
         this.chargeLineID = chargeLineID;
     }
 
-    public int getAttendanceID() {
-        return attendanceID;
+    public void setAttendance(Attendance attendance){
+        this.attendance = attendance;
     }
 
-    public void setAttendanceID(int attendanceID) {
-        this.attendanceID = attendanceID;
+    public Attendance getAttendance() {
+        return attendance;
     }
 
-    public int getChargeID() {
-        return chargeID;
+    public Charge getCharge() {
+        return charge;
     }
 
-    public void setChargeID(int chargeID) {
-        this.chargeID = chargeID;
+    public void setCharge(Charge charge) {
+        this.charge = charge;
     }
 
-    public BigDecimal getTotalCharge() {
-        return totalCharge;
+    public BigDecimal getChargeAmount() {
+        return chargeAmount;
     }
 
-    public void setTotalCharge(BigDecimal totalCharge) {
-        this.totalCharge = totalCharge;
+    public void setChargeAmount(BigDecimal chargeAmount) {
+        this.chargeAmount = chargeAmount;
     }
 
     public BigDecimal getBillableUnitsBilled() {
@@ -71,5 +85,22 @@ public class ChargeLine implements Serializable{
 
     public void setBillableUnitsBilled(BigDecimal billableUnitsBilled) {
         this.billableUnitsBilled = billableUnitsBilled;
+    }
+
+    public LocalDate getDateCharged() {
+        return dateCharged;
+    }
+
+    public void setDateCharged(LocalDate dateCharged) {
+        this.dateCharged = dateCharged;
+    }
+
+    @Override
+    public boolean equals(Object object){
+        if(!(object instanceof ChargeLine))
+            throw new IllegalArgumentException("Argument must be of type ChargeLine!");
+
+        ChargeLine chargeLine = (ChargeLine) object;
+        return chargeLineID == chargeLine.getChargeLineID();
     }
 }

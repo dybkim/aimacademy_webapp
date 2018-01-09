@@ -1,5 +1,7 @@
 package com.aimacademyla.model;
 
+import com.aimacademyla.model.enums.AIMEntityType;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -19,13 +21,16 @@ public class Employee implements Serializable{
 
     @Column(name="EmployeeFirstName")
     @NotEmpty(message = "Must provide first name!")
+    @Length(max=30)
     private String employeeFirstName;
 
     @Column(name="EmployeeLastName")
     @NotEmpty(message="Must provide last name!")
+    @Length(max=30)
     private String employeeLastName;
 
     @Column(name="JobDescription")
+    @Length(max=15)
     private String jobDescription;
 
     @Column(name="DateEmployed")
@@ -93,5 +98,14 @@ public class Employee implements Serializable{
 
     public void setIsActive(boolean active) {
         isActive = active;
+    }
+
+    @Override
+    public boolean equals(Object object){
+        if(!(object instanceof Employee))
+            throw new IllegalArgumentException("Argument must be of type Employee!");
+
+        Employee employee = (Employee) object;
+        return employee.getEmployeeID() == employeeID;
     }
 }
