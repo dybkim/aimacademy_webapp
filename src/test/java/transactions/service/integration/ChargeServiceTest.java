@@ -48,7 +48,7 @@ public class ChargeServiceTest extends AbstractTransactionTest {
         charge = new Charge();
         charge.setChargeID(1);
         charge.setChargeAmount(BigDecimal.valueOf(100));
-        charge.setMemberID(member.getMemberID());
+        charge.setMember(member);
         charge.setCycleStartDate(localDate);
     }
 

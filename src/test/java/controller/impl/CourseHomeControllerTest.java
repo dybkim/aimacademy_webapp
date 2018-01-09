@@ -4,8 +4,8 @@ import com.aimacademyla.controller.course.CourseHomeController;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.enums.BillableUnitType;
-import com.aimacademyla.model.wrapper.CourseRegistrationWrapper;
-import com.aimacademyla.model.wrapper.CourseRegistrationWrapperListItem;
+import com.aimacademyla.model.dto.CourseRegistrationDTO;
+import com.aimacademyla.model.dto.CourseRegistrationDTOListItem;
 import com.aimacademyla.service.AttendanceService;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberCourseRegistrationService;
@@ -52,9 +52,6 @@ public class CourseHomeControllerTest extends AbstractControllerTest{
     @Mock
     private AttendanceService attendanceServiceMock;
 
-    @Mock
-    private ServiceFactory serviceFactory;
-
     @InjectMocks
     private CourseHomeController courseHomeController;
 
@@ -66,7 +63,7 @@ public class CourseHomeControllerTest extends AbstractControllerTest{
     private Course openStudyCourse;
     private Member member;
     private int courseID;
-    private CourseRegistrationWrapper courseRegistrationWrapper;
+    private CourseRegistrationDTO courseRegistrationDTO;
 
     @Before
     public void setUp(){
@@ -101,14 +98,14 @@ public class CourseHomeControllerTest extends AbstractControllerTest{
         member = new Member();
         member.setMemberID(1);
 
-        List<CourseRegistrationWrapperListItem> courseRegistrationWrapperObjectList = new ArrayList<>();
-        CourseRegistrationWrapperListItem courseRegistrationWrapperObject = new CourseRegistrationWrapperListItem();
-        courseRegistrationWrapperObject.setMember(member);
-        courseRegistrationWrapperObjectList.add(courseRegistrationWrapperObject);
+        List<CourseRegistrationDTOListItem> courseRegistrationDTOListItems = new ArrayList<>();
+        CourseRegistrationDTOListItem courseRegistrationDTOListItem = new CourseRegistrationDTOListItem();
+        courseRegistrationDTOListItem.setMember(member);
+        courseRegistrationDTOListItems.add(courseRegistrationDTOListItem);
 
-        courseRegistrationWrapper = new CourseRegistrationWrapper();
-        courseRegistrationWrapper.setCourse(activeCourse);
-        courseRegistrationWrapper.setCourseRegistrationWrapperObjectList(courseRegistrationWrapperObjectList);
+        courseRegistrationDTO = new CourseRegistrationDTO();
+        courseRegistrationDTO.setCourse(activeCourse);
+        courseRegistrationDTO.setCourseRegistrationDTOListItems(courseRegistrationDTOListItems);
     }
 
     @Test
@@ -150,26 +147,26 @@ public class CourseHomeControllerTest extends AbstractControllerTest{
 
     @Test
     public void testEditCourse() throws Exception{
-        RequestBuilder requestBuilder = post("/admin/courseList/editCourse/1").flashAttr("courseRegistrationWrapper", courseRegistrationWrapper);
+        RequestBuilder requestBuilder = post("/admin/courseList/editCourse/1").flashAttr("courseRegistrationDTO", courseRegistrationDTO);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(redirectedUrl("/admin/courseList/courseInfo/1"))
-                .andExpect(model().attribute("courseRegistrationWrapper", hasProperty("course", hasProperty("courseID", Matchers.equalTo(activeCourse.getCourseID())))))
+                .andExpect(model().attribute("courseRegistrationDTO", hasProperty("course", hasProperty("courseID", Matchers.equalTo(activeCourse.getCourseID())))))
                 .andExpect(view().name("redirect:/admin/courseList/courseInfo/1"));
 
-        verify(courseServiceMock, times(1)).update(courseRegistrationWrapper.getCourse());
+        verify(courseServiceMock, times(1)).update(courseRegistrationDTO.getCourse());
     }
 
     @Test
     public void testAddCourse() throws Exception{
-        RequestBuilder requestBuilder = post("/admin/courseList/addCourse").flashAttr("courseRegistrationWrapper", courseRegistrationWrapper);
+        RequestBuilder requestBuilder = post("/admin/courseList/addCourse").flashAttr("courseRegistrationDTO", courseRegistrationDTO);
 
         mockMvc.perform(requestBuilder)
-                .andExpect(model().attribute("courseRegistrationWrapper", hasProperty("course", hasProperty("courseID", Matchers.equalTo(activeCourse.getCourseID())))))
+                .andExpect(model().attribute("courseRegistrationDTO", hasProperty("course", hasProperty("courseID", Matchers.equalTo(activeCourse.getCourseID())))))
                 .andExpect(redirectedUrl("/admin/courseList"))
                 .andExpect(view().name("redirect:/admin/courseList"));
 
-        verify(courseServiceMock, times(1)).add(courseRegistrationWrapper.getCourse());
+        verify(courseServiceMock, times(1)).add(courseRegistrationDTO.getCourse());
     }
 
 }

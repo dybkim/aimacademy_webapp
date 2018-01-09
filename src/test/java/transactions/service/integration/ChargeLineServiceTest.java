@@ -37,6 +37,7 @@ public class ChargeLineServiceTest extends AbstractTransactionTest{
     @Autowired
     private CourseService courseService;
 
+    private Member member;
     private Charge charge;
     private ChargeLine chargeLine;
     private Attendance attendance;
@@ -47,6 +48,9 @@ public class ChargeLineServiceTest extends AbstractTransactionTest{
     @Before
     public void setUp(){
         cycleStartDate = LocalDate.of(2000,1,1);
+
+        member = new Member();
+        member.setMemberID(1);
 
         attendance = new Attendance();
         attendance.setWasPresent(true);
@@ -66,25 +70,24 @@ public class ChargeLineServiceTest extends AbstractTransactionTest{
 
         charge = new Charge();
         charge.setChargeID(1);
-        charge.setMemberID(1);
+        charge.setMember(member);
         charge.setChargeAmount(BigDecimal.ZERO);
         charge.setBillableUnitsBilled(BigDecimal.ZERO);
         charge.setNumChargeLines(0);
-        charge.setCourseID(course.getCourseID());
+        charge.setCourse(course);
 
         chargeLine = new ChargeLine();
         chargeLine.setChargeLineID(1);
-        chargeLine.setTotalCharge(BigDecimal.valueOf(100));
-        chargeLine.setChargeID(charge.getChargeID());
-        chargeLine.setAttendanceID(attendance.getAttendanceID());
+        chargeLine.setChargeAmount(BigDecimal.valueOf(100));
+        chargeLine.setCharge(charge);
+        chargeLine.setAttendance(attendance);
     }
 
     @Test
     @Rollback
     public void testAddChargeLine() throws Exception{
         monthlyFinancesSummaryService.add(monthlyFinancesSummary);
-        chargeService.add(charge);
-        chargeService.addChargeLine(chargeLine);
+        chargeLineService.addChargeLine(chargeLine);
 
         Charge retrievedCharge = chargeService.get(charge.getChargeID());
         assertNotNull(retrievedCharge);
