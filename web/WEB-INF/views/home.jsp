@@ -11,13 +11,11 @@
   To change this template use File | Settings | File Templates.
 --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ include file="template/navbar.jsp"%>
 <%@ include file="template/sidebar.jsp"%>
 
 <script>
-
     function format(memberID){
         var table = '<table cellpadding="5" cellspacing="0" border="1" style="padding-left:50px;">';
         $.ajax({
@@ -26,8 +24,8 @@
             async: false,
             dataType: "json",
             data: {
-                month: ${cycleStartDate.monthValue},
-                year: ${cycleStartDate.year}
+                cycleStartDate: '${cycleStartDate.toString()}',
+                cycleEndDate: '${cycleEndDate.toString()}'
             },
             success:function(chargeList){
                 for(var i = 0; i < chargeList.length; i++){
@@ -59,6 +57,10 @@
     }
 
     $(document).ready(function() {
+        jQuery.validator.setDefaults({
+            debug: true,
+            success: "valid"
+        });
 
         $('a[data-toggle="tabpanel"]').on('shown.bs.tab', function () {
             $.fn.dataTable.tables(true).columns.adjust();
@@ -110,34 +112,90 @@
                 row.child(format(id)).show();
                 tr.addClass('shown');
             }
-        })
+        });
+
+        $('#cycleStartDate, #cycleEndDate').datepicker({
+            dateFormat: "mm/dd/yy"
+        });
+
+        $('#cycleStartDate, #cycleEndDate').keydown(function (e) {
+            // Allow: backspace, delete, tab
+            if ($.inArray(e.keyCode, [46, 8, 9]) !== -1 || (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40) || ((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode === 191)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode > 1 || e.keyCode < 200))) {
+                e.preventDefault();
+            }
+        });
+
+        $('#fetchChargesButton').click(function(){
+            var cycleStartDateString = $('#cycleStartDate').val();
+            var cycleEndDateString = $('#cycleEndDate').val();
+
+            var cycleStartDate = parseDMY(cycleStartDateString);
+            var cycleEndDate = parseDMY(cycleEndDateString);
+
+            if(isNaN(cycleStartDate.getTime()) || (isNaN(cycleEndDate.getTime()))){
+                alert("Must enter valid date for start and end dates!");
+                return;
+            }
+
+            var url = '${pageContext.request.contextPath}/admin/home/fetchPeriod?cycleStartDate=' + cycleStartDateString + '&cycleEndDate=' + cycleEndDateString;
+            window.location.replace(url);
+        });
     });
 
+    function parseDMY(value) {
+        var date = value.split("/");
+        var d = parseInt(date[1], 10),
+            m = parseInt(date[0], 10),
+            y = parseInt(date[2], 10);
+        return new Date(y, m - 1, d);
+    }
 </script>
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <body>
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
                 <h1 class="page-header">Home</h1>
-                <h3>${cycleStartDate.month} ${cycleStartDate.year}</h3>
+                <h3>${cycleString}</h3>
 
-                <form:select path="cycleStartDate" id="selectMonthBox">
-                    <form:option selected="true" value="">Select Month</form:option>
-                    <c:forEach items="${monthsList}" var="date">
-                        <form:option value="?month=${date.monthValue}&year=${date.year}">${date.month} ${date.year}</form:option>
-                    </c:forEach>
-                </form:select>
+                <div class="container" style="float:left; border: thin solid black; padding: 10px; width:auto; margin-bottom: 50px;">
+                    <label for="selectMonthBox">Select Month:</label>
+                    <form:select path="cycleStartDate" id="selectMonthBox">
+                        <form:option selected="true" value="">Select Month</form:option>
+                        <c:forEach items="${monthsList}" var="date">
+                            <form:option value="?month=${date.monthValue}&year=${date.year}">${date.month} ${date.year}</form:option>
+                        </c:forEach>
+                    </form:select>
+                    <br>
 
-                <br>
-                <br>
+                    <h5>Or Select A Period:</h5>
+                    <label for="cycleStartDate">Starting From:</label>
+                    <input type="date" id="cycleStartDate" style="float:right;"/>
+                    <br>
+                    <br>
+                    <label for="cycleEndDate">Ending At:</label>
+                    <input type="date" id="cycleEndDate" style="float:right;"/>
+                    <br>
+                    <br>
+                    <button type="button" class="btn btn-primary" id="fetchChargesButton" style="float:right">Fetch Charges</button>
+                </div>
 
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation"><a href="#tab-members" aria-controls="tab-members" role="tab" data-toggle="tab">Outstanding Balances</a></li>
-                    <li role="presentation"><a href="#tab-paidBalanceMembers" aria-controls="tab-paidBalanceMembers" role="tab" data-toggle="tab">Paid Balances</a></li>
-                </ul>
+                <div class="container" style="float: left">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation"><a href="#tab-members" aria-controls="tab-members" role="tab" data-toggle="tab">Outstanding Balances</a></li>
+                        <li role="presentation"><a href="#tab-paidBalanceMembers" aria-controls="tab-paidBalanceMembers" role="tab" data-toggle="tab">Paid Balances</a></li>
+                    </ul>
+                </div>
 
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane fade in active" id="tab-members">
@@ -155,13 +213,13 @@
                             </thead>
 
                             <tbody>
-                            <c:forEach items="${outstandingChargesPaymentWrapper.outstandingBalanceMemberList}" var="member">
+                            <c:forEach items="${outstandingChargesPaymentDTO.outstandingBalanceMemberList}" var="member">
                                 <tr class="parent">
                                     <td class="details-control"><span class="glyphicon glyphicon-plus-sign"></span></td>
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
-                                    <td>${outstandingChargesPaymentWrapper.balanceAmountHashMap.get(member.memberID)}</td>
-                                    <td>${outstandingChargesPaymentWrapper.paymentAmountHashMap.get(member.memberID)} / ${outstandingChargesPaymentWrapper.chargesAmountHashMap.get(member.memberID)}</td>
+                                    <td>${outstandingChargesPaymentDTO.balanceAmountHashMap.get(member.memberID)}</td>
+                                    <td>${outstandingChargesPaymentDTO.paymentAmountHashMap.get(member.memberID)} / ${outstandingChargesPaymentDTO.chargesAmountHashMap.get(member.memberID)}</td>
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     <td><a href="<spring:url value="/admin/resources/excel/generateInvoice/student/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
@@ -185,13 +243,13 @@
                             </thead>
 
                             <tbody>
-                            <c:forEach items="${outstandingChargesPaymentWrapper.paidBalanceMemberList}" var="member">
+                            <c:forEach items="${outstandingChargesPaymentDTO.paidBalanceMemberList}" var="member">
                                 <tr>
                                     <td class="details-control" border="1"><span class="glyphicon glyphicon-plus-sign"></span></td>
                                     <td>${member.memberID}</td>
                                     <td><a href="<spring:url value="/admin/student/studentList/${member.memberID}"/>">${member.memberFirstName} ${member.memberLastName}</a></td>
-                                    <td>${outstandingChargesPaymentWrapper.balanceAmountHashMap.get(member.memberID)}</td>
-                                    <td>${outstandingChargesPaymentWrapper.paymentAmountHashMap.get(member.memberID)} / ${outstandingChargesPaymentWrapper.chargesAmountHashMap.get(member.memberID)}</td>
+                                    <td>${outstandingChargesPaymentDTO.balanceAmountHashMap.get(member.memberID)}</td>
+                                    <td>${outstandingChargesPaymentDTO.paymentAmountHashMap.get(member.memberID)} / ${outstandingChargesPaymentDTO.chargesAmountHashMap.get(member.memberID)}</td>
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
                                     <td><a href=""><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
@@ -203,10 +261,6 @@
             </div>
         </div>
     </div>
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
 
 </body>
