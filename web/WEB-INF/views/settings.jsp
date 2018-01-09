@@ -36,7 +36,8 @@
 
 </script>
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <body>
 <div class="container-fluid">
     <div class="row">
@@ -44,7 +45,7 @@
 
             <h1 class="page-header">Settings</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/settings" method="POST" modelAttribute="newPasswordFormWrapper" style="width:500px">
+            <form:form action="${pageContext.request.contextPath}/admin/settings" method="POST" modelAttribute="newPasswordFormDTO" style="width:500px">
 
                 <span style="color: #FF0000">${currentPasswordErrorMessage}</span>
                 <div class="form-group">
@@ -77,9 +78,6 @@
     </div>
 </div>
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
 </body>
 </html>
