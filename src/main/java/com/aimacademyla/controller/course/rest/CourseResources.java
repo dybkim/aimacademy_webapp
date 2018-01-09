@@ -49,6 +49,7 @@ public class CourseResources {
     @ResponseBody
     public ResponseEntity<GenericResponse> validateAddCourseSession(@PathVariable("courseID") int courseID){
         Course course = courseService.get(courseID);
+        course = courseService.loadCollections(course);
         List<MemberCourseRegistration> memberCourseRegistrationList = new ArrayList<>(course.getMemberCourseRegistrationSet());
 
         if(memberCourseRegistrationList.size() == 0)
@@ -90,6 +91,7 @@ public class CourseResources {
     @ResponseBody
     public List<Member> getCourseSession(@PathVariable("courseSessionID") int courseSessionID) {
         CourseSession courseSession = courseSessionService.get(courseSessionID);
+        courseSession = courseSessionService.loadCollections(courseSession);
         List<Member> memberList = new ArrayList<>();
 
         for(Attendance attendance : courseSession.getAttendanceMap().values()){
