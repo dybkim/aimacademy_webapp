@@ -6,6 +6,7 @@ import com.aimacademyla.model.builder.dto.OutstandingChargesPaymentDTOBuilder;
 import com.aimacademyla.model.dto.OutstandingChargesPaymentDTO;
 import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.service.*;
+import org.hibernate.type.LocalDateType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -22,12 +24,10 @@ import java.util.*;
 @Controller
 @RequestMapping("/admin")
 public class HomeController {
-    private CourseService courseService;
     private DAOFactory daoFactory;
 
     @Autowired
-    public HomeController(CourseService courseService, DAOFactory daoFactory){
-        this.courseService = courseService;
+    public HomeController(DAOFactory daoFactory){
         this.daoFactory = daoFactory;
     }
 
@@ -36,27 +36,56 @@ public class HomeController {
                        @RequestParam(name="month", required = false) Integer month,
                        @RequestParam(name="year", required = false) Integer year){
 
-        LocalDate cycleStartDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1);
+        LocalDate now = LocalDate.now();
+        LocalDate cycleStartDate = LocalDate.of(now.getYear(), now.getMonthValue(), 1);
+        LocalDate cycleEndDate = LocalDate.of(now.getYear(), now.getMonthValue(), now.getMonth().length(now.isLeapYear()));
 
-        if(month != null && year != null)
+        if(month != null && year != null) {
             cycleStartDate = LocalDate.of(year, month, 1);
+            cycleEndDate = LocalDate.of(year, month, cycleStartDate.getMonth().length(cycleStartDate.isLeapYear()));
+        }
 
         OutstandingChargesPaymentDTO outstandingChargesPaymentDTO = new OutstandingChargesPaymentDTOBuilder(daoFactory)
                                                                         .setCycleStartDate(cycleStartDate)
+                                                                        .setCycleEndDate(cycleEndDate)
                                                                         .build();
-
-        HashMap<Integer, Course> courseHashMap = new HashMap<>();
-
-        for(Course course : courseService.getList())
-            courseHashMap.put(course.getCourseID(), course);
 
         List<LocalDate> monthsList = TemporalReference.getMonthList();
         Collections.reverse(monthsList);
+        String cycleString = cycleStartDate.getMonth() + " " + cycleStartDate.getYear();
 
+        model.addAttribute("cycleString", cycleString);
         model.addAttribute("cycleStartDate", cycleStartDate);
+        model.addAttribute("cycleEndDate", cycleEndDate);
         model.addAttribute("monthsList", monthsList);
         model.addAttribute("outstandingChargesPaymentDTO", outstandingChargesPaymentDTO);
-        model.addAttribute("courseHashMap", courseHashMap);
+
+        return "home";
+    }
+
+    @RequestMapping("/home/fetchPeriod")
+    public String getPeriodSummary(Model model, @RequestParam(name="cycleStartDate") String cycleStartDateString,
+                                                @RequestParam(name="cycleEndDate") String cycleEndDateString){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
+
+        LocalDate cycleStartDate = LocalDate.parse(cycleStartDateString, dateTimeFormatter);
+        LocalDate cycleEndDate = LocalDate.parse(cycleEndDateString, dateTimeFormatter);
+
+        OutstandingChargesPaymentDTO outstandingChargesPaymentDTO = new OutstandingChargesPaymentDTOBuilder(daoFactory)
+                                                                            .setCycleStartDate(cycleStartDate)
+                                                                            .setCycleEndDate(cycleEndDate)
+                                                                            .build();
+
+        List<LocalDate> monthsList = TemporalReference.getMonthList();
+        Collections.reverse(monthsList);
+        String cycleString = cycleStartDate.getMonth() + " " + Integer.toString(cycleStartDate.getDayOfMonth()) + ", " + cycleStartDate.getYear() + " - "
+                + cycleEndDate.getMonth() + " " + cycleEndDate.getDayOfMonth() + ", " + cycleEndDate.getYear();
+
+        model.addAttribute("cycleString", cycleString);
+        model.addAttribute("cycleStartDate", cycleStartDate);
+        model.addAttribute("cycleEndDate", cycleEndDate);
+        model.addAttribute("monthsList", monthsList);
+        model.addAttribute("outstandingChargesPaymentDTO", outstandingChargesPaymentDTO);
 
         return "home";
     }
