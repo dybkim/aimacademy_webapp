@@ -2,14 +2,19 @@ package com.aimacademyla.controller.student.rest;
 
 import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.Charge;
+import com.aimacademyla.model.ChargeLine;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
-import com.aimacademyla.model.MonthlyFinancesSummary;
 import com.aimacademyla.model.builder.dto.MemberChargesFinancesDTOBuilder;
-import com.aimacademyla.model.builder.entity.ChargeBuilder;
+import com.aimacademyla.model.builder.entity.ChargeLineBuilder;
 import com.aimacademyla.model.dto.MemberChargesFinancesDTO;
-import com.aimacademyla.model.enums.BillableUnitType;
-import com.aimacademyla.service.*;
+import com.aimacademyla.model.initializer.impl.ChargeDefaultValueInitializer;
+import com.aimacademyla.service.ChargeLineService;
+import com.aimacademyla.service.ChargeService;
+import com.aimacademyla.service.CourseService;
+import com.aimacademyla.service.MemberService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -17,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -28,24 +33,25 @@ import java.util.List;
 @RequestMapping("/admin/student/rest/studentFinances")
 public class StudentFinancesResources {
 
+    private static final Logger logger = LogManager.getLogger(StudentFinancesResources.class.getName());
     private DAOFactory daoFactory;
 
     private MemberService memberService;
     private ChargeService chargeService;
+    private ChargeLineService chargeLineService;
     private CourseService courseService;
-    private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
 
     @Autowired
     public StudentFinancesResources(MemberService memberService,
                                     ChargeService chargeService,
+                                    ChargeLineService chargeLineService,
                                     CourseService courseService,
-                                    MonthlyFinancesSummaryService monthlyFinancesSummaryService,
                                     DAOFactory daoFactory){
         this.daoFactory = daoFactory;
         this.courseService = courseService;
         this.memberService = memberService;
         this.chargeService = chargeService;
-        this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
+        this.chargeLineService = chargeLineService;
     }
 
     @RequestMapping("/{memberID}")
@@ -56,40 +62,47 @@ public class StudentFinancesResources {
         LocalDate selectedDate = LocalDate.of(year, month, 1);
         Member member = memberService.get(memberID);
 
-        //Need to remove circular references to allow JSON object to be instantiated properly
-//        member.removeCircularReferences();
         return new MemberChargesFinancesDTOBuilder(daoFactory)
-                    .setSelectedDate(selectedDate)
-                    .setMember(member)
-                    .build();
+                            .setSelectedDate(selectedDate)
+                            .setMember(member)
+                            .build();
 
     }
 
-    @RequestMapping(value="/{memberID}/addMiscCharge", method=RequestMethod.POST)
+    @RequestMapping(value="/{memberID}/addMiscCharge", method=RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addMiscCharge(@PathVariable("memberID") int memberID,
                                                 @RequestParam(name="chargeDescription") String chargeDescription,
                                                 @RequestParam(name="chargeAmount") BigDecimal chargeAmount,
                                                 @RequestParam(name="chargeDiscount", required = false) BigDecimal chargeDiscount,
                                                 @RequestParam(name="month") int month,
+                                                @RequestParam(name="day") int day,
                                                 @RequestParam(name="year") int year){
-        LocalDate selectedDate = LocalDate.of(year, month, 1);
-        Course course = courseService.get(Course.OTHER_ID);
-        MonthlyFinancesSummary monthlyFinancesSummary = monthlyFinancesSummaryService.getMonthlyFinancesSummary(selectedDate);
+        Member member = memberService.get(memberID);
 
-        Charge charge = new ChargeBuilder()
-                            .setMember(memberService.get(memberID))
-                            .setMonthlyFinancesSummary(monthlyFinancesSummary)
-                            .setChargeAmount(chargeAmount)
-                            .setDiscountAmount(chargeDiscount)
-                            .setCourse(course)
-                            .setCycleStartDate(selectedDate)
-                            .setBillableUnitsBilled(BigDecimal.ONE)
-                            .setNumChargeLines(0)
-                            .setBillableUnitsType(BillableUnitType.PER_SESSION.toString())
-                            .build();
+        LocalDate selectedDate = LocalDate.of(year, month, day);
+        LocalDate cycleStartDate = LocalDate.of(year, month, 1);
+        Course otherCourse = courseService.get(Course.OTHER_ID);
 
-        chargeService.addCharge(charge);
+        Charge charge = new ChargeDefaultValueInitializer(daoFactory)
+                                .setCourse(otherCourse)
+                                .setLocalDate(cycleStartDate)
+                                .setMember(member)
+                                .initialize();
+
+        charge.setDescription(chargeDescription + " (Other)");
+        charge.setDiscountAmount(chargeDiscount);
+
+        chargeService.add(charge);
+
+        ChargeLine chargeLine = new ChargeLineBuilder()
+                .setBillableUnitsBilled(BigDecimal.ONE)
+                .setChargeAmount(chargeAmount)
+                .setCharge(charge)
+                .setDateCharged(selectedDate)
+                .build();
+
+        chargeLineService.addChargeLine(chargeLine);
     }
 
     @RequestMapping(value="/dropMiscCharge/{chargeID}", method=RequestMethod.PUT)
@@ -109,9 +122,11 @@ public class StudentFinancesResources {
 
     @RequestMapping(value="/getChargeList/{memberID}")
     @ResponseBody
-    public List<Charge> getChargeList(@PathVariable("memberID") int memberID, @RequestParam("month") Integer month, @RequestParam("year") Integer year){
-        LocalDate cycleStartDate = LocalDate.of(year, month, 1);
+    public List<Charge> getChargeList(@PathVariable("memberID") int memberID, @RequestParam("cycleStartDate") String cycleStartDateString, @RequestParam("cycleEndDate") String cycleEndDateString){
+        LocalDate cycleStartDate = LocalDate.parse(cycleStartDateString);
+        LocalDate cycleEndDate = LocalDate.parse(cycleEndDateString);
+        logger.debug("cycleStartDate: " + cycleStartDate + ", cycleEndDate: " + cycleEndDate);
         Member member = memberService.get(memberID);
-        return chargeService.getList(member, cycleStartDate);
+        return chargeService.getTransientChargeList(member, cycleStartDate, cycleEndDate);
     }
 }
