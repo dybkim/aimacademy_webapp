@@ -1,5 +1,6 @@
-package com.aimacademyla.model.builder.impl;
+package com.aimacademyla.model.builder.dto;
 
+import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.builder.GenericBuilder;
 import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.service.factory.ServiceFactory;
@@ -8,20 +9,20 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-public abstract class GenericBuilderImpl<T> implements GenericBuilder<T> {
+public abstract class GenericDTOBuilderImpl<T> implements GenericBuilder<T> {
 
-    private ServiceFactory serviceFactory;
+    private DAOFactory daoFactory;
 
-    GenericBuilderImpl(ServiceFactory serviceFactory){
-        this.serviceFactory = serviceFactory;
+    GenericDTOBuilderImpl(DAOFactory daoFactory){
+        this.daoFactory = daoFactory;
     }
 
-    public void setServiceFactory(ServiceFactory serviceFactory){
-        this.serviceFactory = serviceFactory;
+    public void setDAOFactory(DAOFactory daoFactory){
+        this.daoFactory = daoFactory;
     }
 
-    ServiceFactory getServiceFactory(){
-        return serviceFactory;
+    DAOFactory getDAOFactory(){
+        return daoFactory;
     }
 
     @Override
