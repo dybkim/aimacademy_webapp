@@ -1,1 +1,2 @@
-production.properties
+localhost.properties
+development.properties
