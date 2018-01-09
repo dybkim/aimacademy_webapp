@@ -11,10 +11,4 @@ import java.util.List;
  */
 public interface CourseDAO extends GenericDAO<Course, Integer>{
 
-    Course getCourseByName(String courseName);
-
-    List<Course> getCourseListByDate(LocalDate date);
-
-    List<Course> getCourseListBySeason(int seasonID);
-
 }

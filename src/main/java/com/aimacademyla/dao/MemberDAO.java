@@ -10,8 +10,4 @@ import java.util.List;
  * Created by davidkim on 1/18/17.
  */
 public interface MemberDAO extends GenericDAO<Member, Integer>{
-
-    List<Member> getMembersByCourse(Course course);
-
-    void updateMemberList(List<Member> memberList);
 }

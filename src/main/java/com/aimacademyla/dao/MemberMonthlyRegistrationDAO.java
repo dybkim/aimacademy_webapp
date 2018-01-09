@@ -12,9 +12,4 @@ import java.util.List;
  */
 public interface MemberMonthlyRegistrationDAO extends GenericDAO<MemberMonthlyRegistration, Integer>{
 
-    MemberMonthlyRegistration getMemberMonthlyRegistrationForMemberByDate(Member member,LocalDate date);
-    List<MemberMonthlyRegistration> getMemberMonthlyRegistrationList(LocalDate date);
-    void addMemberMonthlyRegistrationList(List<MemberMonthlyRegistration> memberMonthlyRegistrationList);
-    void updateMemberMonthlyRegistrationList(List<MemberMonthlyRegistration> memberMonthlyRegistrationList);
-    void removeMemberMonthlyRegistrationList(List<MemberMonthlyRegistration> memberMonthlyRegistrationList);
 }

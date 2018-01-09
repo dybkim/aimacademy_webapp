@@ -9,12 +9,4 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface PaymentDAO extends GenericDAO<Payment, Integer>{
-
-    List<Payment> getPaymentsByMember(Member member);
-
-    List<Payment> getPaymentsByMemberForCourse(Member member, Course course);
-
-    List<Payment> getPaymentsForDate(LocalDate date);
-
-    Payment getPaymentForMemberByDate(Member member, LocalDate date);
 }
