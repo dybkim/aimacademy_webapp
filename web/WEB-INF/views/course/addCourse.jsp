@@ -12,28 +12,28 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8"%>
-
 <%@ include file="../template/navbar.jsp"%>
 <%@ include file="../template/sidebar.jsp"%>
 
 <link href="<c:url value="/WEB-INF/resources/css/suggestion.css" />" rel="stylesheet">
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function(){
+        $('#courseStartDate, #courseEndDate').datepicker({
+            dateFormat: "mm/dd/yy"
+        });
 
-        $('#w-input-search').autocomplete({
-            serviceUrl: '${pageContext.request.contextPath}/admin/courseList/addCourse/getMembers',
-            paramName: "memberTagName",
-            delimiter: ",",
-            transformResult: function(response) {
-
-                return {
-                    //must convert json to javascript object before process
-                    suggestions: $.map($.parseJSON(response), function(item) {
-
-                        return { value: item.tagName, data: item.id };
-                    })
-                };
+        $('#courseStartDate, #courseEndDate').keydown(function (e) {
+            // Allow: backspace, delete, tab
+            if ($.inArray(e.keyCode, [46, 8, 9]) !== -1 || (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40) || ((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode === 191)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode > 1 || e.keyCode < 200))) {
+                e.preventDefault();
             }
         });
     });
@@ -41,24 +41,22 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <body>
-<%@include file="../template/navbar.jsp"%>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Add Course</h1>
 
-            <form:form action="${pageContext.request.contextPath}/admin/courseList/addCourse" method="POST" modelAttribute="courseRegistrationWrapper">
-                <div class="form-group"><form:errors path="course.courseName" cssStyle="color: #FF0000"/>
+            <form:form action="${pageContext.request.contextPath}/admin/courseList/addCourse" method="POST" modelAttribute="course">
+                <div class="form-group"><form:errors path="courseName" cssStyle="color: #FF0000"/>
                     <label for="courseTitle">Course Title</label>
-                    <form:input path="course.courseName" id="courseTitle" class="form-Control" cssStyle="width: 400px"/>
+                    <form:input path="courseName" id="courseTitle" class="form-Control" cssStyle="width: 400px"/>
                 </div>
 
-                <div class="form-group"><form:errors path="course.courseType" cssStyle="color: #FF0000"/>
+                <div class="form-group"><form:errors path="courseType" cssStyle="color: #FF0000"/>
                     <label for="courseType">Course Type: </label>
-                    <form:select path="course.courseType" id="courseType" class="form-control" cssStyle="width: 200px">
+                    <form:select path="courseType" id="courseType" class="form-control" cssStyle="width: 200px">
                         <form:option value="Supplement"/>
                         <form:option value="Finals Prep"/>
                         <form:option value="Test Prep"/>
@@ -79,7 +77,7 @@
 
                 <div class="form-group">
                     <label for="startDate">Start Date (MM/DD/YYYY): </label>
-                    <form:input path="course.courseStartDate" id="startDate" class="date"/>
+                    <form:input path="courseStartDate" id="startDate" class="date"/>
                 </div>
 
                 <c:choose>
@@ -94,12 +92,12 @@
 
                 <div class="form-group">
                     <label for="endDate">End Date (MM/DD/YYYY): </label>
-                    <form:input path="course.courseEndDate" id="endDate" class="date"/>
+                    <form:input path="courseEndDate" id="endDate" class="date"/>
                 </div>
 
                 <div class="form-group">
                     <label for="billingType">Billing Type: </label>
-                    <form:select path="course.billableUnitType" id="billingType" class="form-Control">
+                    <form:select path="billableUnitType" id="billingType" class="form-Control">
                         <form:option value="hour">Per Hour</form:option>
                         <form:option value="session">Per Session</form:option>
                     </form:select>
@@ -107,12 +105,12 @@
 
                 <div class="form-group">
                     <label for="memberCoursePrice">Price per hour/session (for Members): </label>
-                    <form:input path="course.memberPricePerBillableUnit" id="memberCoursePrice" class="form-control" cssStyle="width: 100px"/>
+                    <form:input path="memberPricePerBillableUnit" id="memberCoursePrice" class="form-control" cssStyle="width: 100px"/>
                 </div>
 
                 <div class="form-group">
                     <label for="nonMemberCoursePrice">Price per hour/session (for Non-Members): </label>
-                    <form:input path="course.nonMemberPricePerBillableUnit" id="nonMemberCoursePrice" class="form-control" cssStyle="width: 100px"/>
+                    <form:input path="nonMemberPricePerBillableUnit" id="nonMemberCoursePrice" class="form-control" cssStyle="width: 100px"/>
                 </div>
 
                 <c:choose>
@@ -127,12 +125,12 @@
 
                 <div class="form-group">
                     <label for="classDuration">Class Duration (hours): </label>
-                    <form:input path="course.classDuration" id="classDuration" class="form-control" cssStyle="width: 100px"/>
+                    <form:input path="classDuration" id="classDuration" class="form-control" cssStyle="width: 100px"/>
                 </div>
 
-                <form:hidden path="course.isActive" value="true"/>
+                <form:hidden path="isActive" value="true"/>
 
-                <form:hidden path="course.numEnrolled" value="0"/>
+                <form:hidden path="numEnrolled" value="0"/>
 
                 <br><br>
 
@@ -144,12 +142,6 @@
         </div>
     </div>
 </div>
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="<spring:url value="/resources/js/jquery-3.1.1.min.js"/>"<\/script>')</script>
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
 </body>
 </html>
