@@ -1,25 +1,33 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.UserDAO;
+import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.User;
 import com.aimacademyla.model.enums.AIMEntityType;
 
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository("userDAO")
 @Transactional
 public class UserDAOImpl extends GenericDAOImpl<User, String> implements UserDAO{
-
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.USER;
-
     public UserDAOImpl(){
         super(User.class);
     }
 
-
     @Override
-    public AIMEntityType getAIMEntityType() {
-        return AIM_ENTITY_TYPE;
+    public void removeList(List<User> userList){
+        Session session = currentSession();
+        List<String> userIDList = new ArrayList<>();
+        for(User user : userList)
+            userIDList.add(user.getUsername());
+        Query query = session.createQuery("DELETE FROM User U WHERE U.username in :userIDList");
+        query.setParameterList("userIDList", userIDList);
+        query.executeUpdate();
     }
 }

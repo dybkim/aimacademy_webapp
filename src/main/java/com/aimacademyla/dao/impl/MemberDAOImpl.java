@@ -1,9 +1,9 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.MemberDAO;
-import com.aimacademyla.model.Course;
-import com.aimacademyla.model.Member;
+import com.aimacademyla.model.*;
 import com.aimacademyla.model.enums.AIMEntityType;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,33 +23,34 @@ import java.util.List;
 @Transactional
 public class MemberDAOImpl extends GenericDAOImpl<Member,Integer> implements MemberDAO {
 
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MEMBER;
-
     public MemberDAOImpl(){
         super(Member.class);
     }
 
     @Override
-    public List<Member> getMembersByCourse(Course course){
+    public void removeList(List<Member> memberList){
         Session session = currentSession();
-        Query query = session.createQuery("FROM Member WHERE memberID IN (SELECT memberID FROM Member_Course_Registration WHERE courseID = :courseID)");
-        query.setParameter("courseID", course.getCourseID());
-        List<Member> memberList = query.getResultList();
+        List<Integer> memberIDList = new ArrayList<>();
+        for(Member member : memberList)
+            memberIDList.add(member.getMemberID());
+        Query query = session.createQuery("DELETE FROM Member M WHERE M.memberID in :memberIDList");
+        query.setParameterList("memberIDList", memberIDList);
+        query.executeUpdate();
+    }
+
+    @Override
+    public Member getEager(Integer memberID){
+        return loadCollections(get(memberID));
+    }
+
+    @Override
+    public Member loadCollections(Member member){
+        Session session = currentSession();
+        member = session.get(Member.class, member.getMemberID());
+        Hibernate.initialize(member.getMemberMonthlyRegistrationMap());
+        Hibernate.initialize(member.getMemberCourseRegistrationMap());
         session.flush();
 
-        return memberList;
-    }
-
-    @Override
-    public void updateMemberList(List<Member> memberList){
-        Session session = currentSession();
-
-        for(Member member : memberList)
-            session.saveOrUpdate(member);
-    }
-
-    @Override
-    public AIMEntityType getAIMEntityType() {
-        return AIM_ENTITY_TYPE;
+        return member;
     }
 }

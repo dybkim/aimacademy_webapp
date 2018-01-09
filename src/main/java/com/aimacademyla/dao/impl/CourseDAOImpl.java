@@ -1,18 +1,25 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.CourseDAO;
+import com.aimacademyla.dao.CourseSessionDAO;
+import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
+import com.aimacademyla.model.CourseSession;
+import com.aimacademyla.model.MemberCourseRegistration;
 import com.aimacademyla.model.enums.AIMEntityType;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by davidkim on 2/8/17.
@@ -22,46 +29,69 @@ import java.util.List;
 @Transactional
 public class CourseDAOImpl extends GenericDAOImpl<Course, Integer> implements CourseDAO {
 
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.COURSE;
+    private CourseSessionDAO courseSessionDAO;
 
-    public CourseDAOImpl(){
+    @Autowired
+    public CourseDAOImpl(CourseSessionDAO courseSessionDAO){
         super(Course.class);
+        this.courseSessionDAO = courseSessionDAO;
     }
 
     @Override
-    public Course getCourseByName(String courseName) {
+    public void removeList(List<Course> courseList){
         Session session = currentSession();
-        Query query = session.createQuery("FROM Course WHERE CourseName = :courseName");
-        query.setParameter("courseName", courseName);
+        List<Integer> courseIDList = new ArrayList<>();
+        for(Course course : courseList)
+            courseIDList.add(course.getCourseID());
+        Query query = session.createQuery("DELETE FROM Course C WHERE C.chargeID in :courseIDList");
+        query.setParameterList("courseIDList", courseIDList);
+        query.executeUpdate();
+    }
+
+    @Override
+    public Course getEager(Integer courseID){
+        return loadCollections(get(courseID));
+    }
+
+    @Override
+    public Course loadCollections(Course course){
+        Session session = currentSession();
+        course = session.get(Course.class, course.getCourseID());
+        Hibernate.initialize(course.getCourseSessionSet());
+        Hibernate.initialize(course.getMemberCourseRegistrationSet());
+        session.flush();
+        return course;
+    }
+
+    @Override
+    public Course loadCollection(Course course, Class classType){
+        Session session = currentSession();
+
+        if(classType == CourseSession.class){
+            course = session.get(Course.class, course.getCourseID());
+            Hibernate.initialize(course.getCourseSessionSet());
+        }
+
+        if(classType == MemberCourseRegistration.class){
+            course = session.get(Course.class, course.getCourseID());
+            Hibernate.initialize(course.getMemberCourseRegistrationSet());
+        }
         session.flush();
 
-        return (Course) query.uniqueResult();
+        return course;
     }
 
     @Override
-    public List<Course> getCourseListBySeason(int seasonID) {
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Course WHERE SeasonID = :seasonID");
-        query.setParameter("seasonID", seasonID);
-        List<Course> courseList = query.getResultList();
-        session.flush();
+    public Course loadSubcollections(Course course){
+        if(course.getCourseSessionSet() == null || course.getCourseSessionSet().isEmpty())
+            return course;
 
-        return courseList;
-    }
+        Set<CourseSession> courseSessionSet = new HashSet<>();
 
-    @Override
-    public List<Course> getCourseListByDate(LocalDate date){
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Course WHERE CourseStartDate <= :date AND CourseEndDate >= :date");
-        query.setParameter("date",date);
-        List<Course> courseList = query.getResultList();
-        session.flush();
+        for(CourseSession courseSession : course.getCourseSessionSet())
+            courseSessionSet.add(courseSessionDAO.loadCollections(courseSession));
 
-        return courseList;
-    }
-
-    @Override
-    public AIMEntityType getAIMEntityType() {
-        return AIM_ENTITY_TYPE;
+        course.setCourseSessionSet(courseSessionSet);
+        return course;
     }
 }

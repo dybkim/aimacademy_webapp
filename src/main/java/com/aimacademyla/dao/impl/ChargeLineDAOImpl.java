@@ -3,6 +3,7 @@ package com.aimacademyla.dao.impl;
 import com.aimacademyla.dao.ChargeLineDAO;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.ChargeLine;
+import com.aimacademyla.model.Member;
 import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,44 +24,31 @@ import java.util.List;
 @Transactional
 public class ChargeLineDAOImpl extends GenericDAOImpl<ChargeLine, Integer> implements ChargeLineDAO {
 
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.CHARGE_LINE;
-
     public ChargeLineDAOImpl(){
         super(ChargeLine.class);
     }
 
     @Override
-    public ChargeLine getChargeLineByID(int chargeLineID) {
+    public void removeList(List<ChargeLine> chargeLineList){
         Session session = currentSession();
-        ChargeLine chargeLine = session.get(ChargeLine.class, chargeLineID);
-        session.flush();
-        return chargeLine;
+        List<Integer> chargeLineIDList = new ArrayList<>();
+        for(ChargeLine chargeLine : chargeLineList)
+            chargeLineIDList.add(chargeLine.getChargeLineID());
+        Query query = session.createQuery("DELETE FROM Charge_Line C WHERE C.charge IN :chargeLineIDList");
+        query.setParameterList("chargeLineIDList", chargeLineIDList);
+        query.executeUpdate();
     }
 
     @Override
-    public ChargeLine getChargeLineByAttendanceID(int attendanceID) {
+    public List<ChargeLine> getList(Member member, LocalDate cycleStartDate, LocalDate cycleEndDate){
         Session session = currentSession();
-        Query query = session.createQuery("FROM Charge_Line WHERE attendanceID = :attendanceID");
-        query.setParameter("attendanceID", attendanceID);
-        ChargeLine chargeLine = (ChargeLine) query.uniqueResult();
-        session.flush();
 
-        return chargeLine;
-    }
+        Query query = session.createQuery("FROM Charge_Line Cl WHERE (Cl.dateCharged BETWEEN :cycleStartDate AND :cycleEndDate) AND Cl.charge.member.memberID = :memberID")
+                        .setParameter("memberID", member.getMemberID())
+                        .setParameter("cycleStartDate", cycleStartDate)
+                        .setParameter("cycleEndDate", cycleEndDate);
 
-    @Override
-    public List<ChargeLine> getChargeLinesByCharge(Charge charge){
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Charge_Line WHERE chargeID = :chargeID");
-        query.setParameter("chargeID", charge.getChargeID());
         List<ChargeLine> chargeLineList = query.getResultList();
-        session.flush();
-
         return chargeLineList;
-    }
-
-    @Override
-    public AIMEntityType getAIMEntityType() {
-        return AIM_ENTITY_TYPE;
     }
 }

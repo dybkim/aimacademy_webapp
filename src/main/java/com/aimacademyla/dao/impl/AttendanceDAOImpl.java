@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,84 +26,18 @@ import java.util.List;
 @Transactional
 public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implements AttendanceDAO{
 
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.ATTENDANCE;
-
     public AttendanceDAOImpl(){
         super(Attendance.class);
     }
 
     @Override
-    public List<Attendance> getAttendanceForCourse(Course course) {
+    public void removeList(List<Attendance> attendanceList){
         Session session = currentSession();
-        Query query = session.createQuery("FROM Attendance WHERE courseSessionID IN (SELECT courseSessionID FROM Course_Session WHERE courseID = :courseID)");
-        query.setParameter("courseID", course.getCourseID());
-        List<Attendance> attendanceList = query.getResultList();
-        session.flush();
-
-        return attendanceList;
-    }
-
-    @Override
-    public List<Attendance> getAttendanceForCourseForDate(Course course, LocalDate date) {
-        return null;
-    }
-
-    @Override
-    public List<Attendance> getAttendanceForCourseSession(int courseSessionID){
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Attendance WHERE courseSessionID = :courseSessionID");
-        query.setParameter("courseSessionID", courseSessionID);
-        List<Attendance> attendanceList = query.getResultList();
-
-        session.flush();
-
-        return attendanceList;
-    }
-
-    @Override
-    public List<Attendance> getAttendanceForCourseSession(CourseSession courseSession) {
-        return getAttendanceForCourseSession(courseSession.getCourseSessionID());
-    }
-
-    @Override
-    public List<Attendance> getAttendanceForMember(Member member) {
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Attendance WHERE MemberID = :memberID");
-        query.setParameter("memberID", member.getMemberID());
-        List<Attendance> attendanceList = query.getResultList();
-
-        session.flush();
-
-        return attendanceList;
-    }
-
-    @Override
-    public List<Attendance> getAttendanceForMemberForCourse(Member member, Course course) {
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Attendance WHERE memberID = :memberID AND courseSessionID IN (SELECT courseSessionID FROM Course_Session WHERE courseID = :courseID)");
-        query.setParameter("memberID", member.getMemberID());
-        query.setParameter("courseID", course.getCourseID());
-        List<Attendance> attendanceList = query.getResultList();
-
-        session.flush();
-
-        return attendanceList;
-    }
-
-    @Override
-    public Attendance getAttendanceForMemberForCourseForDate(Member member, Course course, LocalDate date) {
-        return null;
-    }
-
-    @Override
-    public void addOrUpdateAttendanceList(List<Attendance> attendanceList){
-        Session session = currentSession();
+        List<Integer> attendanceIDList = new ArrayList<>();
         for(Attendance attendance : attendanceList)
-            session.saveOrUpdate(attendance);
-        session.flush();
-    }
-
-    public AIMEntityType getAIMEntityType() {
-        return AIM_ENTITY_TYPE;
+            attendanceIDList.add(attendance.getAttendanceID());
+        Query query = session.createQuery("DELETE FROM Attendance A WHERE A.attendanceID in :attendanceIDList");
+        query.setParameterList("attendanceIDList", attendanceIDList);
+        query.executeUpdate();
     }
 }

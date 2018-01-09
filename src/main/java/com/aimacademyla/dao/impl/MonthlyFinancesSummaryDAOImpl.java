@@ -1,14 +1,17 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.MonthlyFinancesSummaryDAO;
+import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.MonthlyFinancesSummary;
 import com.aimacademyla.model.enums.AIMEntityType;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,48 +22,29 @@ import java.util.List;
 @Transactional
 public class MonthlyFinancesSummaryDAOImpl extends GenericDAOImpl<MonthlyFinancesSummary, Integer> implements MonthlyFinancesSummaryDAO {
 
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MONTHLY_FINANCES_SUMMARY;
-
-    public MonthlyFinancesSummaryDAOImpl(){
+    public MonthlyFinancesSummaryDAOImpl() {
         super(MonthlyFinancesSummary.class);
     }
 
     @Override
-    public MonthlyFinancesSummary getMonthlyFinancesSummary(LocalDate date) {
+    public void removeList(List<MonthlyFinancesSummary> monthlyFinancesSummaryList){
         Session session = currentSession();
-        Query query = session.createQuery("FROM Monthly_Finances_Summary WHERE MONTH(CycleStartDate) = MONTH(:date) AND YEAR(CycleStartDate) = YEAR(:date)")
-                .setParameter("date", date);
-        MonthlyFinancesSummary monthlyFinancesSummary = (MonthlyFinancesSummary) query.uniqueResult();
+        List<Integer> monthlyFinancesSummaryIDList = new ArrayList<>();
+        for(MonthlyFinancesSummary monthlyFinancesSummary : monthlyFinancesSummaryList)
+            monthlyFinancesSummaryIDList.add(monthlyFinancesSummary.getMonthlyFinancesSummaryID());
+        Query query = session.createQuery("DELETE FROM Monthly_Finances_Summary M WHERE M.monthlyFinancesSummaryID in :monthlyFinancesSummaryIDList");
+        query.setParameterList("monthlyFinancesSummaryIDList", monthlyFinancesSummaryIDList);
+        query.executeUpdate();
+    }
+
+    @Override
+    public MonthlyFinancesSummary loadCollections(MonthlyFinancesSummary monthlyFinancesSummary){
+        Session session = currentSession();
+        monthlyFinancesSummary = session.get(MonthlyFinancesSummary.class, monthlyFinancesSummary.getMonthlyFinancesSummaryID());
+        Hibernate.initialize(monthlyFinancesSummary.getChargeSet());
+        Hibernate.initialize(monthlyFinancesSummary.getPaymentSet());
         session.flush();
 
         return monthlyFinancesSummary;
-    }
-
-    @Override
-    public List<MonthlyFinancesSummary> getMonthlyFinancesSummariesInDateRange(LocalDate startDate, LocalDate endDate) {
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Monthly_Finances_Summary BETWEEN :startDate AND :date")
-                .setParameter("startDate", startDate)
-                .setParameter("endDate", endDate);
-        List<MonthlyFinancesSummary> monthlyFinancesSummaryList = query.getResultList();
-        session.flush();
-
-        return monthlyFinancesSummaryList;
-    }
-
-    @Override
-    public MonthlyFinancesSummary getMonthlyFinancesSummaryCurrent() {
-        Session session = currentSession();
-        Query query = session.createQuery("FROM Monthly_Finances_Summary WHERE YEAR(curdate()) = YEAR(DateSummaryCreated)" +
-                "AND MONTH(curdate()) = MONTH(DateSummaryCreated");
-        MonthlyFinancesSummary monthlyFinancesSummary = (MonthlyFinancesSummary) query.uniqueResult();
-        session.flush();
-
-        return monthlyFinancesSummary;
-    }
-
-    @Override
-    public AIMEntityType getAIMEntityType() {
-        return AIM_ENTITY_TYPE;
     }
 }
