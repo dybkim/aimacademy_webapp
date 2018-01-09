@@ -84,7 +84,7 @@
                             <td>${course.courseID}</td>
                             <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}"/>">${course.courseName}</a></td>
                             <td>${course.courseType}</td>
-                            <td>${courseAttendanceCountHashMap.get(course.courseID)}/${courseSessionListHashMap.get(course.courseID).size()}</td>
+                            <td>${courseAttendanceCountHashMap.get(course.courseID)}/${numCourseSessionsHashMap.get(course.courseID)}</td>
                             </tr>
                             </c:forEach>
                         </tbody>
@@ -108,7 +108,7 @@
                                 <td>${course.courseID}</td>
                                 <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}"/>">${course.courseName}</a></td>
                                 <td>${course.courseType}</td>
-                                <td>${courseAttendanceCountHashMap.get(course.courseID)}/${courseSessionListHashMap.get(course.courseID).size()}</td>
+                                <td>${courseAttendanceCountHashMap.get(course.courseID)}/${numCourseSessionsHashMap.get(course.courseID)}</td>
                             </tr>
                         </c:forEach>
                         </tbody>
@@ -128,21 +128,21 @@
                         </thead>
 
                         <tbody>
-                        <c:forEach items="${memberCourseFinancesWrapperList}" var="memberCourseFinancesWrapper" varStatus="i" begin="0">
+                        <c:forEach items="${memberCourseFinancesDTOList}" var="memberCourseFinancesDTO" varStatus="i" begin="0">
                             <tr>
-                                <td><fmt:parseDate value="${memberCourseFinancesWrapper.date}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
+                                <td><fmt:parseDate value="${memberCourseFinancesDTO.date}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
                                     <fmt:formatDate value="${parsedDate}" var="formattedHiddenDate" type="date" pattern="yyyy/MM/dd" timeZone="GMT" />${formattedHiddenDate}</td>
 
                                 <c:choose>
-                                    <c:when test="${memberCourseFinancesWrapper.chargeList.size() != 0}">
-                                        <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesWrapper.date.monthValue}&year=${memberCourseFinancesWrapper.date.year}"/>">${memberCourseFinancesWrapper.date.month.toString()} ${memberCourseFinancesWrapper.date.year}</a></td>
-                                        <td>${memberCourseFinancesWrapper.chargeList.size()}</td>
-                                        <td>${memberCourseFinancesWrapper.totalPaymentAmount}</td>
-                                        <td>${memberCourseFinancesWrapper.totalChargeAmount}</td>
+                                    <c:when test="${memberCourseFinancesDTO.chargeList.size() != 0}">
+                                        <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesDTO.date.monthValue}&year=${memberCourseFinancesDTO.date.year}"/>">${memberCourseFinancesDTO.date.month.toString()} ${memberCourseFinancesDTO.date.year}</a></td>
+                                        <td>${memberCourseFinancesDTO.chargeList.size()}</td>
+                                        <td>${memberCourseFinancesDTO.totalPaymentAmount}</td>
+                                        <td>${memberCourseFinancesDTO.totalChargeAmount}</td>
                                     </c:when>
 
                                     <c:otherwise>
-                                        <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesWrapper.date.monthValue}&year=${memberCourseFinancesWrapper.date.year}"/>">${memberCourseFinancesWrapper.date.month.toString()} ${memberCourseFinancesWrapper.date.year}</a></td>
+                                        <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${memberCourseFinancesDTO.date.monthValue}&year=${memberCourseFinancesDTO.date.year}"/>">${memberCourseFinancesDTO.date.month.toString()} ${memberCourseFinancesDTO.date.year}</a></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
@@ -158,10 +158,6 @@
     </div>
 </div>
 
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
 
 </body>

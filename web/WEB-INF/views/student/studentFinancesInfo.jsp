@@ -23,16 +23,16 @@
     <body>
         <div class="container-fluid" ng-app="studentFinancesControllerApp">
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <div ng-controller="studentFinancesControl" ng-init="initChargesWrapper('${member.memberID}','${selectedDate.monthValue}','${selectedDate.year}')">
+                <div ng-controller="studentFinancesControl" ng-init="initChargesDTO('${member.memberID}','${selectedDate.monthValue}','${selectedDate.year}')">
                     <h1 class="page-header">Finance Summary: ${member.memberFirstName} ${member.memberLastName}</h1>
 
-                    <h3>{{memberChargesFinancesWrapper.cycleStartDate.month}} {{memberChargesFinancesWrapper.cycleStartDate.year}}</h3>
+                    <h3>{{memberChargesFinancesDTO.cycleStartDate.month}} {{memberChargesFinancesDTO.cycleStartDate.year}}</h3>
 
                     <div class="form-group">
                         <label for="selectDate">Month</label>
                         <select id="selectDate" data-ng-model="monthSelected"
                                 data-ng-options="localDate as (localDate.month + ' ' + localDate.year) for localDate in monthsList"
-                                ng-change="initChargesWrapper('${member.memberID}', monthSelected.monthValue, monthSelected.year)">
+                                ng-change="initChargesDTO('${member.memberID}', monthSelected.monthValue, monthSelected.year)">
                         </select>
                     </div>
 
@@ -69,9 +69,9 @@
                             </thead>
 
                             <tbody>
-                                <tr ng-repeat = "charge in memberChargesFinancesWrapper.chargeHashMap">
+                                <tr ng-repeat = "charge in memberChargesFinancesDTO.chargeHashMap">
                                     <td>{{charge.description}}</td>
-                                    <td>{{memberChargesFinancesWrapper.billableUnitsBilledHashMap[charge.chargeID]}} {{charge.billableUnitType}}</td>
+                                    <td>{{memberChargesFinancesDTO.billableUnitsBilledHashMap[charge.chargeID]}} {{charge.billableUnitType}}</td>
                                     <td>{{charge.chargeAmount}}</td>
                                     <td><form ng-submit="addDiscountToCharge(charge.chargeID, charge.discountAmount)"><input ng-model="charge.discountAmount" style="text-align:center; width:50px;"/></form></td>
                                     <td>{{charge.chargeAmount - charge.discountAmount}}</td>
@@ -80,10 +80,10 @@
 
                                 <tr>
                                     <td><b>Total</b></td>
-                                    <td><b>{{memberChargesFinancesWrapper.hoursBilledTotal}} hour(s) / {{memberChargesFinancesWrapper.sessionsBilledTotal}} session(s)</b></td>
-                                    <td><b>{{memberChargesFinancesWrapper.totalChargesAmount}}</b></td>
-                                    <td><b>{{memberChargesFinancesWrapper.totalDiscountAmount}}</b></td>
-                                    <td><b>{{memberChargesFinancesWrapper.totalChargesAmount - memberChargesFinancesWrapper.totalDiscountAmount}}</b></td>
+                                    <td><b>{{memberChargesFinancesDTO.hoursBilledTotal}} hour(s) / {{memberChargesFinancesDTO.sessionsBilledTotal}} session(s)</b></td>
+                                    <td><b>{{memberChargesFinancesDTO.totalChargesAmount}}</b></td>
+                                    <td><b>{{memberChargesFinancesDTO.totalDiscountAmount}}</b></td>
+                                    <td><b>{{memberChargesFinancesDTO.totalChargesAmount - memberChargesFinancesDTO.totalDiscountAmount}}</b></td>
                                     <td></td>
                                 </tr>
                             </tbody>
@@ -94,8 +94,5 @@
         </div>
     </body>
 </html>
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
 <script src="<c:url value="/resources/js/studentFinancesController.js"/>"></script>
