@@ -1,4 +1,4 @@
-package com.aimacademyla.model.wrapper;
+package com.aimacademyla.model.dto;
 
 import com.aimacademyla.model.Member;
 

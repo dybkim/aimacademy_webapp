@@ -1,4 +1,4 @@
-package com.aimacademyla.model.wrapper;
+package com.aimacademyla.model.dto;
 
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Member;
@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
-public class OutstandingChargesPaymentWrapper implements Serializable{
+public class OutstandingChargesPaymentDTO implements Serializable{
 
     private static final long serialVersionUID = 8281548987324398595L;
 

@@ -1,16 +1,13 @@
-package com.aimacademyla.model.wrapper;
+package com.aimacademyla.model.dto;
 
 import com.aimacademyla.model.Charge;
-import com.aimacademyla.model.Payment;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-public class MemberCourseFinancesWrapper implements Serializable{
+public class MemberCourseFinancesDTO implements Serializable{
 
     private static final long serialVersionUID = -4035158236340063169L;
 

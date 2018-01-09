@@ -1,4 +1,4 @@
-package com.aimacademyla.model.wrapper;
+package com.aimacademyla.model.dto;
 
 import com.aimacademyla.model.Member;
 
@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by davidkim on 7/17/17.
  */
-public class CourseRegistrationWrapperListItem implements Serializable {
+public class CourseRegistrationDTOListItem implements Serializable {
 
     private static final long serialVersionUID = 4767686080695400542L;
 

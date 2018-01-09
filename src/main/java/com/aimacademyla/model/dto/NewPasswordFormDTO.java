@@ -1,8 +1,8 @@
-package com.aimacademyla.model.wrapper;
+package com.aimacademyla.model.dto;
 
 import java.io.Serializable;
 
-public class NewPasswordFormWrapper implements Serializable{
+public class NewPasswordFormDTO implements Serializable{
 
     private static final long serialVersionUID = 7657257718520268689L;
 
