@@ -15,7 +15,7 @@ import java.util.Map;
 public class DAOFactory {
     private List<GenericDAO> genericDAOList;
 
-    private static final Map<AIMEntityType, GenericDAO> genericDAOCache = new HashMap<>();
+    private static final Map<Class, GenericDAO> genericDAOCache = new HashMap<>();
 
     @Autowired
     public DAOFactory(List<GenericDAO> genericDAOList) {
@@ -25,11 +25,11 @@ public class DAOFactory {
     @PostConstruct
     public void initGenericDAOCache(){
         for(GenericDAO genericDAO : genericDAOList){
-            genericDAOCache.put(genericDAO.getAIMEntityType(), genericDAO);
+            genericDAOCache.put(genericDAO.getEntityClass(), genericDAO);
         }
     }
 
-    public GenericDAO getDAO(AIMEntityType entityType) {
-        return genericDAOCache.get(entityType);
+    public GenericDAO getDAO(Class entityClass) {
+        return genericDAOCache.get(entityClass);
     }
 }
