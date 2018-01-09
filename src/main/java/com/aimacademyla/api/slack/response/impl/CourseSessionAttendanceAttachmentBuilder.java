@@ -4,6 +4,7 @@ import com.aimacademyla.api.slack.response.AttachmentBuilder;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.Member;
+import com.aimacademyla.model.MemberCourseRegistration;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.MemberService;
 import com.ullink.slack.simpleslackapi.SlackAction;
@@ -38,7 +39,7 @@ public class CourseSessionAttendanceAttachmentBuilder implements AttachmentBuild
 
     @Override
     public SlackAttachment build() {
-        Course course = courseService.get(courseSession.getCourseID());
+        Course course = courseSession.getCourse();
 
         String title = course.getBillableUnitDuration().toString() + " hours";
         String text = "Pick 'No Session' if session was canceled";
@@ -62,9 +63,10 @@ public class CourseSessionAttendanceAttachmentBuilder implements AttachmentBuild
 
     private List<SlackAction> buildActionList(Course course){
         List<SlackAction> slackActionList = new ArrayList<>();
-        List<Member> memberList = memberService.getMembersByCourse(course);
+        List<MemberCourseRegistration> memberCourseRegistrationList = new ArrayList<>(course.getMemberCourseRegistrationSet());
 
-        for(Member member : memberList){
+        for(MemberCourseRegistration memberCourseRegistration : memberCourseRegistrationList){
+            Member member = memberCourseRegistration.getMember();
             SlackAction slackAction = new SlackAction("member", member.getMemberFirstName() + " " + member.getMemberLastName(), "button", Integer.toString(member.getMemberID()));
             slackActionList.add(slackAction);
         }
