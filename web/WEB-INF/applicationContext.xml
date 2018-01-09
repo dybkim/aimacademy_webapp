@@ -3,12 +3,38 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/security
        http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd">
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/jdbc
+       http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <context:component-scan base-package="com.aimacademyla"/>
+
+    <tx:annotation-driven/>
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper">
+                    <bean class="com.aimacademyla.mapper.HibernateAwareObjectMapper"/>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <jdbc:initialize-database data-source="c3p0DataSource">
+        <jdbc:script location="WEB-INF/resources/sql/initializationScript.sql" encoding="UTF-8"/>
+    </jdbc:initialize-database>
 
     <bean id="c3p0DataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="${jdbc.driver}"/>
@@ -69,9 +95,15 @@
         </security:authentication-provider>
     </security:authentication-manager>
 
-    <bean id="slackServiceThread" class="com.aimacademyla.api.slack.thread.SlackServiceThread">
-        <!--TODO: Setup conversion strategy for AIMSlackTeam-->
-        <!--<property name="slackTeam" value="com.aimacademyla.api.slack.team.AIMSlackTeam"/>-->
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <set>
+                <ref bean="courseFormatter"/>
+                <ref bean="attendanceFormatter"/>
+                <ref bean="memberFormatter"/>
+                <ref bean="courseSessionFormatter"/>
+            </set>
+        </property>
     </bean>
 
     <beans profile="development">
@@ -91,5 +123,4 @@
                 ignore-resource-not-found="false"
                 location="WEB-INF/resources/properties/localhost.properties"/>
     </beans>
-
 </beans>
