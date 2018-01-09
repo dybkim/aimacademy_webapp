@@ -77,6 +77,7 @@ public class CourseHomeController {
     @RequestMapping("/editCourse/{courseID}")
     public String editCourse(@PathVariable("courseID") int courseID, Model model){
         Course course = courseService.get(courseID);
+        course = courseService.loadCollection(course, MemberCourseRegistration.class);
         CourseRegistrationDTO courseRegistrationDTO = new CourseRegistrationDTOBuilder(daoFactory).setCourse(course).build();
         model.addAttribute("courseRegistrationDTO", courseRegistrationDTO);
 
