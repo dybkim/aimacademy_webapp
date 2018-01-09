@@ -2,11 +2,15 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.PaymentDAO;
+import com.aimacademyla.dao.factory.DAOFactory;
+import com.aimacademyla.dao.flow.impl.PaymentDAOAccessFlow;
+import com.aimacademyla.model.*;
 import com.aimacademyla.model.enums.AIMEntityType;
-import com.aimacademyla.model.Course;
-import com.aimacademyla.model.Member;
-import com.aimacademyla.model.Payment;
+import com.aimacademyla.model.initializer.impl.PaymentDefaultValueInitializer;
+import com.aimacademyla.service.MonthlyFinancesSummaryService;
 import com.aimacademyla.service.PaymentService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -18,54 +22,41 @@ import java.util.List;
 @Service
 public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> implements PaymentService{
 
-    private PaymentDAO paymentDAO;
+    private static final Logger logger = LogManager.getLogger(PaymentServiceImpl.class.getName());
 
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.PAYMENT;
+    private PaymentDAO paymentDAO;
+    private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
 
     @Autowired
-    public PaymentServiceImpl(@Qualifier("paymentDAO")GenericDAO<Payment, Integer> genericDAO){
+    public PaymentServiceImpl(@Qualifier("paymentDAO")GenericDAO<Payment, Integer> genericDAO,
+                              MonthlyFinancesSummaryService monthlyFinancesSummaryService){
         super(genericDAO);
-        this.paymentDAO = (PaymentDAO) genericDAO;
+        this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
     }
 
     @Override
-    public List<Payment> getPaymentsByMember(Member member) {
-        return paymentDAO.getPaymentsByMember(member);
+    public void addPayment(Payment payment){
+        MonthlyFinancesSummary monthlyFinancesSummary = payment.getMonthlyFinancesSummary();
+        logger.debug("Adding Payment to MonthlyFinancesSummary");
+        monthlyFinancesSummary.addPayment(payment);
+        monthlyFinancesSummaryService.update(monthlyFinancesSummary);
+        logger.debug("Added Payment to MonthlyFinancesSummary, current Payment Balance: " + payment.getBalance());
+    }
+    @Override
+    public void updatePayment(Payment payment){
+        MonthlyFinancesSummary monthlyFinancesSummary = payment.getMonthlyFinancesSummary();
+        logger.debug("Updating Payment in MonthlyFinancesSummary with Charges: ");
+        monthlyFinancesSummary.updatePayment(payment);
+        monthlyFinancesSummaryService.update(monthlyFinancesSummary);
+        logger.debug("Updated Payment in MonthlyFinancesSummary, current Payment Balance: " + payment.getBalance());
     }
 
     @Override
-    public List<Payment> getPaymentsByMemberForCourse(Member member, Course course) {
-        return paymentDAO.getPaymentsByMemberForCourse(member, course);
-    }
-
-    @Override
-    public List<Payment> getPaymentsForDate(LocalDate date) {
-        return paymentDAO.getPaymentsForDate(date);
-    }
-
-    @Override
-    public Payment getPaymentForMemberByDate(Member member, LocalDate date){
-        Payment payment = paymentDAO.getPaymentForMemberByDate(member, date);
-
-        if(payment == null){
-            payment = new Payment();
-            payment.setMemberID(member.getMemberID());
-            payment.setCycleStartDate(LocalDate.of(date.getYear(), date.getMonthValue(), 1));
-            payment.setPaymentAmount(BigDecimal.ZERO);
-        }
-
-
-        return payment;
-    }
-
-    @Override
-    public void remove(List<Payment> paymentList){
-        for(Payment payment : paymentList)
-            remove(payment);
-    }
-
-    @Override
-    public AIMEntityType getAIMEntityType(){
-        return AIM_ENTITY_TYPE;
-    }
+    public void removePayment(Payment payment){
+        MonthlyFinancesSummary monthlyFinancesSummary = payment.getMonthlyFinancesSummary();
+        logger.debug("Removing Payment from MonthlyFinancesSummary");
+        monthlyFinancesSummary.removePayment(payment);
+        monthlyFinancesSummaryService.update(monthlyFinancesSummary);
+        logger.debug("Removed Payment MonthlyFinancesSummary, currentPayment Balance: " + payment.getBalance());
+   }
 }

@@ -1,6 +1,8 @@
 package com.aimacademyla.service;
 
 import com.aimacademyla.model.Course;
+import com.aimacademyla.model.dto.CourseRegistrationDTO;
+import com.aimacademyla.model.dto.CourseSessionDTO;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -11,9 +13,10 @@ import java.util.List;
  */
 public interface CourseService extends GenericService<Course, Integer>{
 
-    Course getCourseByName(String courseName);
+    void addCourse(Course course);
+    void removeCourse(Course course);
+    void updateCourse(CourseRegistrationDTO courseRegistrationDTO);
 
-    List<Course> getCourseListBySeason(int seasonID);
-
-    List<Course> getCourseListByDate(LocalDate date);
+    List<Course> getActiveList();
+    List<Course> getInactiveList();
 }

@@ -2,7 +2,9 @@ package com.aimacademyla.service;
 
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
+import com.aimacademyla.model.dto.CourseSessionDTO;
 
+import javax.validation.constraints.Null;
 import java.util.List;
 
 /**
@@ -10,10 +12,7 @@ import java.util.List;
  */
 public interface CourseSessionService extends GenericService<CourseSession, Integer> {
 
-    List<CourseSession> getCourseSessionsForCourse(Course course);
-    List<CourseSession> getCourseSessionsForCourse(int courseID);
-
-    int generateCourseSessionIDAfterSave(CourseSession courseSession);
-
-    void remove(List<CourseSession> courseSessionList);
+    void addCourseSession(CourseSessionDTO courseSessionDTO);
+    void updateCourseSession(CourseSessionDTO courseSessionDTO);
+    void removeCourseSession(CourseSessionDTO courseSessionDTO);
 }

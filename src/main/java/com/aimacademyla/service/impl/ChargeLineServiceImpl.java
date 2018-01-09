@@ -1,21 +1,17 @@
 package com.aimacademyla.service.impl;
 
+import com.aimacademyla.dao.ChargeDAO;
 import com.aimacademyla.dao.ChargeLineDAO;
 import com.aimacademyla.dao.GenericDAO;
-import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.ChargeLine;
-import com.aimacademyla.model.Course;
 import com.aimacademyla.service.ChargeLineService;
 import com.aimacademyla.service.ChargeService;
-import com.aimacademyla.service.CourseService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by davidkim on 4/6/17.
@@ -27,40 +23,62 @@ import java.util.List;
 public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer> implements ChargeLineService{
 
     private ChargeLineDAO chargeLineDAO;
-    private CourseService courseService;
+    private ChargeService chargeService;
+    private ChargeDAO chargeDAO;
 
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.CHARGE_LINE;
+    private static final Logger logger = LogManager.getLogger(ChargeLineServiceImpl.class.getName());
 
     @Autowired
-    public ChargeLineServiceImpl(@Qualifier("chargeLineDAO") GenericDAO<ChargeLine, Integer> genericDAO, CourseService courseService){
+    public ChargeLineServiceImpl(@Qualifier("chargeLineDAO") GenericDAO<ChargeLine, Integer> genericDAO,
+                                 ChargeService chargeService,
+                                 ChargeDAO chargeDAO){
         super(genericDAO);
         this.chargeLineDAO = (ChargeLineDAO) genericDAO;
-        this.courseService = courseService;
+        this.chargeService = chargeService;
+        this.chargeDAO = chargeDAO;
     }
 
     @Override
-    public void remove(List<ChargeLine> chargeLineList){
-        for(ChargeLine chargeLine : chargeLineList)
-            remove(chargeLine);
+    public void addChargeLine(ChargeLine chargeLine){
+        Charge charge = chargeDAO.get(chargeLine.getCharge().getChargeID());
+        charge = chargeDAO.loadCollections(charge);
+
+        charge.addChargeLine(chargeLine);
+        chargeService.updateCharge(charge);
+
+        //Have to update chargeLine to cascade updates to associated Attendance entity
+        chargeLineDAO.update(chargeLine);
     }
 
     @Override
-    public ChargeLine getChargeLineByAttendanceID(int attendanceID) {
-        return chargeLineDAO.getChargeLineByAttendanceID(attendanceID);
+    public void updateChargeLine(ChargeLine chargeLine){
+        Charge charge = chargeService.get(chargeLine.getCharge().getChargeID());
+        charge = chargeDAO.loadCollections(charge);
+
+        charge.updateChargeLine(chargeLine);
+        chargeService.updateCharge(charge);
+
+        //Have to update chargeLine to cascade updates to associated Attendance entity
+        chargeLineDAO.update(chargeLine);
     }
 
     @Override
-    public List<ChargeLine> getChargeLinesByCharge(Charge charge){
-        List<ChargeLine> chargeLineList = chargeLineDAO.getChargeLinesByCharge(charge);
+    public void removeChargeLine(ChargeLine chargeLine){
+        Charge charge = chargeService.get(chargeLine.getCharge().getChargeID());
+        charge = chargeDAO.loadCollections(charge);
 
-        if(chargeLineList == null)
-            chargeLineList = new ArrayList<>();
+        charge.removeChargeLine(chargeLine);
 
-        return chargeLineList;
-    }
+        if(charge.getNumChargeLines() > 0){
+            logger.debug("Updating Charge: " + charge.getChargeID() + " after removing chargeLine");
+            chargeService.updateCharge(charge);
 
-    @Override
-    public AIMEntityType getAIMEntityType(){
-        return AIM_ENTITY_TYPE;
+            //Have to update chargeLine to cascade updates to associated Attendance entity
+            chargeLineDAO.update(chargeLine);
+            return;
+        }
+
+        logger.debug("Removing Charge: " + charge.getChargeID());
+        chargeService.removeCharge(charge);
     }
 }

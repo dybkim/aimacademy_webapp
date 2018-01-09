@@ -10,6 +10,4 @@ import java.util.List;
  */
 public interface MonthlyFinancesSummaryService extends GenericService<MonthlyFinancesSummary, Integer>{
     MonthlyFinancesSummary getMonthlyFinancesSummary(LocalDate date);
-    List<MonthlyFinancesSummary> getMonthlyFinancesSummariesInDateRange(LocalDate startDate, LocalDate endDate);
-    MonthlyFinancesSummary getMonthlyFinancesSummaryCurrent();
 }

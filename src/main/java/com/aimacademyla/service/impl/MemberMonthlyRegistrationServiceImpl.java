@@ -1,11 +1,18 @@
 package com.aimacademyla.service.impl;
 
-import com.aimacademyla.dao.GenericDAO;
-import com.aimacademyla.dao.MemberDAO;
-import com.aimacademyla.dao.MemberMonthlyRegistrationDAO;
+import com.aimacademyla.dao.*;
 import com.aimacademyla.dao.factory.DAOFactory;
+import com.aimacademyla.dao.flow.impl.ChargeDAOAccessFlow;
+import com.aimacademyla.dao.flow.impl.MemberMonthlyRegistrationDAOAccessFlow;
+import com.aimacademyla.dao.flow.impl.MonthlyFinancesSummaryDAOAccessFlow;
+import com.aimacademyla.dao.flow.impl.SeasonDAOAccessFlow;
 import com.aimacademyla.model.*;
+import com.aimacademyla.model.builder.entity.ChargeBuilder;
+import com.aimacademyla.model.builder.entity.ChargeLineBuilder;
+import com.aimacademyla.model.builder.entity.MemberMonthlyRegistrationBuilder;
+import com.aimacademyla.model.dto.MemberListDTO;
 import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.enums.BillableUnitType;
 import com.aimacademyla.model.initializer.impl.MemberMonthlyRegistrationDefaultValueInitializer;
 import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -25,25 +33,103 @@ import java.util.List;
 public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<MemberMonthlyRegistration, Integer> implements MemberMonthlyRegistrationService {
 
     private MemberMonthlyRegistrationDAO memberMonthlyRegistrationDAO;
+    private ChargeLineService chargeLineService;
     private ChargeService chargeService;
-    private CourseService courseService;
+    private ChargeDAO chargeDAO;
+    private CourseDAO courseDAO;
     private MemberDAO memberDAO;
-
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.MEMBER_MONTHLY_REGISTRATION;
 
     @Autowired
     public MemberMonthlyRegistrationServiceImpl(@Qualifier("memberMonthlyRegistrationDAO") GenericDAO<MemberMonthlyRegistration, Integer> genericDAO,
+                                                ChargeLineService chargeLineService,
                                                 ChargeService chargeService,
-                                                CourseService courseService,
+                                                ChargeDAO chargeDAO,
+                                                CourseDAO courseDAO,
                                                 MemberDAO memberDAO){
         super(genericDAO);
-        this.memberMonthlyRegistrationDAO = (MemberMonthlyRegistrationDAO) genericDAO;
+        this.chargeLineService = chargeLineService;
         this.chargeService = chargeService;
-        this.courseService = courseService;
+        this.memberMonthlyRegistrationDAO = (MemberMonthlyRegistrationDAO) genericDAO;
+        this.chargeDAO = chargeDAO;
+        this.courseDAO = courseDAO;
         this.memberDAO = memberDAO;
     }
 
-    /**
+    @Override
+    public void updateMemberMonthlyRegistrationList(MemberListDTO memberListDTO){
+        HashMap<Integer, Boolean> isActiveMemberHashMap = memberListDTO.getIsActiveMemberHashMap();
+        LocalDate cycleStartDate = memberListDTO.getCycleStartDate();
+        Course openStudyCourse = courseDAO.get(Course.OPEN_STUDY_ID);
+
+        for(int memberID : isActiveMemberHashMap.keySet()){
+            Member member = memberDAO.get(memberID);
+            MemberMonthlyRegistration memberMonthlyRegistration = (MemberMonthlyRegistration) new MemberMonthlyRegistrationDAOAccessFlow(getDAOFactory())
+                                                                                                .addQueryParameter(member)
+                                                                                                .addQueryParameter(cycleStartDate)
+                                                                                                .get();
+            Boolean memberIsRegistered = isActiveMemberHashMap.get(memberID);
+
+            if(memberIsRegistered == null)
+                memberIsRegistered = false;
+
+            Season season = (Season) new SeasonDAOAccessFlow(getDAOFactory())
+                                         .addQueryParameter(cycleStartDate)
+                                         .get();
+
+            if(memberIsRegistered){
+                if(memberMonthlyRegistration == null || memberMonthlyRegistration.getMemberMonthlyRegistrationID() == MemberMonthlyRegistration.INACTIVE){
+                    memberMonthlyRegistration = new MemberMonthlyRegistrationBuilder()
+                                                    .setMember(member)
+                                                    .setCycleStartDate(cycleStartDate)
+                                                    .setSeason(season)
+                                                    .setMembershipCharge(member.getMembershipRate())
+                                                    .build();
+
+                    Charge charge = (Charge) new ChargeDAOAccessFlow(getDAOFactory())
+                                                .addQueryParameter(member)
+                                                .addQueryParameter(openStudyCourse)
+                                                .addQueryParameter(cycleStartDate)
+                                                .get();
+
+                    ChargeLine chargeLine = new ChargeLineBuilder()
+                                                .setBillableUnitsBilled(BigDecimal.ONE)
+                                                .setChargeAmount(member.getMembershipRate())
+                                                .setCharge(charge)
+                                                .setDateCharged(cycleStartDate)
+                                                .build();
+
+                    chargeLineService.addChargeLine(chargeLine);
+                    memberMonthlyRegistration.setCharge(charge);
+                    memberMonthlyRegistrationDAO.update(memberMonthlyRegistration);
+                }
+            }
+
+            else{
+                if(memberMonthlyRegistration.getMemberMonthlyRegistrationID() != MemberMonthlyRegistration.INACTIVE){
+                    Charge charge = (Charge) new ChargeDAOAccessFlow(getDAOFactory())
+                            .addQueryParameter(member)
+                            .addQueryParameter(openStudyCourse)
+                            .addQueryParameter(cycleStartDate)
+                            .get();
+
+                    charge = chargeService.loadCollections(charge);
+                    List<ChargeLine> chargeLineList = new ArrayList<>(charge.getChargeLineSet());
+
+                    if(chargeLineList.isEmpty()){
+                        chargeService.removeCharge(charge);
+                        memberMonthlyRegistrationDAO.remove(memberMonthlyRegistration);
+                        return;
+                    }
+
+                    ChargeLine chargeLine = new ArrayList<>(charge.getChargeLineSet()).get(0);
+                    memberMonthlyRegistrationDAO.remove(memberMonthlyRegistration);
+                    chargeLineService.removeChargeLine(chargeLine);
+                }
+            }
+        }
+    }
+
+    /*
      * Charge is generated if none exists
      * chargeAmount for OpenStudy is set as a constant value since it is not calculated per hour
      *
@@ -51,89 +137,86 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
      * TODO: MUST IMPLEMENT A CHECK TO SEE IF OPEN STUDY COURSE ENTITY EXISTS
      */
     @Override
-    public void add(MemberMonthlyRegistration memberMonthlyRegistration) {
-        super.add(memberMonthlyRegistration);
+    public void addMemberMonthlyRegistration(MemberMonthlyRegistration memberMonthlyRegistration) {
+        Member member = memberMonthlyRegistration.getMember();
+        Course course = courseDAO.get(Course.OPEN_STUDY_ID);
+        Charge charge = (Charge) new ChargeDAOAccessFlow(getDAOFactory())
+                                        .addQueryParameter(member)
+                                        .addQueryParameter(course)
+                                        .addQueryParameter(memberMonthlyRegistration.getCycleStartDate())
+                                        .get();
 
-        Charge charge = chargeService.getChargeByMemberForCourseByDate(memberMonthlyRegistration.getMemberID(), Course.OPEN_STUDY_ID, memberMonthlyRegistration.getCycleStartDate());
+        ChargeLine chargeLine = new ChargeLineBuilder()
+                                        .setCharge(charge)
+                                        .setChargeAmount(member.getMembershipRate())
+                                        .setBillableUnitsBilled(BigDecimal.ONE)
+                                        .setDateCharged(memberMonthlyRegistration.getCycleStartDate())
+                                        .build();
+
         charge.setChargeAmount(memberMonthlyRegistration.getMembershipCharge());
         charge.setBillableUnitsBilled(BigDecimal.ONE);
-        chargeService.add(charge);
+        chargeLineService.addChargeLine(chargeLine);
+
+        add(memberMonthlyRegistration);
     }
 
     @Override
-    public void update(MemberMonthlyRegistration memberMonthlyRegistration) {
-        super.update(memberMonthlyRegistration);
+    public void updateMemberMonthlyRegistration(MemberMonthlyRegistration memberMonthlyRegistration) {
+        Member member = memberMonthlyRegistration.getMember();
+        Course course = courseDAO.get(Course.OPEN_STUDY_ID);
+        Charge charge = (Charge) new ChargeDAOAccessFlow(getDAOFactory())
+                .addQueryParameter(member)
+                .addQueryParameter(course)
+                .addQueryParameter(memberMonthlyRegistration.getCycleStartDate())
+                .get();
 
-        Charge charge = chargeService.getChargeByMemberForCourseByDate(memberMonthlyRegistration.getMemberID(), Course.OPEN_STUDY_ID, memberMonthlyRegistration.getCycleStartDate());
-        charge.setChargeAmount(memberMonthlyRegistration.getMembershipCharge());
-        charge.setBillableUnitsBilled(BigDecimal.ONE);
-        chargeService.update(charge);
+        charge = chargeService.loadCollections(charge);
+
+        ChargeLine chargeLine;
+
+        if(!charge.getChargeLineSet().isEmpty())
+            chargeLine = new ArrayList<>(charge.getChargeLineSet()).get(0);
+
+        else
+            chargeLine = new ChargeLineBuilder().setCharge(charge)
+                                                .setChargeAmount(member.getMembershipRate())
+                                                .setBillableUnitsBilled(BigDecimal.ONE)
+                                                .setDateCharged(memberMonthlyRegistration.getCycleStartDate())
+                                                .build();
+
+        chargeLine.setChargeAmount(member.getMembershipRate());
+        charge.updateChargeLine(chargeLine);
+
+        chargeLineService.updateChargeLine(chargeLine);
+
+        update(memberMonthlyRegistration);
     }
 
     @Override
-    public void remove(MemberMonthlyRegistration memberMonthlyRegistration) {
-        Charge charge = chargeService.getChargeByMemberForCourseByDate(memberMonthlyRegistration.getMemberID(), Course.OPEN_STUDY_ID, memberMonthlyRegistration.getCycleStartDate());
+    public void removeMemberMonthlyRegistration(MemberMonthlyRegistration memberMonthlyRegistration) {
+        Member member = memberMonthlyRegistration.getMember();
+        Course course = courseDAO.get(Course.OPEN_STUDY_ID);
 
-        if(charge != null)
-            chargeService.remove(charge);
+        Charge charge = (Charge) new ChargeDAOAccessFlow(getDAOFactory())
+                .addQueryParameter(member)
+                .addQueryParameter(course)
+                .addQueryParameter(memberMonthlyRegistration.getCycleStartDate())
+                .get();
 
-        super.remove(memberMonthlyRegistration);
-    }
+        charge = chargeService.loadCollections(charge);
 
-    @Override
-    public MemberMonthlyRegistration getMemberMonthlyRegistrationForMemberByDate(Member member, LocalDate date) {
-        return memberMonthlyRegistrationDAO.getMemberMonthlyRegistrationForMemberByDate(member, date);
-    }
-
-    @Override
-    public List<MemberMonthlyRegistration> getMemberMonthlyRegistrationList(LocalDate date) {
-        return memberMonthlyRegistrationDAO.getMemberMonthlyRegistrationList(date);
-    }
-
-    @Override
-    public void addMemberMonthlyRegistrationList(List<MemberMonthlyRegistration> memberMonthlyRegistrationList){
-        for(MemberMonthlyRegistration memberMonthlyRegistration : memberMonthlyRegistrationList)
-            add(memberMonthlyRegistration);
-    }
-
-    @Override
-    public void updateMemberMonthlyRegistrationList(List<MemberMonthlyRegistration> memberMonthlyRegistrationList){
-        for(MemberMonthlyRegistration memberMonthlyRegistration : memberMonthlyRegistrationList)
-            update(memberMonthlyRegistration);
-    }
-
-    @Override
-    public void removeMemberMonthlyRegistrationList(List<MemberMonthlyRegistration> memberMonthlyRegistrationList){
-        for(MemberMonthlyRegistration memberMonthlyRegistration : memberMonthlyRegistrationList)
+        if(charge.getChargeLineSet().isEmpty()) {
+            chargeService.removeCharge(charge);
             remove(memberMonthlyRegistration);
-    }
-
-    @Override
-    public List<Member> getActiveMembers() {return getActiveMembersForMonth(LocalDate.now());}
-
-    @Override
-    public List<Member> getActiveMembersForMonth(LocalDate date){
-        List<MemberMonthlyRegistration> memberMonthlyRegistrationList = getMemberMonthlyRegistrationList(date);
-        List<Member> memberList = new ArrayList<>();
-
-        for(MemberMonthlyRegistration memberMonthlyRegistration : memberMonthlyRegistrationList){
-            memberList.add(memberDAO.get(memberMonthlyRegistration.getMemberID()));
+            return;
         }
 
-        return memberList;
+        ChargeLine chargeLine = new ArrayList<>(charge.getChargeLineSet()).get(0);
+
+        if(chargeDAO.get(charge.getChargeID()) != null)
+            chargeLineService.removeChargeLine(chargeLine);
+
+        remove(memberMonthlyRegistration);
     }
 
-    private List<MemberMonthlyRegistration> generateMemberMonthlyRegistrationListForMonth(List<Integer> memberIDList, LocalDate date){
-        List<MemberMonthlyRegistration> memberMonthlyRegistrationList = new ArrayList<>();
-
-        for(int memberID :  memberIDList)
-            memberMonthlyRegistrationList.add(new MemberMonthlyRegistrationDefaultValueInitializer(getDaoFactory()).setMemberID(memberID).setLocalDate(date).initialize());
-
-        return memberMonthlyRegistrationList;
-    }
-
-    @Override
-    public AIMEntityType getAIMEntityType(){
-        return AIM_ENTITY_TYPE;
-    }
 }

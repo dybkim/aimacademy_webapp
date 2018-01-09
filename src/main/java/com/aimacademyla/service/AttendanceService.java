@@ -14,18 +14,4 @@ import java.util.List;
  */
 public interface AttendanceService extends GenericService<Attendance, Integer>{
 
-    List<Attendance> getAttendanceForCourse(Course course);
-    List<Attendance> getAttendanceForCourseForDate(Course course, LocalDate date);
-
-    List<Attendance> getAttendanceForCourseSession(CourseSession courseSession);
-    List<Attendance> getAttendanceForCourseSession(int courseSessionID);
-    List<List<Attendance>> getAttendanceListsForCourseSessionList(List<CourseSession> courseSessionList);
-
-    List<Attendance> getAttendanceForMember(Member member);
-    List<Attendance> getAttendanceForMemberForCourse(Member member, Course course);
-    Attendance getAttendanceForMemberForCourseForDate(Member member, Course course, LocalDate date);
-
-    void addOrUpdateAttendanceList(List<Attendance> attendanceList);
-    void remove(List<Attendance> attendanceList);
-
 }

@@ -2,6 +2,7 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.SeasonDAO;
+import com.aimacademyla.dao.flow.impl.SeasonDAOAccessFlow;
 import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.Season;
 import com.aimacademyla.service.SeasonService;
@@ -18,28 +19,15 @@ import java.time.LocalDate;
 @Service
 public class SeasonServiceImpl extends GenericServiceImpl<Season, Integer> implements SeasonService{
 
-    private SeasonDAO seasonDAO;
-
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.SEASON;
-
     @Autowired
     public SeasonServiceImpl(@Qualifier("seasonDAO") GenericDAO<Season, Integer> genericDAO){
         super(genericDAO);
-        this.seasonDAO = (SeasonDAO) genericDAO;
     }
 
     @Override
     public Season getSeason(LocalDate date) {
-        Season season = seasonDAO.getSeason(date);
-
-        if(season == null)
-            season = seasonDAO.get(Season.NO_SEASON_FOUND);
-
-        return season;
-    }
-
-    @Override
-    public AIMEntityType getAIMEntityType(){
-        return AIM_ENTITY_TYPE;
+        return (Season) new SeasonDAOAccessFlow(getDAOFactory())
+                                    .addQueryParameter(date)
+                                    .get();
     }
 }

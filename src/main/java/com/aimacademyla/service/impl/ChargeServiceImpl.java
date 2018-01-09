@@ -1,19 +1,26 @@
 package com.aimacademyla.service.impl;
 
-import com.aimacademyla.dao.ChargeDAO;
-import com.aimacademyla.dao.CourseDAO;
-import com.aimacademyla.dao.GenericDAO;
+import com.aimacademyla.dao.*;
+import com.aimacademyla.dao.flow.impl.ChargeDAOAccessFlow;
+import com.aimacademyla.dao.flow.impl.MonthlyFinancesSummaryDAOAccessFlow;
+import com.aimacademyla.dao.flow.impl.PaymentDAOAccessFlow;
 import com.aimacademyla.model.*;
-import com.aimacademyla.model.initializer.impl.ChargeDefaultValueInitializer;
-import com.aimacademyla.model.enums.AIMEntityType;
-import com.aimacademyla.service.*;
+import com.aimacademyla.model.builder.entity.ChargeBuilder;
+import com.aimacademyla.service.ChargeService;
+import com.aimacademyla.service.MonthlyFinancesSummaryService;
+import com.aimacademyla.service.PaymentService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by davidkim on 4/10/17.
@@ -24,236 +31,153 @@ import java.util.List;
 @Service
 public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> implements ChargeService{
 
-    private ChargeDAO chargeDAO;
-    private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
-    private ChargeLineService chargeLineService;
-    private CourseService courseService;
+    private static final Logger logger = LogManager.getLogger(ChargeServiceImpl.class.getName());
 
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.CHARGE;
+    private ChargeDAO chargeDAO;
+    private ChargeLineDAO chargeLineDAO;
+    private MonthlyFinancesSummaryService monthlyFinancesSummaryService;
+    private MonthlyFinancesSummaryDAO monthlyFinancesSummaryDAO;
+    private PaymentService paymentService;
+    private PaymentDAO paymentDAO;
 
     @Autowired
     public ChargeServiceImpl(@Qualifier("chargeDAO") GenericDAO<Charge, Integer> genericDAO,
-                             CourseService courseService,
+                             ChargeLineDAO chargeLineDAO,
                              MonthlyFinancesSummaryService monthlyFinancesSummaryService,
-                             ChargeLineService chargeLineService){
+                             MonthlyFinancesSummaryDAO monthlyFinancesSummaryDAO,
+                             PaymentService paymentService,
+                             PaymentDAO paymentDAO){
         super(genericDAO);
         this.chargeDAO = (ChargeDAO) genericDAO;
-        this.courseService = courseService;
+        this.chargeLineDAO = chargeLineDAO;
         this.monthlyFinancesSummaryService = monthlyFinancesSummaryService;
-        this.chargeLineService = chargeLineService;
+        this.monthlyFinancesSummaryDAO = monthlyFinancesSummaryDAO;
+        this.paymentService = paymentService;
+        this.paymentDAO = paymentDAO;
     }
 
     @Override
-    public void add(Charge charge) {
-        if(charge.getCycleStartDate() != null){
-            MonthlyFinancesSummary monthlyFinancesSummary = monthlyFinancesSummaryService.getMonthlyFinancesSummary(charge.getCycleStartDate());
+    @SuppressWarnings("unchecked")
+    public List<Charge> getList(Member member, LocalDate date){
+        return new ChargeDAOAccessFlow(getDAOFactory())
+                        .addQueryParameter(member)
+                        .addQueryParameter(date)
+                        .getList();
+    }
 
-            if(charge.getMonthlyFinancesSummaryID() == null)
-                charge.setMonthlyFinancesSummaryID(monthlyFinancesSummary.getMonthlyFinancesSummaryID());
+    /*
+     * getTransientChargeList method implementation combines Charges that are of the same Course into one Charge
+     */
+    @Override
+    public List<Charge> getTransientChargeList(Member member, LocalDate cycleStartDate, LocalDate cycleEndDate){
+        Map<Integer, Charge> chargeMap = new HashMap<>();
+        List<ChargeLine> chargeLineList = chargeLineDAO.getList(member, cycleStartDate, cycleEndDate);
 
-            monthlyFinancesSummary.addCharge(charge);
-            monthlyFinancesSummaryService.update(monthlyFinancesSummary);
+        for(ChargeLine chargeLine : chargeLineList){
+            Course course = chargeLine.getCharge().getCourse();
+            int courseID = course.getCourseID();
+            Charge persistedCharge = chargeLine.getCharge();
+            Charge transientCharge = chargeMap.get(courseID);
+            if(transientCharge == null){
+                transientCharge = new ChargeBuilder()
+                                .setNumChargeLines(0)
+                                .setDescription(persistedCharge.getDescription())
+                                .setBillableUnitsBilled(BigDecimal.ZERO)
+                                .setBillableUnitsType(persistedCharge.getBillableUnitType())
+                                .setChargeAmount(BigDecimal.ZERO)
+                                .setCourse(course)
+                                .build();
+                chargeMap.put(courseID, transientCharge);
+            }
+            transientCharge.addChargeLine(chargeLine);
         }
+        return new ArrayList<>(chargeMap.values());
+    }
 
+    @Override
+    public  void addCharge(Charge charge){
+        Payment payment = getPayment(charge);
+        payment.addCharge(charge);
+
+        //Need to update monthlyFinancesSummary again to add Charge and update Payment via cascade
+        MonthlyFinancesSummary monthlyFinancesSummary = getMonthlyFinancesSummary(charge);
+        logger.debug("Adding Charge: " + charge.getChargeID() + " for MonthlyFinancesSummary: " + monthlyFinancesSummary.getMonthlyFinancesSummaryID());
+        monthlyFinancesSummary.addCharge(charge);
+        monthlyFinancesSummary.updatePayment(payment);
+        monthlyFinancesSummaryService.update(monthlyFinancesSummary);
+        logger.debug("Added Charge for MonthlyFinancesSummary: "+ monthlyFinancesSummary.getMonthlyFinancesSummaryID());
+
+        //Need to add charge to persist chargeLines
         chargeDAO.add(charge);
     }
 
     @Override
-    public void update(Charge charge){
-        Charge previousCharge = chargeDAO.get(charge.getChargeID());
+    public void updateCharge(Charge charge){
+        Payment payment = getPayment(charge);
+        payment.updateCharge(charge);
 
-        if(charge.getCycleStartDate() != null) {
-            MonthlyFinancesSummary monthlyFinancesSummary = monthlyFinancesSummaryService.getMonthlyFinancesSummary(charge.getCycleStartDate());
+        //Need to update monthlyFinancesSummary again to update Charge and update Payment via cascade
+        MonthlyFinancesSummary monthlyFinancesSummary = getMonthlyFinancesSummary(charge);
+        logger.debug("Updating Charge: " + charge.getChargeID() + " for MonthlyFinancesSummary: " + monthlyFinancesSummary.getMonthlyFinancesSummaryID());
+        monthlyFinancesSummary.updateCharge(charge);
+        monthlyFinancesSummary.updatePayment(payment);
+        monthlyFinancesSummaryService.update(monthlyFinancesSummary);
+        logger.debug("Updated Charge for MonthlyFinancesSummary: "+ monthlyFinancesSummary.getMonthlyFinancesSummaryID());
 
-            if(charge.getMonthlyFinancesSummaryID() == null)
-                charge.setMonthlyFinancesSummaryID(monthlyFinancesSummary.getMonthlyFinancesSummaryID());
-
-            if(previousCharge == null){
-                monthlyFinancesSummary.addCharge(charge);
-                monthlyFinancesSummaryService.update(monthlyFinancesSummary);
-
-                chargeDAO.update(charge);
-                return;
-            }
-
-            monthlyFinancesSummary.updateCharge(previousCharge, charge);
-            monthlyFinancesSummaryService.update(monthlyFinancesSummary);
-        }
-
+        //Need to update charge to cascade update detached chargeLines
         chargeDAO.update(charge);
     }
 
     @Override
-    public void remove(Charge charge){
-        charge = chargeDAO.get(charge.getChargeID());
-        MonthlyFinancesSummary monthlyFinancesSummary = monthlyFinancesSummaryService.getMonthlyFinancesSummary(charge.getCycleStartDate());
-        if(monthlyFinancesSummary.getNumTotalCharges() <= 0){
-            chargeDAO.remove(charge);
-            return;
-        }
+    public void removeCharge(Charge charge){
+        Payment payment = getPayment(charge);
+        payment.removeCharge(charge);
 
+        //Need to update monthlyFinancesSummary to remove Charge and update Payment via cascade
+        MonthlyFinancesSummary monthlyFinancesSummary = getMonthlyFinancesSummary(charge);
         monthlyFinancesSummary.removeCharge(charge);
+        monthlyFinancesSummary.updatePayment(payment);
         monthlyFinancesSummaryService.update(monthlyFinancesSummary);
-        chargeDAO.remove(charge);
+        logger.debug("Removed Charge from MonthlyFinancesSummary");
     }
 
-    @Override
-    public List<Charge> getChargesByMember(Member member) {
-        return getChargesByMember(member.getMemberID());
-    }
-
-    @Override
-    public List<Charge> getChargesByMember(int memberID){
-        return chargeDAO.getChargesByMember(memberID);
-    }
-
-    @Override
-    public List<Charge> getChargesByMemberForCourse(Member member, Course course) {
-        return getChargesByMemberForCourse(member.getMemberID(), course.getCourseID());
-    }
-
-    @Override
-    public List<Charge> getChargesByMemberForCourse(int memberID, int courseID){
-        return chargeDAO.getChargesByMemberForCourse(memberID, courseID);
-    }
-
-    @Override
-    public List<Charge> getChargesByMemberByDate(Member member, LocalDate localDate) {
-        return getChargesByMemberByDate(member.getMemberID(), localDate);
-    }
-
-    @Override
-    public List<Charge> getChargesByMemberByDate(int memberID, LocalDate localDate){
-        return chargeDAO.getChargesByMemberByDate(memberID, localDate);
-    }
-
-    @Override
-    public Charge getChargeByMemberForCourseByDate(Member member, Course course, LocalDate date){
-
-        return getChargeByMemberForCourseByDate(member.getMemberID(), course.getCourseID(), date);
-    }
-
-    @Override
-    public Charge getChargeByMemberForCourseByDate(int memberID, int courseID, LocalDate date){
-        Charge charge = chargeDAO.getChargeByMemberForCourseByDate(memberID, courseID, date);
-
-        if(charge == null){
-            charge = new ChargeDefaultValueInitializer(getDaoFactory()).setCourseID(courseID).setMemberID(memberID).setLocalDate(date).initialize();
-            add(charge);
+    private Payment getPayment(Charge charge){
+        Payment payment = charge.getPayment();
+        if(payment != null) {
+            payment = paymentService.get(payment.getPaymentID());
+            if(payment != null){
+                payment = paymentDAO.loadCollections(payment);
+                return payment;
+            }
         }
 
-        return charge;
+        payment = (Payment) new PaymentDAOAccessFlow(getDAOFactory())
+                .addQueryParameter(charge.getCycleStartDate())
+                .addQueryParameter(charge.getMember())
+                .get();
+
+        payment = paymentDAO.loadCollections(payment);
+        charge.setPayment(payment);
+        return payment;
     }
 
-    @Override
-    public List<Charge> getChargesByCourse(int courseID) {
-        return chargeDAO.getChargesByCourse(courseID);
-    }
-
-    @Override
-    public List<Charge> getChargesByCourse(Course course) {
-        return chargeDAO.getChargesByCourse(course);
-    }
-
-    @Override
-    public List<Charge> getChargesByDate(LocalDate localDate){
-        return chargeDAO.getChargesByDate(localDate);
-    }
-
-    @Override
-    public void remove(List<Charge> chargeList){
-        for(Charge charge : chargeList)
-            remove(charge);
-    }
-
-    @Override
-    public void addChargeLine(ChargeLine chargeLine){
-        BigDecimal chargeLineAmount = chargeLine.getTotalCharge();
-        Charge charge = chargeDAO.get(chargeLine.getChargeID());
-
-        Course course = courseService.get(charge.getCourseID());
-
-        BigDecimal chargeAmount = charge.getChargeAmount().add(chargeLineAmount);
-        charge.setChargeAmount(chargeAmount);
-
-        BigDecimal billableUnitsBilled = charge.getBillableUnitsBilled();
-
-        if(billableUnitsBilled == null)
-            billableUnitsBilled = BigDecimal.ZERO;
-
-        billableUnitsBilled = billableUnitsBilled.add(course.getBillableUnitDuration());
-        charge.setBillableUnitsBilled(billableUnitsBilled);
-
-        int numChargeLines = charge.getNumChargeLines() + 1;
-        charge.setNumChargeLines(numChargeLines);
-        update(charge);
-
-        chargeLineService.add(chargeLine);
-    }
-
-    @Override
-    public void updateChargeLine(ChargeLine chargeLine){
-        ChargeLine oldChargeLine = chargeLineService.get(chargeLine.getChargeLineID());
-        BigDecimal oldChargeLineAmount = oldChargeLine.getTotalCharge();
-        Charge charge = get(chargeLine.getChargeID());
-        Course course = courseService.get(charge.getCourseID());
-
-        BigDecimal billableUnitsBilled = charge.getBillableUnitsBilled();
-        if(billableUnitsBilled == null)
-            billableUnitsBilled = BigDecimal.ZERO;
-        BigDecimal oldHoursBilled = chargeLine.getBillableUnitsBilled();
-        if(oldHoursBilled == null)
-            oldHoursBilled = BigDecimal.ZERO;
-
-        billableUnitsBilled = billableUnitsBilled.subtract(oldHoursBilled);
-        billableUnitsBilled = billableUnitsBilled.add(course.getBillableUnitDuration());
-        charge.setBillableUnitsBilled(billableUnitsBilled);
-
-        if(billableUnitsBilled.equals(BigDecimal.ZERO))
-            charge.setBillableUnitsBilled(BigDecimal.ZERO);
-
-        BigDecimal chargeAmount = charge.getChargeAmount().subtract(oldChargeLineAmount).add(chargeLine.getTotalCharge());
-        charge.setChargeAmount(chargeAmount);
-        update(charge);
-        chargeLineService.update(chargeLine);
-    }
-
-    @Override
-    public void removeChargeLine(ChargeLine chargeLine){
-        BigDecimal chargeLineAmount = chargeLineService.get(chargeLine.getChargeLineID()).getTotalCharge();
-        Charge charge = get(chargeLine.getChargeID());
-
-        BigDecimal newChargeAmount = charge.getChargeAmount().subtract(chargeLineAmount);
-        charge.setChargeAmount(newChargeAmount);
-
-        BigDecimal billableUnitsBilled = charge.getBillableUnitsBilled();
-        if(billableUnitsBilled == null)
-            billableUnitsBilled = BigDecimal.ZERO;
-
-        BigDecimal chargeLineBillableUnitsBilled = chargeLine.getBillableUnitsBilled();
-        if(chargeLineBillableUnitsBilled == null)
-            chargeLineBillableUnitsBilled = BigDecimal.ZERO;
-
-        billableUnitsBilled = billableUnitsBilled.subtract(chargeLineBillableUnitsBilled);
-        charge.setBillableUnitsBilled(billableUnitsBilled);
-
-        int numChargeLines = charge.getNumChargeLines() - 1;
-        charge.setNumChargeLines(numChargeLines);
-
-        if(numChargeLines > 0){
-            update(charge);
-            chargeLineService.remove(chargeLine);
+    private MonthlyFinancesSummary getMonthlyFinancesSummary(Charge charge){
+        MonthlyFinancesSummary monthlyFinancesSummary = charge.getMonthlyFinancesSummary();
+        if(monthlyFinancesSummary != null){
+            monthlyFinancesSummary = monthlyFinancesSummaryService.get(monthlyFinancesSummary.getMonthlyFinancesSummaryID());
+            if(monthlyFinancesSummary != null){
+                monthlyFinancesSummary = monthlyFinancesSummaryDAO.loadCollections(monthlyFinancesSummary);
+                return monthlyFinancesSummary;
+            }
         }
 
-        /*
-         * chargeLine entities are deleted when charges are deleted due to cascading settings
-         */
-        else
-           remove(charge);
-    }
+        monthlyFinancesSummary = (MonthlyFinancesSummary) new MonthlyFinancesSummaryDAOAccessFlow(getDAOFactory())
+                .addQueryParameter(charge.getCycleStartDate())
+                .get();
 
-    @Override
-    public AIMEntityType getAIMEntityType(){
-        return AIM_ENTITY_TYPE;
+        monthlyFinancesSummary = monthlyFinancesSummaryDAO.loadCollections(monthlyFinancesSummary);
+        charge.setMonthlyFinancesSummary(monthlyFinancesSummary);
+
+        return monthlyFinancesSummary;
     }
 }

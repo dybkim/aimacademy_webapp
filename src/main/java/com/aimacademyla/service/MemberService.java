@@ -12,13 +12,4 @@ import java.util.List;
  */
 public interface MemberService extends GenericService<Member, Integer>{
 
-    List<Member> getMembersByCourse(Course course);
-
-    List<Member> getActiveMembersByCourse(Course course);
-
-    List<Member> getMemberListFromAttendanceList(List<Attendance> attendanceList);
-
-    List<Member> getPresentMemberListFromAttendanceList(List<Attendance> attendanceList);
-
-    void updateMemberList(List<Member> memberList);
 }

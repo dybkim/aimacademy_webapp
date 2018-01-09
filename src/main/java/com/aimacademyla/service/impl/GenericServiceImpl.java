@@ -2,26 +2,23 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.factory.DAOFactory;
-import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.service.GenericService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.List;
 
-/**
- * Created by davidkim on 6/23/17.
- */
-
 @Service
-public abstract class GenericServiceImpl<E, K> implements GenericService<E, K> {
+public abstract class GenericServiceImpl<T, K> implements GenericService<T, K> {
 
-    private GenericDAO<E,K> genericDAO;
+    private GenericDAO<T,K> genericDAO;
     private DAOFactory daoFactory;
+    private Class<T> entityClass;
 
-    public GenericServiceImpl(GenericDAO<E, K> genericDAO){
+    public GenericServiceImpl(GenericDAO<T, K> genericDAO){
         this.genericDAO = genericDAO;
+        this.entityClass = genericDAO.getEntityClass();
     }
 
     @Autowired
@@ -30,34 +27,51 @@ public abstract class GenericServiceImpl<E, K> implements GenericService<E, K> {
     }
 
     @Override
-    public void add(E entity) {
+    public void add(T entity) {
         genericDAO.add(entity);
     }
 
     @Override
-    public void update(E entity) {
+    public void update(T entity) {
         genericDAO.update(entity);
     }
 
     @Override
-    public void remove(E entity) {
+    public void remove(T entity) {
         genericDAO.remove(entity);
     }
 
     @Override
-    public E get(K key) {
+    public T get(K key) {
         return genericDAO.get(key);
     }
 
     @Override
-    public List<E> getList(){
+    public T getEager(K key){return genericDAO.getEager(key);}
+
+    @Override
+    public List<T> getList(){
         return genericDAO.getList();
     }
 
-    @Override
-    public abstract AIMEntityType getAIMEntityType();
-
-    public DAOFactory getDaoFactory() {
+    public DAOFactory getDAOFactory() {
         return daoFactory;
     }
+
+    @Override
+    public Class<T> getEntityClass(){
+        return entityClass;
+    }
+
+    @Override
+    public T loadCollection(T entity, Class classType){return genericDAO.loadCollection(entity, classType);}
+
+    @Override
+    public T loadCollections(T entity){return genericDAO.loadCollections(entity);}
+
+    @Override
+    public T loadSubcollections(T entity){return genericDAO.loadSubcollections(entity);}
+
+    @Override
+    public Collection<T> loadCollections(Collection<T> entityCollection){return genericDAO.loadCollections(entityCollection);}
 }

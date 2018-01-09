@@ -14,18 +14,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl extends GenericServiceImpl<User, String> implements UserService{
 
-    private UserDAO userDAO;
-
-    private final AIMEntityType AIM_ENTITY_TYPE = AIMEntityType.SEASON;
-
     @Autowired
     public UserServiceImpl(@Qualifier("userDAO")GenericDAO<User, String> genericDAO) {
         super(genericDAO);
-        userDAO = (UserDAO) genericDAO;
     }
 
-    @Override
-    public AIMEntityType getAIMEntityType() {
-        return AIM_ENTITY_TYPE;
-    }
 }

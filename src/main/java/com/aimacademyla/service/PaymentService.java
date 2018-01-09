@@ -9,13 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface PaymentService extends GenericService<Payment, Integer>{
-    List<Payment> getPaymentsByMember(Member member);
-
-    List<Payment> getPaymentsByMemberForCourse(Member member, Course course);
-
-    List<Payment> getPaymentsForDate(LocalDate date);
-
-    Payment getPaymentForMemberByDate(Member member, LocalDate date);
-
-    void remove(List<Payment> paymentList);
+    void addPayment(Payment payment);
+    void updatePayment(Payment payment);
+    void removePayment(Payment payment);
 }

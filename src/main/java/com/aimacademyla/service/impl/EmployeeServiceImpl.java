@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 @Service
 public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Integer> implements EmployeeService{
 
@@ -22,8 +26,14 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Integer> i
         this.employeeDAO = (EmployeeDAO) genericDAO;
     }
 
-    @Override
-    public AIMEntityType getAIMEntityType(){
-        return AIM_ENTITY_TYPE;
+    public List<Employee> getInactiveList(){
+        List<Employee> employeeList = getList();
+        List<Employee> inactiveList = new ArrayList<>();
+
+        for(Employee employee : employeeList)
+            if(!employee.getIsActive())
+                inactiveList.add(employee);
+
+        return inactiveList;
     }
 }
