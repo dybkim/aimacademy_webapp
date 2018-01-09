@@ -1,4 +1,4 @@
-package com.aimacademyla.controller;
+package com.aimacademyla.model.response;
 
 /**
  * Created by davidkim on 7/7/17.
