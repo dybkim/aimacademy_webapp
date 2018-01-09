@@ -1,9 +1,9 @@
 package com.aimacademyla.controller.student.rest;
 
 import com.aimacademyla.model.Member;
+import com.aimacademyla.model.MemberCourseRegistration;
 import com.aimacademyla.service.MemberService;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +38,8 @@ public class StudentListResource {
     @ResponseBody
     public String getStudentList(){
         List<Member> memberList = memberService.getList();
-        logger.debug("memberList size: " + memberList.size());
-        String jsonOutput = new Gson().toJson(memberList);
-        logger.debug("Constructed JSON:" + jsonOutput);
-        return jsonOutput;
+        Gson gson = new GsonBuilder().setExclusionStrategies(new MemberExclusionStrategy()).create();
+        return gson.toJson(memberList);
     }
 
     @RequestMapping("/getMembershipRates")
@@ -57,4 +55,15 @@ public class StudentListResource {
         return membershipRateHashMap;
     }
 
+    private class MemberExclusionStrategy implements ExclusionStrategy{
+        @Override
+        public boolean shouldSkipField(FieldAttributes fieldAttributes) {
+            return fieldAttributes.getName().contains("memberCourseRegistrationMap") || fieldAttributes.getName().contains("memberMonthlyRegistrationMap");
+        }
+
+        @Override
+        public boolean shouldSkipClass(Class<?> aClass) {
+            return false;
+        }
+    }
 }
