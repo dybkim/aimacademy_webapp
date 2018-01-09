@@ -62,6 +62,10 @@
     <!-- JQueryUI CSS -->
     <link href="<spring:url value="/resources/css/jquery-ui.min.css"/>" rel="stylesheet">
 
+    <!-- JQuery Validation Library -->
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+
     <![endif]-->
 </head>
 <body>
@@ -102,7 +106,4 @@
 </body>
 </html>
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
