@@ -12,9 +12,30 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <%@ include file="../template/navbar.jsp"%>
 <%@ include file="../template/sidebar.jsp"%>
+
+<script>
+    $(document).ready(function(){
+        $('#startDate').datepicker({
+            dateFormat: "mm/dd/yy"
+        });
+
+        $('#startDate').keydown(function (e) {
+            // Allow: backspace, delete, tab
+            if ($.inArray(e.keyCode, [46, 8, 9]) !== -1 || (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40) || ((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode === 191)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode > 1 || e.keyCode < 200))) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -66,11 +87,6 @@
     </div>
 </div>
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="<spring:url value="/resources/js/jquery-3.1.1.min.js"/>"<\/script>')</script>
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
 </body>
 </html>
