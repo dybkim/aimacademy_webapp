@@ -25,7 +25,7 @@ public class CourseSessionTimerTask extends SlackTimerTask{
         CourseSession courseSession = new CourseSession();
         LocalDate courseSessionDate = LocalDate.now();
         courseSession.setCourseSessionDate(courseSessionDate);
-        courseSession.setCourseID(course.getCourseID());
+        courseSession.setCourse(course);
 
         SlackAttachment courseSessionAttendanceAttachment = new CourseSessionAttendanceAttachmentBuilder(courseSession).build();
         SlackPreparedMessage slackPreparedMessage = new SlackPreparedMessage.Builder().withMessage(course.getCourseName() +  " " + courseSessionDate.getMonthValue() + "/" + courseSessionDate.getDayOfMonth() + "/" + courseSessionDate.getYear()).addAttachment(courseSessionAttendanceAttachment).build();
