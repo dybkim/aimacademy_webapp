@@ -33,6 +33,7 @@ public class StudentListController {
 
     private MemberService memberService;
     private CourseService courseService;
+    private CourseSessionService courseSessionService;
     private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
     private DAOFactory daoFactory;
 
@@ -40,10 +41,12 @@ public class StudentListController {
     @Autowired
     public StudentListController(MemberService memberService,
                                  CourseService courseService,
+                                 CourseSessionService courseSessionService,
                                  MemberMonthlyRegistrationService memberMonthlyRegistrationService,
                                  DAOFactory daoFactory){
         this.memberService = memberService;
         this.courseService = courseService;
+        this.courseSessionService = courseSessionService;
         this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
         this.daoFactory = daoFactory;
     }
@@ -128,8 +131,7 @@ public class StudentListController {
 
     @RequestMapping("/{memberID}")
     public String getStudentInfo(@PathVariable("memberID") int memberID, Model model){
-        Member member = memberService.get(memberID);
-        member = memberService.loadCollection(member, MemberCourseRegistration.class);
+        Member member = memberService.getEager(memberID);
 
         List<MemberCourseRegistration> memberCourseRegistrationList = new ArrayList<>(member.getMemberCourseRegistrationMap().values());
         List<Course> allCourseList = new ArrayList<>();
@@ -141,6 +143,9 @@ public class StudentListController {
 
         for(MemberCourseRegistration memberCourseRegistration : memberCourseRegistrationList){
             Course course = memberCourseRegistration.getCourse();
+            course = courseService.loadCollections(course);
+            course = courseService.loadSubcollections(course);
+
             int numCourseSessions = course.getCourseSessionSet().size();
 
             numCourseSessionsHashMap.put(course.getCourseID(), numCourseSessions);
