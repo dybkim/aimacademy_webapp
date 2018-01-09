@@ -20,10 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * CourseController handles all requests regarding a course's info and coursesessions.
@@ -63,12 +60,17 @@ public class CourseSessionController {
     @RequestMapping("/{courseID}")
     public String getCourseInfo(@PathVariable("courseID") int courseID, Model model){
         Course course = courseService.get(courseID);
+        course = courseService.loadCollections(course);
+
+        //Populate Attendance Collection for each CourseSession in courseSessionSet
+        Set<CourseSession> courseSessionSet = new HashSet<>(courseSessionService.loadCollections(course.getCourseSessionSet()));
+        course.setCourseSessionSet(courseSessionSet);
+
         List<Member> activeMemberList = course.getActiveMembers();
         List<Member> inactiveMemberList = course.getInactiveMembers();
 
         List<CourseSession> courseSessionList = new ArrayList<>(course.getCourseSessionSet());
-
-        Map<Integer, Integer> memberAttendanceCountMap = buildMemberAttendanceCountHashMap(course);
+        HashMap<Integer, Integer> memberAttendanceCountMap = new HashMap<>(course.getMemberAttendanceCountHashMap());
 
         model.addAttribute("memberList", activeMemberList);
         model.addAttribute("inactiveMemberList", inactiveMemberList);
@@ -78,16 +80,10 @@ public class CourseSessionController {
         return "/course/courseInfo";
     }
 
-    /**
-     * NOTE: When adding a CourseSession, a CourseSession is preemptively instantiated in the RDB. In the case that the query is cancelled,
-     * the CourseSession instance is deleted.
-     */
     @RequestMapping(value="/{courseID}/addCourseSession")
     public String addCourseSession(@PathVariable("courseID") int courseID, Model model){
         Course course = courseService.get(courseID);
         CourseSessionDTO courseSessionDTO = new CourseSessionDTODefaultValueInitializer(daoFactory).setCourse(course).initialize();
-        logger.debug("CourseSession's course is: " + course.getCourseName());
-        logger.debug("Number of Members: " + courseSessionDTO.getAttendanceList().size());
         model.addAttribute("courseSessionDTO", courseSessionDTO);
 
         return "/course/addCourseSession";
@@ -99,9 +95,8 @@ public class CourseSessionController {
          * Propagate courseSession's Course field inside this controller method instead of in the JSP because it's simpler to set the values
          * in this method using a converter
          */
-        Course course = courseService.get(courseID);
+        Course course = courseService.getEager(courseID);
         courseSessionDTO.setCourse(course);
-        logger.debug("CourseSessionDate: " + courseSessionDTO.getCourseSessionDate());
 
         if(hasErrors(result, courseSessionDTO)){
             addErrorMessages(result.getFieldErrors(), courseSessionDTO, redirectAttributes);
@@ -115,7 +110,7 @@ public class CourseSessionController {
 
     @RequestMapping(value="/{courseID}/editCourseSession/{courseSessionID}")
     public String editCourseSession(@PathVariable("courseID") int courseID, @PathVariable("courseSessionID") int courseSessionID, Model model){
-        CourseSession courseSession = courseSessionService.get(courseSessionID);
+        CourseSession courseSession = courseSessionService.getEager(courseSessionID);
         CourseSessionDTO courseSessionDTO = courseSession.getCourseSessionDTO();
 
         model.addAttribute("courseSessionDTO", courseSessionDTO);
@@ -153,7 +148,7 @@ public class CourseSessionController {
          * Propagate courseSession's Course field inside this controller method instead of in the JSP because it's simpler to set the values
          * in this method using a converter
          */
-        CourseSession courseSession = courseSessionService.get(courseSessionID);
+        CourseSession courseSession = courseSessionService.getEager(courseSessionID);
         CourseSessionDTO courseSessionDTO = courseSession.getCourseSessionDTO();
 
         logger.debug("Removing CourseSession: " + courseSession.getCourseSessionID());
@@ -226,14 +221,5 @@ public class CourseSessionController {
         return redirectAttributes;
     }
 
-    private HashMap<Integer, Integer> buildMemberAttendanceCountHashMap(Course course){
-        HashMap<Integer, Integer> memberAttendanceCountHashMap = new HashMap<>();
 
-        for(MemberCourseRegistration memberCourseRegistration : course.getMemberCourseRegistrationSet()){
-            Member member = memberCourseRegistration.getMember();
-            memberAttendanceCountHashMap.put(member.getMemberID(), course.getNumAttendanceForMember(member));
-        }
-
-        return memberAttendanceCountHashMap;
-    }
 }
