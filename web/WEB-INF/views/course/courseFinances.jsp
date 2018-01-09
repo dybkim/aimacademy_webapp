@@ -10,30 +10,26 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <%@include file="../template/navbar.jsp"%>
 <%@include file="../template/sidebar.jsp" %>
 
-
+<!DOCTYPE html>
+<html lang="en">
 <html>
 <head>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header">Course Finances</h1>
-                <h2>${course.courseDescription}</h2>
+<body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <h1 class="page-header">Course Finances</h1>
+                    <h2>${course.courseDescription}</h2>
 
 
+                </div>
             </div>
         </div>
-    </div>
-</head>
-<body>
+    </head>
 
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
 
 </body>

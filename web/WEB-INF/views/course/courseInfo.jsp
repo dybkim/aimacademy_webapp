@@ -11,11 +11,10 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <%@include file="../template/navbar.jsp"%>
 <%@include file="../template/sidebar.jsp" %>
-<script>
 
+<script>
     function formatCourseSession(courseSessionID){
         var table = '<table cellpadding="5" cellspacing="0" border="1" style="padding-left:50px;">';
         $.ajax({
@@ -53,6 +52,22 @@
     }
 
     $(document).ready(function(){
+        $('#addCourseSessionButton').click(function(){
+            $.ajax({
+                url: "${pageContext.request.contextPath}/admin/courseList/rest/${course.courseID}/validateAddCourseSession",
+                type: "GET",
+                async: false,
+                dataType: "json",
+                success:function(){
+                    window.location.replace('/admin/courseList/courseInfo/${course.courseID}/addCourseSession');
+                },
+                error:function(response){
+                    var jsonResponse = JSON.parse(response.responseText);
+                    var errorMessage = JSON.stringify(jsonResponse["errorMessage"]);
+                    alert("Error: " + errorMessage);
+                }
+            });
+        });
 
         $('a[data-toggle="tabpanel"]').on( 'shown.bs.tab', function (e) {
             $.fn.dataTable.tables(true).columns.adjust();
@@ -106,35 +121,19 @@
 
         $('.nav-tabs a[href="#tab-sessions"]').tab('show');
     });
-
-
-    var checkCourseMembers = function(){
-        $.ajax({
-            url: "/admin/courseList/rest/${course.courseID}/validateAddCourseSession",
-            type: "GET",
-            async: false,
-            dataType: "json",
-            success:function(){
-                window.location.replace('/admin/courseList/courseInfo/${course.courseID}/addCourseSession');
-            },
-            error:function(response){
-                var jsonResponse = JSON.parse(response.responseText);
-                var errorMessage = JSON.stringify(jsonResponse["errorMessage"]);
-                alert("Error: " + errorMessage);
-            }
-        });
-    };
 </script>
 
+<!DOCTYPE html>
+<html lang="en">
 <html>
     <body>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-                    <h1 class="page-header">${course.courseName} - Course Info</h1>
+                    <h1 class="page-header">Course Info: ${course.courseName}</h1>
 
-                    <button type="button" class="btn btn-primary" onclick="checkCourseMembers()" id="addCourseSessionButton">Add Course Session</button>
+                    <button type="button" class="btn btn-primary"  id="addCourseSessionButton">Add Course Session</button>
 
                     <br>
 
@@ -220,7 +219,7 @@
                                             <td><fmt:parseDate value="${courseSession.courseSessionDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
                                                 <fmt:formatDate value="${parsedDate}" var="formattedDate" type="date" pattern="MM/dd/yyyy" timeZone="GMT" />
                                                     ${formattedDate}</td>
-                                            <td>${courseSession.numMembersAttended} / ${courseSessionMemberCountMap.get(courseSession.courseSessionID)} Students</td>
+                                            <td>${courseSession.numMembersAttended} / ${courseSession.attendanceMap.size()} Students</td>
                                             <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}/editCourseSession/${courseSession.courseSessionID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                             <td><fmt:formatDate value="${parsedDate}" var="formattedHiddenDate" type="date" pattern="yyyy/MM/dd" timeZone="GMT" />${formattedHiddenDate}</td>
                                             <td>${courseSession.courseSessionID}</td>
@@ -234,10 +233,6 @@
                 </div>
             </div>
         </div>
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
 
 </body>

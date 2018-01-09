@@ -10,7 +10,6 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <%@include file="../template/navbar.jsp"%>
 <%@include file="../template/sidebar.jsp" %>
 
@@ -23,7 +22,7 @@
 
         var courseListTable = $('#courseListTable').DataTable({
             "lengthMenu": [[25,50,-1], [25,50, "All"]],
-            "order": [[0, "desc"]],
+            "order": [[0, "asc"]],
             "columnDefs": [
                 {
                     "targets": [0],
@@ -35,7 +34,7 @@
 
         var inactiveCourseListTable = $('#inactiveCourseListTable').DataTable({
             "lengthMenu": [[25,50,-1], [25,50, "All"]],
-            "order": [[0, "desc"]],
+            "order": [[0, "asc"]],
             "columnDefs": [
                 {
                     "targets": [0],
@@ -49,6 +48,8 @@
     });
 </script>
 
+<!DOCTYPE html>
+<html lang="en">
 <html>
 <body>
 <div class="container-fluid">
@@ -56,8 +57,6 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
             <h1 class="page-header">Course List</h1>
-
-            <br>
 
             <a href="<spring:url value="/admin/courseList/addCourse"/>" class="btn btn-primary">Add Course</a>
 
@@ -87,8 +86,8 @@
                         <tbody>
                         <c:forEach items="${courseList}" var="course">
                             <tr>
-                                <td><fmt:parseDate value="${course.courseStartDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
-                                    <fmt:formatDate value="${parsedDate}" var="formattedHiddenDate" type="date" pattern="yyyy/MM/dd" timeZone="GMT" />${formattedHiddenDate}</td>
+                                <td><fmt:parseDate value="${course.courseStartDate}" pattern="yyyy-MM-dd" var="parsedActiveDate" type="date" />
+                                    <fmt:formatDate value="${parsedActiveDate}" var="formattedActiveHiddenDate" type="date" pattern="yyyy/MM/dd" timeZone="GMT" />${formattedActiveHiddenDate}</td>
                                 <td>${course.courseStartDate.month} ${course.courseStartDate.year}</td>
                                 <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}"/>">${course.courseName}</a></td>
                                 <td>${course.courseType}</td>
@@ -117,8 +116,8 @@
                         <tbody>
                         <c:forEach items="${inactiveCourseList}" var="course">
                             <tr>
-                                <td><fmt:parseDate value="${course.courseStartDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
-                                    <fmt:formatDate value="${parsedDate}" var="formattedHiddenDate" type="date" pattern="yyyy/MM/dd" timeZone="GMT" />${formattedHiddenDate}</td>
+                                <td><fmt:parseDate value="${course.courseStartDate}" pattern="yyyy-MM-dd" var="parsedInactiveDate" type="date" />
+                                    <fmt:formatDate value="${parsedInactiveDate}" var="formattedInactiveHiddenDate" type="date" pattern="yyyy/MM/dd" timeZone="GMT" />${formattedInactiveHiddenDate}</td>
                                 <td>${course.courseStartDate.month} ${course.courseStartDate.year}</td>
                                 <td><a href="<spring:url value="/admin/courseList/courseInfo/${course.courseID}"/>">${course.courseName}</a></td>
                                 <td>${course.courseType}</td>
@@ -135,10 +134,6 @@
     </div>
 </div>
 
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
 <script src="<spring:url value="/resources/js/bootstrap.min.js"/>"></script>
 
 </body>
