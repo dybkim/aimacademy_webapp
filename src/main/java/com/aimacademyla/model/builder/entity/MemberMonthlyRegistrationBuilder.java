@@ -10,10 +10,16 @@ import java.time.LocalDate;
 
 public class MemberMonthlyRegistrationBuilder implements GenericBuilder<MemberMonthlyRegistration>{
 
+    private int memberMonthlyRegistrationID;
     private Member member;
     private LocalDate cycleStartDate;
     private BigDecimal membershipCharge;
     private Season season;
+
+    public MemberMonthlyRegistrationBuilder setMemberMonthlyRegistrationID(int memberMonthlyRegistrationID){
+        this.memberMonthlyRegistrationID = memberMonthlyRegistrationID;
+        return this;
+    }
 
     public MemberMonthlyRegistrationBuilder setMember(Member member) {
         this.member = member;

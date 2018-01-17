@@ -1,12 +1,15 @@
 package com.aimacademyla.controller;
 
-import com.aimacademyla.dao.factory.DAOFactory;
-import com.aimacademyla.model.*;
+import com.aimacademyla.controller.resources.HomeResources;
+import com.aimacademyla.dao.ChargeLineDAO;
+import com.aimacademyla.dao.MemberDAO;
+import com.aimacademyla.dao.PaymentDAO;
+import com.aimacademyla.model.ChargeLine;
+import com.aimacademyla.model.Member;
+import com.aimacademyla.model.Payment;
 import com.aimacademyla.model.builder.dto.OutstandingChargesPaymentDTOBuilder;
 import com.aimacademyla.model.dto.OutstandingChargesPaymentDTO;
 import com.aimacademyla.model.reference.TemporalReference;
-import com.aimacademyla.service.*;
-import org.hibernate.type.LocalDateType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,12 +27,6 @@ import java.util.*;
 @Controller
 @RequestMapping("/admin")
 public class HomeController {
-    private DAOFactory daoFactory;
-
-    @Autowired
-    public HomeController(DAOFactory daoFactory){
-        this.daoFactory = daoFactory;
-    }
 
     @RequestMapping("/home")
     public String home(Model model,
@@ -45,7 +42,7 @@ public class HomeController {
             cycleEndDate = LocalDate.of(year, month, cycleStartDate.getMonth().length(cycleStartDate.isLeapYear()));
         }
 
-        OutstandingChargesPaymentDTO outstandingChargesPaymentDTO = new OutstandingChargesPaymentDTOBuilder(daoFactory)
+        OutstandingChargesPaymentDTO outstandingChargesPaymentDTO = new OutstandingChargesPaymentDTOBuilder()
                                                                         .setCycleStartDate(cycleStartDate)
                                                                         .setCycleEndDate(cycleEndDate)
                                                                         .build();
@@ -71,7 +68,7 @@ public class HomeController {
         LocalDate cycleStartDate = LocalDate.parse(cycleStartDateString, dateTimeFormatter);
         LocalDate cycleEndDate = LocalDate.parse(cycleEndDateString, dateTimeFormatter);
 
-        OutstandingChargesPaymentDTO outstandingChargesPaymentDTO = new OutstandingChargesPaymentDTOBuilder(daoFactory)
+        OutstandingChargesPaymentDTO outstandingChargesPaymentDTO = new OutstandingChargesPaymentDTOBuilder()
                                                                             .setCycleStartDate(cycleStartDate)
                                                                             .setCycleEndDate(cycleEndDate)
                                                                             .build();

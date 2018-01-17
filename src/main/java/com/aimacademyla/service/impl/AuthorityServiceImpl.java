@@ -1,9 +1,7 @@
 package com.aimacademyla.service.impl;
 
-import com.aimacademyla.dao.AuthorityDAO;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.model.Authority;
-import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.service.AuthorityService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

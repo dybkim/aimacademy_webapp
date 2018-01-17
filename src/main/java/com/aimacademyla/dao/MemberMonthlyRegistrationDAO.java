@@ -11,5 +11,5 @@ import java.util.List;
  * Created by davidkim on 6/14/17.
  */
 public interface MemberMonthlyRegistrationDAO extends GenericDAO<MemberMonthlyRegistration, Integer>{
-
+    List<MemberMonthlyRegistration> getList(LocalDate cycleStartDate);
 }

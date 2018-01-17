@@ -59,7 +59,7 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
     @Override
     @SuppressWarnings("unchecked")
     public List<Charge> getList(Member member, LocalDate date){
-        return new ChargeDAOAccessFlow(getDAOFactory())
+        return new ChargeDAOAccessFlow()
                         .addQueryParameter(member)
                         .addQueryParameter(date)
                         .getList();
@@ -91,6 +91,13 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
             }
             transientCharge.addChargeLine(chargeLine);
         }
+
+        /*
+         * Some kind of race condition or inconsistent is occurring in this method
+//         */
+//        for(Charge charge : chargeMap.values())
+//            charge.sortChargeLineSetByDate();
+
         return new ArrayList<>(chargeMap.values());
     }
 
@@ -151,7 +158,7 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
             }
         }
 
-        payment = (Payment) new PaymentDAOAccessFlow(getDAOFactory())
+        payment = (Payment) new PaymentDAOAccessFlow()
                 .addQueryParameter(charge.getCycleStartDate())
                 .addQueryParameter(charge.getMember())
                 .get();
@@ -171,7 +178,7 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
             }
         }
 
-        monthlyFinancesSummary = (MonthlyFinancesSummary) new MonthlyFinancesSummaryDAOAccessFlow(getDAOFactory())
+        monthlyFinancesSummary = (MonthlyFinancesSummary) new MonthlyFinancesSummaryDAOAccessFlow()
                 .addQueryParameter(charge.getCycleStartDate())
                 .get();
 

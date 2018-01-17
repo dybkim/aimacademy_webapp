@@ -1,18 +1,14 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.ChargeDAO;
-import com.aimacademyla.model.Attendance;
 import com.aimacademyla.model.Charge;
-import com.aimacademyla.model.Course;
-import com.aimacademyla.model.Member;
-import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -48,7 +44,7 @@ public class ChargeDAOImpl extends GenericDAOImpl<Charge,Integer> implements Cha
     @Override
     public Charge loadCollections(Charge charge){
         Session session = currentSession();
-        charge = session.get(Charge.class, charge.getChargeID());
+        charge = get(charge.getChargeID());
         Hibernate.initialize(charge.getChargeLineSet());
         session.flush();
         return charge;

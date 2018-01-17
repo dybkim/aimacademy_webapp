@@ -1,13 +1,9 @@
 package com.aimacademyla.controller.course.rest;
 
-import com.aimacademyla.exception.NullEntityCollectionException;
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.builder.entity.MemberCourseRegistrationBuilder;
 import com.aimacademyla.model.response.GenericResponse;
-import com.aimacademyla.service.CourseService;
-import com.aimacademyla.service.CourseSessionService;
-import com.aimacademyla.service.MemberCourseRegistrationService;
-import com.aimacademyla.service.MemberService;
+import com.aimacademyla.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +27,7 @@ public class CourseResources {
     private CourseSessionService courseSessionService;
     private CourseService courseService;
     private MemberCourseRegistrationService memberCourseRegistrationService;
+    private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
 
     private static final Logger logger = LogManager.getLogger(CourseResources.class.getName());
 
@@ -38,23 +35,41 @@ public class CourseResources {
     public CourseResources(MemberService memberService,
                            CourseService courseService,
                            CourseSessionService courseSessionService,
-                           MemberCourseRegistrationService memberCourseRegistrationService){
+                           MemberCourseRegistrationService memberCourseRegistrationService,
+                           MemberMonthlyRegistrationService memberMonthlyRegistrationService){
         this.memberService = memberService;
         this.courseService = courseService;
         this.courseSessionService = courseSessionService;
         this.memberCourseRegistrationService = memberCourseRegistrationService;
+        this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
     }
 
     @RequestMapping(value="/{courseID}/validateAddCourseSession")
     @ResponseBody
-    public ResponseEntity<GenericResponse> validateAddCourseSession(@PathVariable("courseID") int courseID){
+    public ResponseEntity<GenericResponse> validateAddCourseSession(@PathVariable("courseID") int courseID,
+                                                                    @RequestParam(name="month", required=false) Integer month,
+                                                                    @RequestParam(name="year", required=false) Integer year){
+        LocalDate cycleStartDate = LocalDate.now();
+        if(month != null && year != null)
+            cycleStartDate = LocalDate.of(year, month, 1);
+
         Course course = courseService.get(courseID);
         course = courseService.loadCollections(course);
         List<MemberCourseRegistration> memberCourseRegistrationList = new ArrayList<>(course.getMemberCourseRegistrationSet());
 
-        if(memberCourseRegistrationList.size() == 0)
-            return new ResponseEntity<>(new GenericResponse("Unable to create course session", "Cannot add course sessions until members are registered to the course!",HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        if(courseID != Course.OPEN_STUDY_ID) {
+            if (memberCourseRegistrationList.size() == 0)
+                return new ResponseEntity<>(new GenericResponse("Unable to create course session", "Cannot add course sessions until members are registered to the course!", HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+                }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        else{
+            List<MemberMonthlyRegistration> memberMonthlyRegistrationList = memberMonthlyRegistrationService.getList(cycleStartDate);
+
+            if(memberMonthlyRegistrationList.size() == 0)
+                return new ResponseEntity<>(new GenericResponse("Unable to create course session", "Cannot add course sessions until members are registered for this month!",HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+                }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         return new ResponseEntity<>(new GenericResponse("OK", "NO_ERROR", HttpStatus.OK.value()){},HttpStatus.OK);
     }

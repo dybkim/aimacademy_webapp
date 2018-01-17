@@ -1,12 +1,10 @@
 package com.aimacademyla.dao.flow.impl;
 
 import com.aimacademyla.dao.SeasonDAO;
-import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.Season;
 import com.aimacademyla.model.builder.entity.SeasonBuilder;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.type.DateType;
 import org.hibernate.type.LocalDateType;
 
 import java.time.LocalDate;
@@ -16,9 +14,8 @@ public class SeasonDAOAccessFlow extends AbstractDAOAccessFlowImpl<Season> {
 
     private SeasonDAO seasonDAO;
 
-    public SeasonDAOAccessFlow(DAOFactory daoFactory) {
-        super(daoFactory);
-        seasonDAO = (SeasonDAO) getDaoFactory().getDAO(Season.class);
+    public SeasonDAOAccessFlow() {
+        seasonDAO = (SeasonDAO) getDAOFactory().getDAO(Season.class);
         dispatch.put(LocalDate.class, this::handleLocalDate);
     }
 
@@ -27,7 +24,9 @@ public class SeasonDAOAccessFlow extends AbstractDAOAccessFlowImpl<Season> {
         Season season = seasonDAO.get(criteria);
         if(season == null){
             LocalDate date = (LocalDate) parameterHashMap.get(LocalDate.class);
-            season = new SeasonBuilder().setLocalDate(date).build();
+            season = new SeasonBuilder()
+                    .setLocalDate(date)
+                    .build();
             seasonDAO.add(season);
         }
         return season;

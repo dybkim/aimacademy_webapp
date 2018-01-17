@@ -1,9 +1,7 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.AuthorityDAO;
-import com.aimacademyla.model.Attendance;
 import com.aimacademyla.model.Authority;
-import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,7 +26,7 @@ import java.util.Map;
  */
 
 @Entity
-public class Member implements Serializable{
+public class Member extends AIMEntity implements Serializable{
 
     private static final long serialVersionUID = -6974012771726031996L;
 
@@ -89,13 +91,28 @@ public class Member implements Serializable{
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<Integer, MemberMonthlyRegistration> memberMonthlyRegistrationMap;
 
-    @Override
-    public boolean equals(Object object) throws IllegalArgumentException{
-        if(!(object instanceof Member))
-            throw new IllegalArgumentException("Parameter must be of Member type!");
+    /*
+     * IMPORTANT: Requires JsonIgnore annotation or else when a member object is converted to JSON,
+     * Jackson Data Binding will try and lazy load the following collections
+     */
+    @JsonIgnore
+    public Map<Integer, MemberCourseRegistration> getMemberCourseRegistrationMap() {
+        return memberCourseRegistrationMap;
+    }
 
-        Member member = (Member) object;
-        return memberID == member.getMemberID();
+    @JsonIgnore
+    public Map<Integer, MemberMonthlyRegistration> getMemberMonthlyRegistrationMap() {
+        return memberMonthlyRegistrationMap;
+    }
+
+    @Override
+    public int getBusinessID() {
+        return memberID;
+    }
+
+    @Override
+    public void setBusinessID(int memberID){
+        this.memberID = memberID;
     }
 
     public int getMemberID() {
@@ -201,20 +218,4 @@ public class Member implements Serializable{
     public void setMemberMonthlyRegistrationMap(Map<Integer, MemberMonthlyRegistration> memberMonthlyRegistrationMap) {
         this.memberMonthlyRegistrationMap = memberMonthlyRegistrationMap;
     }
-
-    /*
-     * IMPORTANT: Requires JsonIgnore annotation or else when a member object is converted to JSON,
-     * Jackson Data Binding will try and lazy load the following collections
-     */
-    @JsonIgnore
-    public Map<Integer, MemberCourseRegistration> getMemberCourseRegistrationMap() {
-        return memberCourseRegistrationMap;
-    }
-
-    @JsonIgnore
-    public Map<Integer, MemberMonthlyRegistration> getMemberMonthlyRegistrationMap() {
-        return memberMonthlyRegistrationMap;
-    }
-
-
 }

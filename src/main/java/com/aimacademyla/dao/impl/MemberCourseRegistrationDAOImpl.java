@@ -3,6 +3,7 @@ package com.aimacademyla.dao.impl;
 import com.aimacademyla.dao.MemberCourseRegistrationDAO;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.MemberCourseRegistration;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;

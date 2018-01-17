@@ -1,9 +1,10 @@
 package com.aimacademyla.model.initializer.impl;
 
-import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
+import com.aimacademyla.model.builder.entity.MemberCourseRegistrationBuilder;
+
 import java.time.LocalDate;
 
 public class MemberCourseRegistrationDefaultValueInitializer extends GenericDefaultValueInitializerImpl<MemberCourseRegistration>{
@@ -11,17 +12,14 @@ public class MemberCourseRegistrationDefaultValueInitializer extends GenericDefa
     private Member member;
     private Course course;
 
-    public MemberCourseRegistrationDefaultValueInitializer(DAOFactory daoFactory){
-        super(daoFactory);
-    }
-
     public MemberCourseRegistration initialize() {
-        MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
-        memberCourseRegistration.setMember(member);
-        memberCourseRegistration.setCourse(course);
-        memberCourseRegistration.setDateRegistered(LocalDate.now());
-        memberCourseRegistration.setIsEnrolled(true);
-        return memberCourseRegistration;
+
+        return new MemberCourseRegistrationBuilder()
+                    .setMember(member)
+                    .setCourse(course)
+                    .setDateRegistered(LocalDate.now())
+                    .setIsEnrolled(true)
+                    .build();
     }
 
     public MemberCourseRegistrationDefaultValueInitializer setMember(Member member){

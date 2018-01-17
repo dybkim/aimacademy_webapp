@@ -1,20 +1,14 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.SeasonDAO;
-import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Season;
-import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.NoResultException;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,6 +18,7 @@ import java.util.List;
 @Repository("seasonDAO")
 @Transactional
 public class SeasonDAOImpl extends GenericDAOImpl<Season, Integer> implements SeasonDAO{
+
     public SeasonDAOImpl(){
         super(Season.class);
     }

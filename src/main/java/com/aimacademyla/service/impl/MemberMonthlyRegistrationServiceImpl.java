@@ -1,20 +1,16 @@
 package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.*;
-import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.dao.flow.impl.ChargeDAOAccessFlow;
 import com.aimacademyla.dao.flow.impl.MemberMonthlyRegistrationDAOAccessFlow;
-import com.aimacademyla.dao.flow.impl.MonthlyFinancesSummaryDAOAccessFlow;
 import com.aimacademyla.dao.flow.impl.SeasonDAOAccessFlow;
 import com.aimacademyla.model.*;
-import com.aimacademyla.model.builder.entity.ChargeBuilder;
 import com.aimacademyla.model.builder.entity.ChargeLineBuilder;
 import com.aimacademyla.model.builder.entity.MemberMonthlyRegistrationBuilder;
 import com.aimacademyla.model.dto.MemberListDTO;
-import com.aimacademyla.model.enums.AIMEntityType;
-import com.aimacademyla.model.enums.BillableUnitType;
-import com.aimacademyla.model.initializer.impl.MemberMonthlyRegistrationDefaultValueInitializer;
-import com.aimacademyla.service.*;
+import com.aimacademyla.service.ChargeLineService;
+import com.aimacademyla.service.ChargeService;
+import com.aimacademyla.service.MemberMonthlyRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -63,7 +59,7 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
 
         for(int memberID : isActiveMemberHashMap.keySet()){
             Member member = memberDAO.get(memberID);
-            MemberMonthlyRegistration memberMonthlyRegistration = (MemberMonthlyRegistration) new MemberMonthlyRegistrationDAOAccessFlow(getDAOFactory())
+            MemberMonthlyRegistration memberMonthlyRegistration = (MemberMonthlyRegistration) new MemberMonthlyRegistrationDAOAccessFlow()
                                                                                                 .addQueryParameter(member)
                                                                                                 .addQueryParameter(cycleStartDate)
                                                                                                 .get();
@@ -72,7 +68,7 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
             if(memberIsRegistered == null)
                 memberIsRegistered = false;
 
-            Season season = (Season) new SeasonDAOAccessFlow(getDAOFactory())
+            Season season = (Season) new SeasonDAOAccessFlow()
                                          .addQueryParameter(cycleStartDate)
                                          .get();
 
@@ -85,7 +81,7 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
                                                     .setMembershipCharge(member.getMembershipRate())
                                                     .build();
 
-                    Charge charge = (Charge) new ChargeDAOAccessFlow(getDAOFactory())
+                    Charge charge = (Charge) new ChargeDAOAccessFlow()
                                                 .addQueryParameter(member)
                                                 .addQueryParameter(openStudyCourse)
                                                 .addQueryParameter(cycleStartDate)
@@ -100,13 +96,13 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
 
                     chargeLineService.addChargeLine(chargeLine);
                     memberMonthlyRegistration.setCharge(charge);
-                    memberMonthlyRegistrationDAO.update(memberMonthlyRegistration);
+                    memberMonthlyRegistrationDAO.add(memberMonthlyRegistration);
                 }
             }
 
             else{
                 if(memberMonthlyRegistration.getMemberMonthlyRegistrationID() != MemberMonthlyRegistration.INACTIVE){
-                    Charge charge = (Charge) new ChargeDAOAccessFlow(getDAOFactory())
+                    Charge charge = (Charge) new ChargeDAOAccessFlow()
                             .addQueryParameter(member)
                             .addQueryParameter(openStudyCourse)
                             .addQueryParameter(cycleStartDate)
@@ -140,7 +136,7 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
     public void addMemberMonthlyRegistration(MemberMonthlyRegistration memberMonthlyRegistration) {
         Member member = memberMonthlyRegistration.getMember();
         Course course = courseDAO.get(Course.OPEN_STUDY_ID);
-        Charge charge = (Charge) new ChargeDAOAccessFlow(getDAOFactory())
+        Charge charge = (Charge) new ChargeDAOAccessFlow()
                                         .addQueryParameter(member)
                                         .addQueryParameter(course)
                                         .addQueryParameter(memberMonthlyRegistration.getCycleStartDate())
@@ -164,7 +160,7 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
     public void updateMemberMonthlyRegistration(MemberMonthlyRegistration memberMonthlyRegistration) {
         Member member = memberMonthlyRegistration.getMember();
         Course course = courseDAO.get(Course.OPEN_STUDY_ID);
-        Charge charge = (Charge) new ChargeDAOAccessFlow(getDAOFactory())
+        Charge charge = (Charge) new ChargeDAOAccessFlow()
                 .addQueryParameter(member)
                 .addQueryParameter(course)
                 .addQueryParameter(memberMonthlyRegistration.getCycleStartDate())
@@ -197,7 +193,7 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
         Member member = memberMonthlyRegistration.getMember();
         Course course = courseDAO.get(Course.OPEN_STUDY_ID);
 
-        Charge charge = (Charge) new ChargeDAOAccessFlow(getDAOFactory())
+        Charge charge = (Charge) new ChargeDAOAccessFlow()
                 .addQueryParameter(member)
                 .addQueryParameter(course)
                 .addQueryParameter(memberMonthlyRegistration.getCycleStartDate())
@@ -219,4 +215,8 @@ public class MemberMonthlyRegistrationServiceImpl extends GenericServiceImpl<Mem
         remove(memberMonthlyRegistration);
     }
 
+    @Override
+    public List<MemberMonthlyRegistration> getList(LocalDate cycleStartDate){
+        return memberMonthlyRegistrationDAO.getList(cycleStartDate);
+    }
 }

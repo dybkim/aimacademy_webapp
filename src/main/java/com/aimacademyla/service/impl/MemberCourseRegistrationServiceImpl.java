@@ -4,16 +4,12 @@ import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.MemberCourseRegistrationDAO;
 import com.aimacademyla.dao.flow.impl.MemberCourseRegistrationDAOAccessFlow;
-import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberCourseRegistration;
-import com.aimacademyla.model.initializer.impl.MemberCourseRegistrationDefaultValueInitializer;
 import com.aimacademyla.service.MemberCourseRegistrationService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Created by davidkim on 2/13/17.
@@ -35,7 +31,7 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
 
     @Override
     public MemberCourseRegistration getMemberCourseRegistration(Member member, Course course){
-        return (MemberCourseRegistration) new MemberCourseRegistrationDAOAccessFlow(getDAOFactory())
+        return (MemberCourseRegistration) new MemberCourseRegistrationDAOAccessFlow()
                                             .addQueryParameter(member)
                                             .addQueryParameter(course)
                                             .get();
@@ -55,7 +51,7 @@ public class MemberCourseRegistrationServiceImpl extends GenericServiceImpl<Memb
         Course course = memberCourseRegistration.getCourse();
         int numEnrolled = course.getNumEnrolled();
 
-        MemberCourseRegistration persistedMemberCourseRegistration = (MemberCourseRegistration) new MemberCourseRegistrationDAOAccessFlow(getDAOFactory())
+        MemberCourseRegistration persistedMemberCourseRegistration = (MemberCourseRegistration) new MemberCourseRegistrationDAOAccessFlow()
                                                                                                     .addQueryParameter(member)
                                                                                                     .addQueryParameter(course)
                                                                                                     .get();

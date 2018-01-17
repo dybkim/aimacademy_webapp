@@ -14,7 +14,8 @@ addStudentToCourseControllerApp.controller("addStudentToCourseController", funct
         $scope.courseID = courseID;
         $http.get("/admin/studentList/rest/getList").then(function(memberList){
             for(var i = 0; i < memberList.data.length; i++){
-                $scope.memberList.push(new Member(memberList.data[i].memberID, memberList.data[i].memberFirstName, memberList.data[i].memberLastName));
+                var member = JSON.parse(memberList.data)[i];
+                $scope.memberList.push(new Member(member.memberID, member.memberFirstName, member.memberLastName));
             }
         });
     };

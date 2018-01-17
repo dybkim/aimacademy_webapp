@@ -41,7 +41,9 @@
         });
 
         $('#startDate, #endDate').datepicker({
-            dateFormat: "mm/dd/yy"
+            dateFormat: "mm/dd/yy",
+            maxDate: '0',
+            minDate: new Date(2016, 1, 1)
         });
 
         $('#startDate, endDate').keydown(function (e) {
@@ -101,10 +103,10 @@
                 </c:choose>
 
                 <div class="form-group">
-                    <label for="startDate">Start Date (MM/DD/YYYY): </label>
+                    <label for="courseStartDate">Start Date (MM/DD/YYYY): </label>
                     <fmt:parseDate value="${courseRegistrationDTO.course.courseStartDate}" pattern="yyyy-MM-dd" var="parsedStartDate" type="date" />
                     <fmt:formatDate value="${parsedStartDate}" var="formattedStartDate" type="date" pattern="MM/dd/yyyy"/>
-                    <form:input path="course.courseStartDate" id="startDate" class="date" value="${formattedStartDate}"/>
+                    <form:input path="course.courseStartDate" id="courseStartDate" class="date" value="${formattedStartDate}"/>
                 </div>
 
                 <c:choose>
@@ -117,10 +119,10 @@
                     </c:otherwise>
                 </c:choose>
                 <div class="form-group">
-                    <label for="endDate">End Date (MM/DD/YYYY): </label>
+                    <label for="courseEndDate">End Date (MM/DD/YYYY): </label>
                     <fmt:parseDate value="${courseRegistrationDTO.course.courseEndDate}" pattern="yyyy-MM-dd" var="parsedEndDate" type="date" />
                     <fmt:formatDate value="${parsedEndDate}" var="formattedEndDate" type="date" pattern="MM/dd/yyyy"/>
-                    <form:input path="course.courseEndDate" id="endDate" class="date" value="${formattedEndDate}"/>
+                    <form:input path="course.courseEndDate" id="courseEndDate" class="date" value="${formattedEndDate}"/>
                 </div>
 
                 <div class="form-group">

@@ -1,16 +1,14 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.MonthlyFinancesSummaryDAO;
-import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.MonthlyFinancesSummary;
-import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +38,7 @@ public class MonthlyFinancesSummaryDAOImpl extends GenericDAOImpl<MonthlyFinance
     @Override
     public MonthlyFinancesSummary loadCollections(MonthlyFinancesSummary monthlyFinancesSummary){
         Session session = currentSession();
-        monthlyFinancesSummary = session.get(MonthlyFinancesSummary.class, monthlyFinancesSummary.getMonthlyFinancesSummaryID());
+        monthlyFinancesSummary = get(monthlyFinancesSummary.getMonthlyFinancesSummaryID());
         Hibernate.initialize(monthlyFinancesSummary.getChargeSet());
         Hibernate.initialize(monthlyFinancesSummary.getPaymentSet());
         session.flush();

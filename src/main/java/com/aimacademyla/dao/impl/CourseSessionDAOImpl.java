@@ -1,18 +1,11 @@
 package com.aimacademyla.dao.impl;
 
-import com.aimacademyla.controller.course.CourseHomeController;
 import com.aimacademyla.dao.CourseSessionDAO;
-import com.aimacademyla.model.Charge;
-import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
-import com.aimacademyla.model.enums.AIMEntityType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +18,7 @@ import java.util.*;
 @Transactional
 @Repository("courseSessionDAO")
 public class CourseSessionDAOImpl extends GenericDAOImpl<CourseSession, Integer> implements CourseSessionDAO{
+
     public CourseSessionDAOImpl(){
         super(CourseSession.class);
     }
@@ -50,7 +44,7 @@ public class CourseSessionDAOImpl extends GenericDAOImpl<CourseSession, Integer>
         Session session = currentSession();
         Set<CourseSession> courseSessionSet = new HashSet<>();
         for(CourseSession courseSession : courseSessionCollection){
-            courseSession = session.get(CourseSession.class, courseSession.getCourseSessionID());
+            courseSession = get(courseSession.getCourseSessionID());
             Hibernate.initialize(courseSession.getAttendanceMap());
             courseSessionSet.add(courseSession);
         }
@@ -60,7 +54,7 @@ public class CourseSessionDAOImpl extends GenericDAOImpl<CourseSession, Integer>
     @Override
     public CourseSession loadCollections(CourseSession courseSession){
         Session session = currentSession();
-        courseSession = session.get(CourseSession.class, courseSession.getCourseSessionID());
+        courseSession = get(courseSession.getCourseSessionID());
         Hibernate.initialize(courseSession.getAttendanceMap());
         session.flush();
 

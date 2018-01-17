@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,9 +29,9 @@ import java.util.*;
 @Entity
 @NamedEntityGraph(name="graph.Course.courseSessionSet",
                 attributeNodes = {@NamedAttributeNode(value="courseSessionSet", subgraph = "courseSessionSet"),
-                                 @NamedAttributeNode(value="memberCourseRegistrationSet")},
+                                  @NamedAttributeNode(value="memberCourseRegistrationSet")},
                 subgraphs = @NamedSubgraph(name="courseSessionSet", attributeNodes = @NamedAttributeNode("attendanceMap")))
-public class Course implements Serializable{
+public class Course extends AIMEntity implements Serializable{
 
     private static final long serialVersionUID = 3942567537260692323L;
 
@@ -71,7 +73,7 @@ public class Course implements Serializable{
     private int totalNumSessions;
 
     @ManyToOne
-    @JoinColumn(name="SeasonID")
+    @JoinColumn(name="SeasonID", referencedColumnName = "SeasonID")
     private Season season;
 
     @Column(name="MemberPricePerBillableUnit")
@@ -222,6 +224,17 @@ public class Course implements Serializable{
     }
 
     @JsonIgnore
+    public int getNumAttendanceForMember(Member member, LocalDate cycleStartDate){
+        int numAttendance = 0;
+        for(CourseSession courseSession : courseSessionSet){
+            LocalDate courseSessionDate = courseSession.getCourseSessionDate();
+            if(courseSession.memberWasPresent(member) && courseSessionDate.getMonthValue() == cycleStartDate.getMonthValue() && courseSessionDate.getYear() == cycleStartDate.getYear())
+                numAttendance++;
+        }
+        return numAttendance;
+    }
+
+    @JsonIgnore
     public Map<Integer, Integer> getMemberAttendanceCountHashMap(){
         HashMap<Integer, Integer> memberAttendanceCountHashMap = new HashMap<>();
 
@@ -231,6 +244,17 @@ public class Course implements Serializable{
         }
 
         return memberAttendanceCountHashMap;
+    }
+
+    @JsonIgnore
+    public Map<Integer, Integer> getOpenStudyMemberAttendanceCountHashMap(List<Member> memberList, LocalDate cycleStartDate){
+        HashMap<Integer, Integer> memberAttendanceCountHashMap = new HashMap<>();
+
+        for(Member member : memberList)
+            memberAttendanceCountHashMap.put(member.getMemberID(), getNumAttendanceForMember(member, cycleStartDate));
+
+        return memberAttendanceCountHashMap;
+
     }
 
     @JsonIgnore
@@ -249,6 +273,16 @@ public class Course implements Serializable{
 
         Course course = (Course) object;
         return course.getCourseID() == courseID;
+    }
+
+    @Override
+    public int getBusinessID() {
+        return courseID;
+    }
+
+    @Override
+    public void setBusinessID(int courseID){
+        this.courseID = courseID;
     }
 
     public int getCourseID() {
@@ -394,6 +428,18 @@ public class Course implements Serializable{
     }
 
     public Set<CourseSession> getCourseSessionSet(){
+        return courseSessionSet;
+    }
+
+    public Set<CourseSession> getCourseSessionSet(LocalDate cycleStartDate){
+        Set<CourseSession> courseSessionSet = new HashSet<>();
+
+        for(CourseSession courseSession : this.courseSessionSet){
+            LocalDate courseSessionDate = courseSession.getCourseSessionDate();
+            if(courseSessionDate.getMonthValue() == cycleStartDate.getMonthValue() && courseSessionDate.getYear() == courseSessionDate.getYear())
+                courseSessionSet.add(courseSession);
+        }
+
         return courseSessionSet;
     }
 

@@ -1,7 +1,7 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.model.enums.AIMEntityType;
-import com.aimacademyla.model.reference.TemporalReference;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -13,7 +13,7 @@ import java.time.LocalDate;
  */
 
 @Entity(name="Member_Course_Registration")
-public class MemberCourseRegistration implements Serializable{
+public class MemberCourseRegistration extends AIMEntity implements Serializable{
 
     private static final long serialVersionUID = 4571615710752919588L;
 
@@ -23,14 +23,14 @@ public class MemberCourseRegistration implements Serializable{
     private int memberCourseRegistrationID;
 
     @ManyToOne
-    @JoinColumn(name="MemberID")
+    @JoinColumn(name="MemberID", referencedColumnName = "MemberID")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name="CourseID")
+    @JoinColumn(name="CourseID", referencedColumnName = "CourseID")
     private Course course;
 
-    @JoinColumn(name="ReferMemberID")
+    @JoinColumn(name="ReferMemberID", referencedColumnName = "MemberID")
     private Member referMember;
 
     @Column(name="DateRegistered")
@@ -39,6 +39,16 @@ public class MemberCourseRegistration implements Serializable{
 
     @Column(name="IsEnrolled")
     private boolean isEnrolled;
+
+    @Override
+    public int getBusinessID() {
+        return memberCourseRegistrationID;
+    }
+
+    @Override
+    public void setBusinessID(int memberCourseRegistrationID){
+        this.memberCourseRegistrationID = memberCourseRegistrationID;
+    }
 
     public int getMemberCourseRegistrationID() {
         return memberCourseRegistrationID;

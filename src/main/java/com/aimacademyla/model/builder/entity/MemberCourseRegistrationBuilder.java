@@ -9,6 +9,7 @@ import java.time.LocalDate;
 
 public class MemberCourseRegistrationBuilder implements GenericBuilder<MemberCourseRegistration>{
 
+    private int memberCourseRegistrationID;
     private Member member;
     private Course course;
     private boolean isEnrolled;
@@ -17,11 +18,17 @@ public class MemberCourseRegistrationBuilder implements GenericBuilder<MemberCou
     @Override
     public MemberCourseRegistration build() {
         MemberCourseRegistration memberCourseRegistration = new MemberCourseRegistration();
+        memberCourseRegistration.setMemberCourseRegistrationID(memberCourseRegistrationID);
         memberCourseRegistration.setMember(member);
         memberCourseRegistration.setCourse(course);
         memberCourseRegistration.setIsEnrolled(isEnrolled);
         memberCourseRegistration.setDateRegistered(dateRegistered);
         return memberCourseRegistration;
+    }
+
+    public MemberCourseRegistrationBuilder setMemberCourseRegistrationID(int memberCourseRegistrationID){
+        this.memberCourseRegistrationID = memberCourseRegistrationID;
+        return this;
     }
 
     public MemberCourseRegistrationBuilder setMember(Member member){

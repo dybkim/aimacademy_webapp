@@ -1,13 +1,10 @@
 package com.aimacademyla.dao.flow.impl;
 
 import com.aimacademyla.dao.PaymentDAO;
-import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.Member;
-import com.aimacademyla.model.MonthlyFinancesSummary;
 import com.aimacademyla.model.Payment;
 import com.aimacademyla.model.initializer.impl.PaymentDefaultValueInitializer;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,9 +12,8 @@ public class PaymentDAOAccessFlow extends AbstractDAOAccessFlowImpl<Payment>{
 
     private PaymentDAO paymentDAO;
 
-    public PaymentDAOAccessFlow(DAOFactory daoFactory) {
-        super(daoFactory);
-        paymentDAO = (PaymentDAO) daoFactory.getDAO(Payment.class);
+    public PaymentDAOAccessFlow() {
+        paymentDAO = (PaymentDAO) getDAOFactory().getDAO(Payment.class);
         dispatch.put(Member.class, super::handleMember);
         dispatch.put(LocalDate.class, super::handleLocalDate);
     }
@@ -30,7 +26,7 @@ public class PaymentDAOAccessFlow extends AbstractDAOAccessFlowImpl<Payment>{
         Payment payment = paymentDAO.get(criteria);
 
         if(payment == null){
-            payment = new PaymentDefaultValueInitializer(getDaoFactory())
+            payment = new PaymentDefaultValueInitializer()
                             .setMember(member)
                             .setCycleStartDate(LocalDate.of(cycleStartDate.getYear(), cycleStartDate.getMonthValue(), 1))
                             .initialize();

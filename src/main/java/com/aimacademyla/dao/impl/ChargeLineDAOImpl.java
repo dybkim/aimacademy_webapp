@@ -1,14 +1,11 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.ChargeLineDAO;
-import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.ChargeLine;
 import com.aimacademyla.model.Member;
-import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +46,7 @@ public class ChargeLineDAOImpl extends GenericDAOImpl<ChargeLine, Integer> imple
                         .setParameter("cycleEndDate", cycleEndDate);
 
         List<ChargeLine> chargeLineList = query.getResultList();
+        session.flush();
         return chargeLineList;
     }
 }

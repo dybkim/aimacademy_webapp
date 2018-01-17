@@ -1,16 +1,13 @@
 package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.GenericDAO;
-import com.aimacademyla.dao.MemberCourseRegistrationDAO;
 import com.aimacademyla.dao.MemberDAO;
-import com.aimacademyla.model.*;
-import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.Member;
 import com.aimacademyla.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,7 +32,7 @@ public class MemberServiceImpl extends GenericServiceImpl<Member, Integer> imple
         Iterator it = memberList.iterator();
         while(it.hasNext()){
             Member member = (Member)it.next();
-            if(member.getMemberID() <= 0)
+            if(member.getMemberID() <= 1000)
                 it.remove();
         }
         return memberList;

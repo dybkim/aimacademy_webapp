@@ -20,7 +20,9 @@
 <script>
     $(document).ready(function(){
         $('#courseStartDate, #courseEndDate').datepicker({
-            dateFormat: "mm/dd/yy"
+            dateFormat: "mm/dd/yy",
+            maxDate: '0',
+            minDate: new Date(2016, 1, 1)
         });
 
         $('#courseStartDate, #courseEndDate').keydown(function (e) {
@@ -76,8 +78,8 @@
                 </c:choose>
 
                 <div class="form-group">
-                    <label for="startDate">Start Date (MM/DD/YYYY): </label>
-                    <form:input path="courseStartDate" id="startDate" class="date"/>
+                    <label for="courseStartDate">Start Date (MM/DD/YYYY): </label>
+                    <form:input path="courseStartDate" id="courseStartDate" class="date"/>
                 </div>
 
                 <c:choose>
@@ -91,8 +93,8 @@
                 </c:choose>
 
                 <div class="form-group">
-                    <label for="endDate">End Date (MM/DD/YYYY): </label>
-                    <form:input path="courseEndDate" id="endDate" class="date"/>
+                    <label for="courseEndDate">End Date (MM/DD/YYYY): </label>
+                    <form:input path="courseEndDate" id="courseEndDate" class="date"/>
                 </div>
 
                 <div class="form-group">

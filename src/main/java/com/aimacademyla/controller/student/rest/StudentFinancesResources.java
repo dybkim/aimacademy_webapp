@@ -1,6 +1,5 @@
 package com.aimacademyla.controller.student.rest;
 
-import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.ChargeLine;
 import com.aimacademyla.model.Course;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -34,7 +32,6 @@ import java.util.List;
 public class StudentFinancesResources {
 
     private static final Logger logger = LogManager.getLogger(StudentFinancesResources.class.getName());
-    private DAOFactory daoFactory;
 
     private MemberService memberService;
     private ChargeService chargeService;
@@ -45,9 +42,7 @@ public class StudentFinancesResources {
     public StudentFinancesResources(MemberService memberService,
                                     ChargeService chargeService,
                                     ChargeLineService chargeLineService,
-                                    CourseService courseService,
-                                    DAOFactory daoFactory){
-        this.daoFactory = daoFactory;
+                                    CourseService courseService){
         this.courseService = courseService;
         this.memberService = memberService;
         this.chargeService = chargeService;
@@ -59,14 +54,15 @@ public class StudentFinancesResources {
     MemberChargesFinancesDTO fetchMemberCharges(@PathVariable("memberID") int memberID,
                                                 @RequestParam(name = "month") int month,
                                                 @RequestParam(name = "year") int year){
-        LocalDate selectedDate = LocalDate.of(year, month, 1);
+        LocalDate cycleStartDate = LocalDate.of(year, month, 1);
+        LocalDate cycleEndDate = LocalDate.of(year, month, cycleStartDate.getMonth().length(cycleStartDate.isLeapYear()));
         Member member = memberService.get(memberID);
 
-        return new MemberChargesFinancesDTOBuilder(daoFactory)
-                            .setSelectedDate(selectedDate)
+        return new MemberChargesFinancesDTOBuilder()
+                            .setCycleStartDate(cycleStartDate)
+                            .setCycleEndDate(cycleEndDate)
                             .setMember(member)
                             .build();
-
     }
 
     @RequestMapping(value="/{memberID}/addMiscCharge", method=RequestMethod.PUT)
@@ -78,13 +74,14 @@ public class StudentFinancesResources {
                                                 @RequestParam(name="month") int month,
                                                 @RequestParam(name="day") int day,
                                                 @RequestParam(name="year") int year){
+
         Member member = memberService.get(memberID);
 
         LocalDate selectedDate = LocalDate.of(year, month, day);
         LocalDate cycleStartDate = LocalDate.of(year, month, 1);
         Course otherCourse = courseService.get(Course.OTHER_ID);
 
-        Charge charge = new ChargeDefaultValueInitializer(daoFactory)
+        Charge charge = new ChargeDefaultValueInitializer()
                                 .setCourse(otherCourse)
                                 .setLocalDate(cycleStartDate)
                                 .setMember(member)
@@ -127,6 +124,7 @@ public class StudentFinancesResources {
         LocalDate cycleEndDate = LocalDate.parse(cycleEndDateString);
         logger.debug("cycleStartDate: " + cycleStartDate + ", cycleEndDate: " + cycleEndDate);
         Member member = memberService.get(memberID);
-        return chargeService.getTransientChargeList(member, cycleStartDate, cycleEndDate);
+        List<Charge> chargeList =  chargeService.getTransientChargeList(member, cycleStartDate, cycleEndDate);
+        return chargeList;
     }
 }

@@ -16,7 +16,9 @@
 <script>
     $(document).ready(function(){
         $('#entryDate').datepicker({
-            dateFormat: "mm/dd/yy"
+            dateFormat: "mm/dd/yy",
+            maxDate: '0',
+            minDate: new Date(2016, 1, 1)
         });
 
         $('#entryDate').keydown(function (e) {

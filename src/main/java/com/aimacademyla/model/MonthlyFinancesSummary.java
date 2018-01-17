@@ -5,6 +5,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.security.access.method.P;
@@ -20,7 +22,7 @@ import java.util.*;
  * Created by davidkim on 4/10/17.
  */
 @Entity(name="Monthly_Finances_Summary")
-public class MonthlyFinancesSummary implements Serializable{
+public class MonthlyFinancesSummary extends AIMEntity implements Serializable{
 
     private static final long serialVersionUID = 399088079685831204L;
 
@@ -32,7 +34,7 @@ public class MonthlyFinancesSummary implements Serializable{
     private int monthlyFinancesSummaryID;
 
     @ManyToOne
-    @JoinColumn(name="SeasonID")
+    @JoinColumn(name="SeasonID", referencedColumnName = "SeasonID")
     private Season season;
 
     @Column(name="NumTotalCharges")
@@ -80,6 +82,114 @@ public class MonthlyFinancesSummary implements Serializable{
         chargeSet = new HashSet<>();
         paymentSet = new HashSet<>();
     }
+
+    public void addCharge(Charge charge){
+        if(chargeSet == null)
+            return;
+
+        if(getCharge(charge.getChargeID()) != null){
+            updateCharge(charge);
+            return;
+        }
+
+        logger.debug("Current totalChargeAmount is: " + totalChargeAmount + ", and numTotalCharges: " + numTotalCharges);
+        logger.debug("Adding Charge: " + charge.getChargeID() + " with chargeAmount: " + charge.getChargeAmount());
+        totalChargeAmount = totalChargeAmount.add((charge.getChargeAmount()).subtract(charge.getDiscountAmount()));
+
+        chargeSet.add(charge);
+        charge.setMonthlyFinancesSummary(this);
+        numTotalCharges = chargeSet.size();
+        logger.debug("New totalChargeAmount is: " + totalChargeAmount +", and numTotalCharges: " + numTotalCharges);
+    }
+
+    public void updateCharge(Charge charge){
+        if(chargeSet == null)
+            return;
+
+        logger.debug("Updating Charge: " + charge.getChargeID());
+        removeCharge(charge);
+        addCharge(charge);
+    }
+
+    public void removeCharge(Charge charge){
+        if(chargeSet == null)
+            return;
+
+        Charge persistedCharge = getCharge(charge.getChargeID());
+        if(persistedCharge == null)
+            return;
+
+        logger.debug("Current totalChargeAmount is: " + totalChargeAmount + ", and numTotalCharges: " + numTotalCharges);
+        logger.debug("Removing Charge: " + persistedCharge.getChargeID() + " with chargeAmount: " + persistedCharge.getChargeAmount());
+        totalChargeAmount = totalChargeAmount.subtract((persistedCharge.getChargeAmount()).subtract(persistedCharge.getDiscountAmount()));
+        logger.debug("New totalChargeAmount is: " + totalChargeAmount +", and numTotalCharges: " + numTotalCharges);
+        Iterator it = chargeSet.iterator();
+        while(it.hasNext()){
+            Charge iteratedCharge = (Charge) it.next();
+            if(iteratedCharge.equals(charge)){
+                it.remove();
+                numTotalCharges = chargeSet.size();
+                break;
+            }
+        }
+    }
+
+    private Payment getPayment(int paymentID){
+        for(Payment payment : paymentSet)
+            if(payment.getPaymentID() == paymentID)
+                return payment;
+        return null;
+    }
+
+    public void addPayment(Payment payment){
+        if(paymentSet == null)
+            return;
+
+        totalPaymentAmount = totalPaymentAmount.add(payment.getPaymentAmount());
+        numTotalPayments++;
+
+        paymentSet.add(payment);
+        payment.setMonthlyFinancesSummary(this);
+    }
+
+    public void updatePayment(Payment payment){
+        if(paymentSet == null)
+            return;
+
+        removePayment(payment);
+        addPayment(payment);
+    }
+
+    public  void removePayment(Payment payment){
+        if(paymentSet == null)
+            return;
+
+        Payment persistedPayment = getPayment(payment.getPaymentID());
+        if(persistedPayment == null)
+            return;
+
+        totalPaymentAmount = totalPaymentAmount.subtract(payment.getPaymentAmount());
+        numTotalPayments--;
+        Iterator it = paymentSet.iterator();
+        while(it.hasNext()){
+            Payment iteratedPayment = (Payment) it.next();
+            if(iteratedPayment.equals(payment)){
+                it.remove();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public int getBusinessID() {
+        return monthlyFinancesSummaryID;
+    }
+
+    @Override
+    public void setBusinessID(int monthlyFinancesSummaryID){
+        this.monthlyFinancesSummaryID = monthlyFinancesSummaryID;
+    }
+
     public int getMonthlyFinancesSummaryID() {
         return monthlyFinancesSummaryID;
     }
@@ -182,102 +292,5 @@ public class MonthlyFinancesSummary implements Serializable{
                 return charge;
 
         return null;
-    }
-
-    public void addCharge(Charge charge){
-        if(chargeSet == null)
-            return;
-
-        if(getCharge(charge.getChargeID()) != null){
-            updateCharge(charge);
-            return;
-        }
-
-        logger.debug("Current totalChargeAmount is: " + totalChargeAmount + ", and numTotalCharges: " + numTotalCharges);
-        logger.debug("Adding Charge: " + charge.getChargeID() + " with chargeAmount: " + charge.getChargeAmount());
-        totalChargeAmount = totalChargeAmount.add((charge.getChargeAmount()).subtract(charge.getDiscountAmount()));
-
-        chargeSet.add(charge);
-        charge.setMonthlyFinancesSummary(this);
-        numTotalCharges = chargeSet.size();
-        logger.debug("New totalChargeAmount is: " + totalChargeAmount +", and numTotalCharges: " + numTotalCharges);
-    }
-
-    public void updateCharge(Charge charge){
-        if(chargeSet == null)
-            return;
-
-        logger.debug("Updating Charge: " + charge.getChargeID());
-        removeCharge(charge);
-        addCharge(charge);
-    }
-
-    public void removeCharge(Charge charge){
-        if(chargeSet == null)
-            return;
-
-        Charge persistedCharge = getCharge(charge.getChargeID());
-        if(persistedCharge == null)
-            return;
-
-        logger.debug("Current totalChargeAmount is: " + totalChargeAmount + ", and numTotalCharges: " + numTotalCharges);
-        logger.debug("Removing Charge: " + persistedCharge.getChargeID() + " with chargeAmount: " + persistedCharge.getChargeAmount());
-        totalChargeAmount = totalChargeAmount.subtract((persistedCharge.getChargeAmount()).subtract(persistedCharge.getDiscountAmount()));
-        logger.debug("New totalChargeAmount is: " + totalChargeAmount +", and numTotalCharges: " + numTotalCharges);
-        Iterator it = chargeSet.iterator();
-        while(it.hasNext()){
-            Charge iteratedCharge = (Charge) it.next();
-            if(iteratedCharge.equals(charge)){
-                it.remove();
-                numTotalCharges = chargeSet.size();
-                break;
-            }
-        }
-    }
-
-    private Payment getPayment(int paymentID){
-        for(Payment payment : paymentSet)
-            if(payment.getPaymentID() == paymentID)
-                return payment;
-        return null;
-    }
-
-    public void addPayment(Payment payment){
-        if(paymentSet == null)
-            return;
-
-        totalPaymentAmount = totalPaymentAmount.add(payment.getPaymentAmount());
-        numTotalPayments++;
-
-        paymentSet.add(payment);
-        payment.setMonthlyFinancesSummary(this);
-    }
-
-    public void updatePayment(Payment payment){
-        if(paymentSet == null)
-            return;
-
-        removePayment(payment);
-        addPayment(payment);
-    }
-
-    public  void removePayment(Payment payment){
-        if(paymentSet == null)
-            return;
-
-        Payment persistedPayment = getPayment(payment.getPaymentID());
-        if(persistedPayment == null)
-            return;
-
-        totalPaymentAmount = totalPaymentAmount.subtract(payment.getPaymentAmount());
-        numTotalPayments--;
-        Iterator it = paymentSet.iterator();
-        while(it.hasNext()){
-            Payment iteratedPayment = (Payment) it.next();
-            if(iteratedPayment.equals(payment)){
-                it.remove();
-                break;
-            }
-        }
     }
 }

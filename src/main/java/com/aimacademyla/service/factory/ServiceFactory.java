@@ -1,6 +1,5 @@
 package com.aimacademyla.service.factory;
 
-import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

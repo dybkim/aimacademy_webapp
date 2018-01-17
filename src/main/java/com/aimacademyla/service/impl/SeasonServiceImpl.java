@@ -1,9 +1,7 @@
 package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.GenericDAO;
-import com.aimacademyla.dao.SeasonDAO;
 import com.aimacademyla.dao.flow.impl.SeasonDAOAccessFlow;
-import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.Season;
 import com.aimacademyla.service.SeasonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,7 @@ public class SeasonServiceImpl extends GenericServiceImpl<Season, Integer> imple
 
     @Override
     public Season getSeason(LocalDate date) {
-        return (Season) new SeasonDAOAccessFlow(getDAOFactory())
+        return (Season) new SeasonDAOAccessFlow()
                                     .addQueryParameter(date)
                                     .get();
     }

@@ -1,18 +1,15 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.MemberDAO;
-import com.aimacademyla.model.*;
-import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.Member;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -46,7 +43,7 @@ public class MemberDAOImpl extends GenericDAOImpl<Member,Integer> implements Mem
     @Override
     public Member loadCollections(Member member){
         Session session = currentSession();
-        member = session.get(Member.class, member.getMemberID());
+        member = get(member.getMemberID());
         Hibernate.initialize(member.getMemberMonthlyRegistrationMap());
         Hibernate.initialize(member.getMemberCourseRegistrationMap());
         session.flush();

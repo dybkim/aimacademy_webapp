@@ -4,12 +4,15 @@ import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.dao.flow.DAOAccessFlow;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
+import com.aimacademyla.util.ApplicationContextProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LocalDateType;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,18 +28,24 @@ public abstract class AbstractDAOAccessFlowImpl<T> implements DAOAccessFlow<T> {
 
     private static final Logger logger = LogManager.getLogger(AbstractDAOAccessFlowImpl.class.getName());
 
-    AbstractDAOAccessFlowImpl(DAOFactory daoFactory){
-        this.daoFactory = daoFactory;
+    AbstractDAOAccessFlowImpl(){
+        ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+        daoFactory = (DAOFactory)context.getBean("daoFactory");
         parameterHashMap = new HashMap<>();
         criteria = new ArrayList<>();
     }
 
-    DAOFactory getDaoFactory(){
+    DAOFactory getDAOFactory(){
         return daoFactory;
     }
 
     /*
      * Uses deprecated Criterion class because using JPA Predicate requires a Hibernate Session (needed to get CriteriaBuilder to get Root)
+     *
+     * parameterHashMap stores query parameter as an object
+     * the handler that matches the query parameter object type is fetched
+     * handler then creates a query criterion based on the object type and the object's values
+     * the generated query criterion is then stored in the query criterion list
      */
     @Override
     public AbstractDAOAccessFlowImpl addQueryParameter(Object object){
@@ -79,17 +88,21 @@ public abstract class AbstractDAOAccessFlowImpl<T> implements DAOAccessFlow<T> {
      * row name in the database itself.
      *
      * When using Restrictions.sqlRestriction however, use the row name in the database, NOT the property name in the entity POJO's.
+     *
+     * The following handle methods are the lambda expressions for Handler
+     *
+     * For Restrictions, propertyNames
      */
     void handleMember(Object object, List<Criterion> criteria){
         Member member = (Member) object;
         criteria.add(Restrictions.eq("member.memberID", member.getMemberID()));
-        logger.debug("Added query parameter: Member");
+        logger.debug("Added query parameter: Member " + member.getMemberID());
     }
 
     void handleCourse(Object object, List<Criterion> criteria){
         Course course = (Course) object;
         criteria.add(Restrictions.eq("course.courseID", course.getCourseID()));
-        logger.debug("Added query parameter: Course");
+        logger.debug("Added query parameter: Course " + course.getCourseID());
     }
 
     void handleLocalDate(Object object, List<Criterion> criteria){

@@ -28,7 +28,10 @@ studentFinancesControllerApp.controller("studentFinancesControl", function($scop
         $scope.refreshChargesList();
     };
 
-    $scope.addMiscCharge = function(memberID, chargeDescription, chargeAmount, chargeDiscount){
+    $scope.addMiscCharge = function(memberID, chargeDescription, chargeAmount, chargeDiscount, dateCharged){
+        alert(dateCharged);
+        $scope.dateCharged = dateCharged;
+        $scope.day = dateCharged.day;
         $http({
             url:'/admin/student/rest/studentFinances/' + $scope.memberID + '/addMiscCharge',
             method: "PUT",
@@ -36,6 +39,7 @@ studentFinancesControllerApp.controller("studentFinancesControl", function($scop
                     chargeAmount: chargeAmount,
                     chargeDiscount: chargeDiscount,
                     month: $scope.month,
+                    day: $scope.day,
                     year: $scope.year}
 
         }).success(function (){
@@ -43,7 +47,6 @@ studentFinancesControllerApp.controller("studentFinancesControl", function($scop
         }).error(function(data){
             alert('ERROR:  ' +  data.error);
         });
-
     };
 
     $scope.addDiscountToCharge = function(chargeID, discountAmount){

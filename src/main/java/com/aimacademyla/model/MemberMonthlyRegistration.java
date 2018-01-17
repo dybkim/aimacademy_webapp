@@ -1,7 +1,7 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.model.enums.AIMEntityType;
-import com.aimacademyla.model.reference.TemporalReference;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
@@ -15,7 +15,7 @@ import java.time.LocalDate;
  */
 
 @Entity(name="Member_Monthly_Registration")
-public class MemberMonthlyRegistration implements Serializable{
+public class MemberMonthlyRegistration extends AIMEntity implements Serializable{
 
     private static final long serialVersionUID = -1918184776043140894L;
     public static final int INACTIVE = -1;
@@ -26,11 +26,11 @@ public class MemberMonthlyRegistration implements Serializable{
     private int memberMonthlyRegistrationID;
 
     @ManyToOne
-    @JoinColumn(name="MemberID")
+    @JoinColumn(name="MemberID", referencedColumnName = "MemberID")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name="SeasonID")
+    @JoinColumn(name="SeasonID", referencedColumnName = "SeasonID")
     private Season season;
 
     @Column(name="CycleStartDate")
@@ -42,7 +42,18 @@ public class MemberMonthlyRegistration implements Serializable{
     private BigDecimal membershipCharge;
 
     @OneToOne(cascade = {CascadeType.MERGE,CascadeType.REFRESH})
+    @JoinColumn(name="ChargeID", referencedColumnName = "ChargeID")
     private Charge charge;
+
+    @Override
+    public int getBusinessID() {
+        return memberMonthlyRegistrationID;
+    }
+
+    @Override
+    public void setBusinessID(int memberMonthlyRegistrationID){
+        this.memberMonthlyRegistrationID = memberMonthlyRegistrationID;
+    }
 
     public int getMemberMonthlyRegistrationID() {
         return memberMonthlyRegistrationID;

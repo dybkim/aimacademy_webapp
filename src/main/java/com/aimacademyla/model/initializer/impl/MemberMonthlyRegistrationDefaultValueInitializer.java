@@ -1,12 +1,11 @@
 package com.aimacademyla.model.initializer.impl;
 
 import com.aimacademyla.dao.SeasonDAO;
-import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.dao.flow.impl.SeasonDAOAccessFlow;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MemberMonthlyRegistration;
 import com.aimacademyla.model.Season;
-import com.aimacademyla.model.initializer.DefaultValueInitializer;
+import com.aimacademyla.model.builder.entity.MemberMonthlyRegistrationBuilder;
 
 import java.time.LocalDate;
 
@@ -17,27 +16,25 @@ public class MemberMonthlyRegistrationDefaultValueInitializer extends GenericDef
     private Member member;
     private LocalDate localDate;
 
-    public MemberMonthlyRegistrationDefaultValueInitializer(DAOFactory daoFactory){
-        super(daoFactory);
+    public MemberMonthlyRegistrationDefaultValueInitializer(){
         seasonDAO = (SeasonDAO) getDAOFactory().getDAO(Season.class);
     }
 
     @Override
     public MemberMonthlyRegistration initialize() {
-        MemberMonthlyRegistration memberMonthlyRegistration = new MemberMonthlyRegistration();
         LocalDate cycleStartDate = LocalDate.of(localDate.getYear(), localDate.getMonthValue(), 1);
-        Season season = (Season) new SeasonDAOAccessFlow(getDAOFactory())
+        Season season = (Season) new SeasonDAOAccessFlow()
                                      .addQueryParameter(cycleStartDate)
                                      .get();
 
         if(season == null)
             season = seasonDAO.get(Season.NO_SEASON_FOUND);
 
-        memberMonthlyRegistration.setCycleStartDate(cycleStartDate);
-        memberMonthlyRegistration.setMember(member);
-        memberMonthlyRegistration.setSeason(season);
-
-        return memberMonthlyRegistration;
+        return new MemberMonthlyRegistrationBuilder()
+                    .setCycleStartDate(cycleStartDate)
+                    .setMember(member)
+                    .setSeason(season)
+                    .build();
     }
 
     public MemberMonthlyRegistrationDefaultValueInitializer setMember(Member member){

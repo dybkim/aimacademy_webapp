@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
@@ -21,7 +23,7 @@ import java.util.*;
  */
 
 @Entity(name="Charges")
-public class Charge implements Serializable{
+public class Charge extends AIMEntity implements Serializable{
 
     private static final long serialVersionUID = 1346555619431916040L;
     private static final Logger logger = LogManager.getLogger(Charge.class.getName());
@@ -36,11 +38,11 @@ public class Charge implements Serializable{
     private int chargeID;
 
     @ManyToOne
-    @JoinColumn(name="MemberID")
+    @JoinColumn(name="MemberID", referencedColumnName = "MemberID")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name="CourseID")
+    @JoinColumn(name="CourseID", referencedColumnName = "CourseID")
     private Course course;
 
     @Column(name="ChargeAmount")
@@ -53,11 +55,11 @@ public class Charge implements Serializable{
     private LocalDate cycleStartDate;
 
     @ManyToOne
-    @JoinColumn(name="PaymentID")
+    @JoinColumn(name="PaymentID", referencedColumnName = "PaymentID")
     private Payment payment;
 
     @ManyToOne
-    @JoinColumn(name="MonthlyFinancesSummaryID")
+    @JoinColumn(name="MonthlyFinancesSummaryID", referencedColumnName = "MonthlyFinancesSummaryID")
     private MonthlyFinancesSummary monthlyFinancesSummary;
 
     @Column(name="Description")
@@ -91,7 +93,7 @@ public class Charge implements Serializable{
         return null;
     }
 
-    private void removeChargeLine(int chargeLineID){
+    private void removeChargeLineFromSet(int chargeLineID){
         Iterator it = chargeLineSet.iterator();
         while(it.hasNext()){
             ChargeLine chargeLine = (ChargeLine) it.next();
@@ -137,7 +139,6 @@ public class Charge implements Serializable{
         if(chargeLineSet == null || getChargeLine(chargeLine.getChargeLineID()) == null)
             return;
 
-
         logger.debug("Removing ChargeLine, current chargeAmount is: " + chargeAmount + ", number of ChargeLines is: "+ chargeLineSet.size());
         chargeAmount = chargeAmount.subtract(chargeLine.getChargeAmount());
 
@@ -145,6 +146,7 @@ public class Charge implements Serializable{
             billableUnitsBilled = BigDecimal.ZERO;
 
         BigDecimal chargeLineBillableUnitsBilled = chargeLine.getBillableUnitsBilled();
+
         if(chargeLineBillableUnitsBilled == null)
             chargeLineBillableUnitsBilled = BigDecimal.ZERO;
 
@@ -152,7 +154,7 @@ public class Charge implements Serializable{
 
         numChargeLines--;
 
-        removeChargeLine(chargeLine.getChargeLineID());
+        removeChargeLineFromSet(chargeLine.getChargeLineID());
 
         logger.debug("Removed ChargeLine, current chargeAmount is: " + chargeAmount + ", number of ChargeLines is: "+ chargeLineSet.size());
     }
@@ -167,6 +169,42 @@ public class Charge implements Serializable{
             chargeAmount = chargeAmount.add(chargeLine.getChargeAmount());
 
         return chargeAmount;
+    }
+
+    public void sortChargeLineSetByDate(){
+        SortedSet<ChargeLine> sortedChargeLineSet = new TreeSet<>((leftChargeLine, rightChargeLine) -> {
+            LocalDate previousDate = leftChargeLine.getDateCharged();
+            LocalDate nextDate = rightChargeLine.getDateCharged();
+            return previousDate.isAfter(nextDate) ? 1 : 0;
+        });
+        sortedChargeLineSet.addAll(chargeLineSet);
+
+        chargeLineSet = sortedChargeLineSet;
+    }
+
+    /*
+     * Have to override equals in order to implement a Set of Charges
+     */
+    @Override
+    public boolean equals(Object object){
+        if(this == object)
+            return true;
+
+        if(!(object instanceof Charge))
+            return false;
+
+        Charge charge = (Charge) object;
+        return charge.getChargeID() == this.chargeID;
+    }
+
+    @Override
+    public int getBusinessID() {
+        return chargeID;
+    }
+
+    @Override
+    public void setBusinessID(int chargeID){
+        this.chargeID = chargeID;
     }
 
     public int getChargeID() {
@@ -272,14 +310,4 @@ public class Charge implements Serializable{
     public void setNumChargeLines(int numChargeLines) {
         this.numChargeLines = numChargeLines;
     }
-
-    @Override
-    public boolean equals(Object object){
-        if(!(object instanceof Charge))
-            throw new IllegalArgumentException("Argument must be of type Charge!");
-
-        Charge charge = (Charge) object;
-        return charge.getChargeID() == this.chargeID;
-    }
-
 }

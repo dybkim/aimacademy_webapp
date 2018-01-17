@@ -21,7 +21,6 @@ public class CourseSessionDTO implements Serializable{
     private Course course;
 
     public CourseSessionDTO(){
-        courseSessionID = 0;
         attendanceList = new ArrayList<>();
     }
 
@@ -62,7 +61,6 @@ public class CourseSessionDTO implements Serializable{
 
     public CourseSession getCourseSession(){
         CourseSession courseSession = new CourseSession();
-        courseSession.setCourseSessionID(courseSessionID);
         courseSession.setCourse(course);
         courseSession.setCourseSessionDate(courseSessionDate);
         return courseSession;

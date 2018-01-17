@@ -1,10 +1,7 @@
 package com.aimacademyla.dao.flow.impl;
 
 import com.aimacademyla.dao.MonthlyFinancesSummaryDAO;
-import com.aimacademyla.dao.factory.DAOFactory;
-import com.aimacademyla.model.Member;
 import com.aimacademyla.model.MonthlyFinancesSummary;
-import com.aimacademyla.model.enums.AIMEntityType;
 import com.aimacademyla.model.initializer.impl.MonthlyFinancesSummaryDefaultValueInitializer;
 
 import java.time.LocalDate;
@@ -15,9 +12,8 @@ public class MonthlyFinancesSummaryDAOAccessFlow extends AbstractDAOAccessFlowIm
 
     private MonthlyFinancesSummaryDAO monthlyFinancesSummaryDAO;
 
-    public MonthlyFinancesSummaryDAOAccessFlow(DAOFactory daoFactory) {
-        super(daoFactory);
-        this.monthlyFinancesSummaryDAO = (MonthlyFinancesSummaryDAO) daoFactory.getDAO(MonthlyFinancesSummary.class);
+    public MonthlyFinancesSummaryDAOAccessFlow() {
+        this.monthlyFinancesSummaryDAO = (MonthlyFinancesSummaryDAO) getDAOFactory().getDAO(MonthlyFinancesSummary.class);
         dispatch.put(LocalDate.class, super::handleLocalDate);
     }
 
@@ -27,11 +23,12 @@ public class MonthlyFinancesSummaryDAOAccessFlow extends AbstractDAOAccessFlowIm
 
         MonthlyFinancesSummary monthlyFinancesSummary = monthlyFinancesSummaryDAO.get(criteria);
 
-        if(monthlyFinancesSummary == null)
-            monthlyFinancesSummary = new MonthlyFinancesSummaryDefaultValueInitializer(getDaoFactory())
+        if(monthlyFinancesSummary == null) {
+            monthlyFinancesSummary = new MonthlyFinancesSummaryDefaultValueInitializer()
                     .setLocalDate(cycleStartDate)
                     .initialize();
             monthlyFinancesSummaryDAO.add(monthlyFinancesSummary);
+        }
         return monthlyFinancesSummary;
     }
 

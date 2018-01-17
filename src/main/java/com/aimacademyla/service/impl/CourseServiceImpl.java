@@ -9,6 +9,7 @@ import com.aimacademyla.model.*;
 import com.aimacademyla.model.dto.CourseRegistrationDTO;
 import com.aimacademyla.model.dto.CourseRegistrationDTOListItem;
 import com.aimacademyla.model.enums.BillableUnitType;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import com.aimacademyla.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -91,7 +92,7 @@ public class CourseServiceImpl extends GenericServiceImpl<Course, Integer> imple
     @Override
     @SuppressWarnings("unchecked")
     public void removeCourse(Course course){
-        List<Charge> chargeList = new ChargeDAOAccessFlow(getDAOFactory())
+        List<Charge> chargeList = new ChargeDAOAccessFlow()
                                         .addQueryParameter(course)
                                         .getList();
         /*

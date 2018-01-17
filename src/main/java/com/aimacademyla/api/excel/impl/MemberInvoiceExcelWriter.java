@@ -1,10 +1,12 @@
 package com.aimacademyla.api.excel.impl;
 
+import com.aimacademyla.api.excel.MSExcelWriter;
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Member;
-import com.aimacademyla.model.wrapper.MemberChargesFinancesWrapper;
+import com.aimacademyla.model.dto.MemberChargesFinancesDTO;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.document.AbstractXlsxView;
 
@@ -20,25 +22,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
-public class ExcelInvoiceView extends AbstractXlsxView {
+public class MemberInvoiceExcelWriter extends MSExcelWriter{
+
+    public MemberInvoiceExcelWriter(Workbook workbook){
+        super(workbook);
+    }
 
     @Override
+    public Workbook writeToWorkbook() {
+        return null;
+    }
+
     protected void buildExcelDocument(Map<String, Object> map, Workbook workbook, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         String invoiceTemplatePath = getClass().getClassLoader().getResource("Invoice_Template.xlsx").getFile();
         File invoiceTemplateFile = new File(invoiceTemplatePath);
         FileInputStream inputStream = new FileInputStream(invoiceTemplateFile);
         OPCPackage opcPackage = OPCPackage.open(inputStream);
 
-        workbook = WorkbookFactory.create(opcPackage);
+        workbook = new XSSFWorkbook(opcPackage);
         Sheet invoiceSheet = workbook.getSheetAt(0);
 
-        MemberChargesFinancesWrapper memberChargesFinancesWrapper = (MemberChargesFinancesWrapper) map.get("memberChargesFinancesWrapper");
+        MemberChargesFinancesDTO memberChargesFinancesDTO = (MemberChargesFinancesDTO) map.get("memberChargesFinancesDTO");
 
-        Member member = memberChargesFinancesWrapper.getMember();
-        LocalDate selectedDate = memberChargesFinancesWrapper.getCycleStartDate();
-        List<Charge> chargeList = new ArrayList<>(memberChargesFinancesWrapper.getChargeHashMap().values());
-        HashMap<Integer, BigDecimal> hoursBilledHashMap = memberChargesFinancesWrapper.getBillableUnitsBilledHashMap();
+        Member member = memberChargesFinancesDTO.getMember();
+        LocalDate selectedDate = memberChargesFinancesDTO.getCycleStartDate();
+        List<Charge> chargeList = new ArrayList<>(memberChargesFinancesDTO.getChargeHashMap().values());
+        HashMap<Integer, BigDecimal> hoursBilledHashMap = memberChargesFinancesDTO.getBillableUnitsBilledHashMap();
 
         String selectedMonthString = selectedDate.getMonth().toString().substring(0,1) + selectedDate.getMonth().toString().substring(1).toLowerCase();
         String fileName = member.getMemberID() + "_" + selectedMonthString + selectedDate.getYear() + "_INVOICE.xlsx";
@@ -86,7 +95,7 @@ public class ExcelInvoiceView extends AbstractXlsxView {
         }
 
         workbook.write(outputStream);
-        inputStream.close();
+//        inputStream.close();
         outputStream.close();
         opcPackage.close();
     }

@@ -2,20 +2,16 @@ package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.AttendanceDAO;
 import com.aimacademyla.model.Attendance;
-import com.aimacademyla.model.Course;
-import com.aimacademyla.model.CourseSession;
-import com.aimacademyla.model.Member;
-import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**

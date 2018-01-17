@@ -2,6 +2,8 @@ package com.aimacademyla.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,7 +19,7 @@ import java.time.LocalDate;
  */
 
 @Entity(name="Charge_Line")
-public class ChargeLine implements Serializable{
+public class ChargeLine extends AIMEntity implements Serializable{
 
     private static final long serialVersionUID = 6493974523582584972L;
 
@@ -27,7 +29,7 @@ public class ChargeLine implements Serializable{
     private int chargeLineID;
 
     @ManyToOne
-    @JoinColumn(name="ChargeID")
+    @JoinColumn(name="ChargeID", referencedColumnName = "ChargeID")
     @JsonBackReference
     private Charge charge;
 
@@ -46,6 +48,29 @@ public class ChargeLine implements Serializable{
     @Column(name="dateCharged")
     @DateTimeFormat(pattern="MM/dd/yyyy")
     private LocalDate dateCharged;
+
+    /*
+     * Have to override equals in order to implement a Set of ChargeLines
+     */
+    @Override
+    public boolean equals(Object object){
+        if(this == object)
+            return true;
+
+        if(!(object instanceof ChargeLine))
+            return false;
+
+        ChargeLine chargeLine = (ChargeLine) object;
+        return chargeLineID == chargeLine.getChargeLineID();
+    }
+
+    @Override
+    public int getBusinessID() {
+        return chargeLineID;
+    }
+
+    @Override
+    public void setBusinessID(int chargeLineID){this.chargeLineID = chargeLineID;}
 
     public int getChargeLineID() {
         return chargeLineID;
@@ -93,14 +118,5 @@ public class ChargeLine implements Serializable{
 
     public void setDateCharged(LocalDate dateCharged) {
         this.dateCharged = dateCharged;
-    }
-
-    @Override
-    public boolean equals(Object object){
-        if(!(object instanceof ChargeLine))
-            throw new IllegalArgumentException("Argument must be of type ChargeLine!");
-
-        ChargeLine chargeLine = (ChargeLine) object;
-        return chargeLineID == chargeLine.getChargeLineID();
     }
 }

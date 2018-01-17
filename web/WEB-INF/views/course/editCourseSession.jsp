@@ -18,7 +18,9 @@
 <script>
     $(document).ready(function(){
         $('#courseSessionDate').datepicker({
-            dateFormat: "mm/dd/yy"
+            dateFormat: "mm/dd/yy",
+            maxDate: '0',
+            minDate: new Date(2016, 1, 1)
         });
 
         $('#courseSessionDate').keydown(function (e) {
@@ -56,7 +58,7 @@
                 <div class="form-group">
                     <span style="color: #FF0000">${courseSessionDateErrorMsg}</span>
                     <br>
-                    <label for="courseSessionDate">Class Session Date (MM/DD/YYYY)</label>
+                    <label for="courseSessionDate">Class Session Date (MM/DD/YYYY):</label>
                     <fmt:parseDate value="${courseSessionDTO.courseSessionDate}" pattern="yyyy-MM-dd" var="parsedDate" type="date" />
                     <fmt:formatDate value="${parsedDate}" var="formattedDate" type="date" pattern="MM/dd/yyyy" />
                     <form:input path="courseSessionDate" id="courseSessionDate" class="date" value="${formattedDate}"/>

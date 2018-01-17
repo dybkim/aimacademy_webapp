@@ -26,6 +26,7 @@
           <file>file://$MODULE_DIR$/target/webportal/WEB-INF/applicationContext.xml</file>
           <file>file://$MODULE_DIR$/target/webportal/WEB-INF/dispatcher-servlet.xml</file>
         </fileset>
+        <fileset id="web application context" profiles="localhost" autodetected="true" />
       </configuration>
     </facet>
   </component>

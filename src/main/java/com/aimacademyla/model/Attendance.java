@@ -1,6 +1,8 @@
 package com.aimacademyla.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,7 +16,7 @@ import java.time.LocalDate;
  */
 
 @Entity
-public class Attendance implements Serializable{
+public class Attendance extends AIMEntity implements Serializable{
 
     private static final long serialVersionUID = -6614132982434332722L;
 
@@ -24,16 +26,16 @@ public class Attendance implements Serializable{
     private int attendanceID;
 
     @ManyToOne
-    @JoinColumn(name="MemberID")
+    @JoinColumn(name="MemberID", referencedColumnName = "MemberID")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name="CourseSessionID")
+    @JoinColumn(name="CourseSessionID", referencedColumnName = "CourseSessionID")
     private CourseSession courseSession;
 
     //ZeroToOne mapping workaround
     @ManyToOne
-    @JoinColumn(name="ChargeLineID")
+    @JoinColumn(name="ChargeLineID", referencedColumnName = "ChargeLineID")
     @NotFound(action = NotFoundAction.IGNORE)
     @JsonBackReference
     private ChargeLine chargeLine;
@@ -45,6 +47,9 @@ public class Attendance implements Serializable{
     @Column(name="WasPresent")
     private boolean wasPresent;
 
+    /*
+     * Have to override equals in order to implement a Set of Attendances
+     */
     @Override
     public boolean equals(Object object) {
         if(!(object instanceof Attendance))
@@ -103,4 +108,12 @@ public class Attendance implements Serializable{
     public void setChargeLine(ChargeLine chargeLine) {
         this.chargeLine = chargeLine;
     }
+
+    @Override
+    public int getBusinessID() {
+        return attendanceID;
+    }
+
+    @Override
+    public void setBusinessID(int attendanceID){this.attendanceID = attendanceID;}
 }

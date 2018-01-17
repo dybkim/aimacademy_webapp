@@ -1,8 +1,6 @@
 package com.aimacademyla.dao.factory;
 
 import com.aimacademyla.dao.GenericDAO;
-import com.aimacademyla.model.enums.AIMEntityType;
-import com.aimacademyla.service.GenericService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,15 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
-public class DAOFactory {
+@Component("daoFactory")
+public class DAOFactory{
     private List<GenericDAO> genericDAOList;
 
     private static final Map<Class, GenericDAO> genericDAOCache = new HashMap<>();
 
     @Autowired
     public DAOFactory(List<GenericDAO> genericDAOList) {
-        this.genericDAOList= genericDAOList;
+        this.genericDAOList = genericDAOList;
     }
 
     @PostConstruct

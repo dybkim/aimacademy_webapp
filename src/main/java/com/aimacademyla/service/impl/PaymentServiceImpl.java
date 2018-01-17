@@ -2,11 +2,8 @@ package com.aimacademyla.service.impl;
 
 import com.aimacademyla.dao.GenericDAO;
 import com.aimacademyla.dao.PaymentDAO;
-import com.aimacademyla.dao.factory.DAOFactory;
-import com.aimacademyla.dao.flow.impl.PaymentDAOAccessFlow;
-import com.aimacademyla.model.*;
-import com.aimacademyla.model.enums.AIMEntityType;
-import com.aimacademyla.model.initializer.impl.PaymentDefaultValueInitializer;
+import com.aimacademyla.model.MonthlyFinancesSummary;
+import com.aimacademyla.model.Payment;
 import com.aimacademyla.service.MonthlyFinancesSummaryService;
 import com.aimacademyla.service.PaymentService;
 import org.apache.logging.log4j.LogManager;
@@ -14,10 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class PaymentServiceImpl extends GenericServiceImpl<Payment, Integer> implements PaymentService{

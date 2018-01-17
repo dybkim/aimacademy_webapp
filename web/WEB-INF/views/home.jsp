@@ -29,19 +29,28 @@
             },
             success:function(chargeList){
                 for(var i = 0; i < chargeList.length; i++){
-                    table = table + '<tr>';
                     var description = JSON.stringify(chargeList[i].description).replace(/\"/g, "");
-                    var chargeAmount = JSON.stringify(chargeList[i].chargeAmount);
-                    var billableUnitsBilled = JSON.stringify(chargeList[i].billableUnitsBilled);
                     var billableUnitType = JSON.stringify(chargeList[i].billableUnitType).replace(/\"/g,"");
 
-                    table = table + '<td><b>Charge Description:</b></td>' +
-                            '<td>' + description + '</td>' +
+                    for(var j = 0; j < chargeList[i].chargeLineSet.length; j++){
+                        table = table + '<tr>';
+                        var chargeAmount = JSON.stringify(chargeList[i].chargeLineSet[j].chargeAmount);
+                        var billableUnitsBilled = JSON.stringify(chargeList[i].chargeLineSet[j].billableUnitsBilled);
+                        var dateCharged = JSON.stringify(chargeList[i].chargeLineSet[j].dateCharged.month).replace(/\"/g,"")
+                            .toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                            return letter.toUpperCase();
+                            })
+                            + ' ' + JSON.stringify(chargeList[i].chargeLineSet[j].dateCharged.dayOfMonth) + ', '
+                            + JSON.stringify(chargeList[i].chargeLineSet[j].dateCharged.year) ;
+
+                        table = table + '<td><b>Charge Description:</b></td>' +
+                            '<td>' + description + ' - ' + dateCharged + '</td>' +
                             '<td><b>Time Billed (' + billableUnitType + ')</b></td>' +
                             '<td>' + billableUnitsBilled + '</td>' +
                             '<td><b>Charge Amount:</b></td>' +
                             '<td>' + chargeAmount + '</td>' +
                             '</tr>';
+                    }
                 }
 
                 table = table + '</table>';
@@ -115,7 +124,9 @@
         });
 
         $('#cycleStartDate, #cycleEndDate').datepicker({
-            dateFormat: "mm/dd/yy"
+            dateFormat: "mm/dd/yy",
+            maxDate: '0',
+            minDate: new Date(2016, 1, 1)
         });
 
         $('#cycleStartDate, #cycleEndDate').keydown(function (e) {
@@ -221,7 +232,7 @@
                                     <td>${outstandingChargesPaymentDTO.balanceAmountHashMap.get(member.memberID)}</td>
                                     <td>${outstandingChargesPaymentDTO.paymentAmountHashMap.get(member.memberID)} / ${outstandingChargesPaymentDTO.chargesAmountHashMap.get(member.memberID)}</td>
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
-                                    <td><a href="<spring:url value="/admin/resources/excel/generateInvoice/student/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                                    <td><a href="<spring:url value="/admin/resources/excel/generate/memberInvoice/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
                             </c:forEach>
                             </tbody>

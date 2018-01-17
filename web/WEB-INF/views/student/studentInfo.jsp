@@ -112,7 +112,7 @@
                             </tr>
                         </c:forEach>
                         </tbody>
-                    </table>
+                    </table>`
                 </div>
 
                 <div role="tabpanel" class="tab-pane fade in active" id="tab-finances">

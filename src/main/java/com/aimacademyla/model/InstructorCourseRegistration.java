@@ -1,4 +1,6 @@
 package com.aimacademyla.model;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -7,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity(name="Instructor_Course_Registration")
-public class InstructorCourseRegistration implements Serializable{
+public class InstructorCourseRegistration extends AIMEntity implements Serializable{
 
     private static final long serialVersionUID = 6943663109872941964L;
 
@@ -17,13 +19,11 @@ public class InstructorCourseRegistration implements Serializable{
     private int instructorCourseRegistrationID;
 
     @ManyToOne
-    @MapsId("EmployeeID")
-    @JoinColumn(insertable=false, updatable=false)
+    @JoinColumn(name="EmployeeID", referencedColumnName = "EmployeeID")
     private Employee employee;
 
     @ManyToOne
-    @MapsId("CourseID")
-    @JoinColumn(insertable=false, updatable=false)
+    @JoinColumn(name="CourseID", referencedColumnName = "CourseID")
     private Course course;
 
     @Column(name="HourlyRate")
@@ -32,6 +32,16 @@ public class InstructorCourseRegistration implements Serializable{
     @Column(name="DateRegistered")
     @DateTimeFormat(pattern = "MM/dd/yyyy")
     private LocalDate dateRegistered;
+
+    @Override
+    public int getBusinessID() {
+        return instructorCourseRegistrationID;
+    }
+
+    @Override
+    public void setBusinessID(int instructorCourseRegistrationID){
+        this.instructorCourseRegistrationID = instructorCourseRegistrationID;
+    }
 
     public int getInstructorCourseRegistrationID() {
         return instructorCourseRegistrationID;

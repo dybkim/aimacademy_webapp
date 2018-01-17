@@ -68,6 +68,25 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <!--<bean id="daoFactory" class="com.aimacademyla.dao.factory.DAOFactory">-->
+        <!--<constructor-arg>-->
+            <!--<list>-->
+                <!--<ref bean="attendanceDAO"/>-->
+                <!--<ref bean="authorityDAO"/>-->
+                <!--<ref bean="chargeDAO"/>-->
+                <!--<ref bean="chargeLineDAO"/>-->
+                <!--<ref bean="courseDAO"/>-->
+                <!--<ref bean="courseSessionDAO"/>-->
+                <!--<ref bean="employeeDAO"/>-->
+                <!--<ref bean="memberCourseRegistrationDAO"/>-->
+                <!--<ref bean="memberMonthlyRegistrationDAO"/>-->
+                <!--<ref bean="paymentDAO"/>-->
+                <!--<ref bean="seasonDAO"/>-->
+                <!--<ref bean="userDAO"/>-->
+            <!--</list>-->
+        <!--</constructor-arg>-->
+    <!--</bean>-->
+
     <security:http auto-config="true">
         <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
         <security:form-login

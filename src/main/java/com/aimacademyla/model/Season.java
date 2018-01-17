@@ -1,26 +1,21 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.model.enums.AIMEntityType;
-import com.aimacademyla.model.reference.TemporalReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.type.LocalDateType;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Map;
 
 /**
  * Created by davidkim on 5/22/17.
  */
 @Entity
-public class Season implements Serializable {
+public class Season extends AIMEntity implements Serializable {
 
     private static final long serialVersionUID = 681613110921037803L;
 
@@ -69,23 +64,26 @@ public class Season implements Serializable {
 
         public static LocalDate getSeasonStartDate(LocalDate date){
             switch(date.getMonthValue()){
-                case 1: case 2: case 12:
-                    return LocalDate.of(date.getYear(), 12, 1);
+                case 1: case 2:
+                    return LocalDate.of(date.getYear()-1, 12, 1);
                 case 3: case 4: case 5:
                     return LocalDate.of(date.getYear(), 3, 1);
                 case 6: case 7: case 8:
                     return LocalDate.of(date.getYear(), 6, 1);
                 case 9: case 10: case 11:
                     return LocalDate.of(date.getYear(), 9, 1);
+                case 12:
+                    return LocalDate.of(date.getYear(), 12, 1);
                 default:
                     return null;
             }
         }
 
         public static LocalDate getSeasonEndDate(LocalDate date){
+            LocalDate localDate;
             switch(date.getMonthValue()){
-                case 1: case 2: case 12:
-                    LocalDate localDate = LocalDate.of(date.getYear() + 1, 2, 28);
+                case 1: case 2:
+                    localDate = LocalDate.of(date.getYear(), 2, 28);
                     if(localDate.isLeapYear())
                         localDate = LocalDate.of(localDate.getYear(), 2, 29);
                     return localDate;
@@ -95,6 +93,11 @@ public class Season implements Serializable {
                     return LocalDate.of(date.getYear(), 8, 31);
                 case 9: case 10: case 11:
                     return LocalDate.of(date.getYear(), 11, 30);
+                case 12:
+                    localDate = LocalDate.of(date.getYear() + 1, 2, 28);
+                    if(localDate.isLeapYear())
+                        localDate = LocalDate.of(localDate.getYear() + 1, 2, 29);
+                    return localDate;
                 default:
                     return null;
             }
@@ -131,6 +134,16 @@ public class Season implements Serializable {
     @MapKey(name="monthlyFinancesSummaryID")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<Integer, MonthlyFinancesSummary> monthlyFinancesSummaryMap;
+
+    @Override
+    public int getBusinessID() {
+        return seasonID;
+    }
+
+    @Override
+    public void setBusinessID(int seasonID){
+        this.seasonID = seasonID;
+    }
 
     public int getSeasonID() {
         return seasonID;

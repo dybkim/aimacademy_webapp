@@ -17,7 +17,10 @@
 <script>
     $(document).ready(function(){
         $('#courseSessionDate').datepicker({
-            dateFormat: "mm/dd/yy"
+            dateFormat: 'mm/dd/yy',
+            defaultDate: '${monthOffset}',
+            maxDate: '0',
+            minDate: new Date(2016, 1, 1)
         });
 
         $('#courseSessionDate').keydown(function (e) {
@@ -49,7 +52,7 @@
                 <div class="form-group">
                     <span style="color: #FF0000">${courseSessionDateErrorMessage}</span>
                     <br>
-                    <label for="courseSessionDate">Class Session Date (MM/DD/YYYY)</label>
+                    <label for="courseSessionDate">Class Session Date (MM/DD/YYYY):</label>
                     <form:input path="courseSessionDate" id="courseSessionDate" class="date"/>
                 </div>
 

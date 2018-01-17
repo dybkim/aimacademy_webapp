@@ -1,20 +1,14 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.PaymentDAO;
-import com.aimacademyla.model.Charge;
-import com.aimacademyla.model.Course;
-import com.aimacademyla.model.Member;
 import com.aimacademyla.model.Payment;
-import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.NoResultException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +39,7 @@ public class PaymentDAOImpl extends GenericDAOImpl<Payment, Integer> implements 
     @Override
     public Payment loadCollections(Payment payment){
         Session session = currentSession();
-        payment = session.get(Payment.class, payment.getPaymentID());
+        payment = get(payment.getPaymentID());
         Hibernate.initialize(payment.getChargeSet());
         session.flush();
 

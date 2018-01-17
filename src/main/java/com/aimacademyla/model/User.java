@@ -1,6 +1,5 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.model.enums.AIMEntityType;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;

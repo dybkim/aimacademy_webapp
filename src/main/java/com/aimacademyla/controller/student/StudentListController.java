@@ -1,6 +1,5 @@
 package com.aimacademyla.controller.student;
 
-import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.builder.dto.MemberCourseFinancesDTOBuilder;
 import com.aimacademyla.model.builder.dto.MemberListDTOBuilder;
@@ -8,7 +7,6 @@ import com.aimacademyla.model.dto.MemberCourseFinancesDTO;
 import com.aimacademyla.model.dto.MemberListDTO;
 import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.service.*;
-import com.aimacademyla.service.factory.ServiceFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,22 +31,16 @@ public class StudentListController {
 
     private MemberService memberService;
     private CourseService courseService;
-    private CourseSessionService courseSessionService;
     private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
-    private DAOFactory daoFactory;
 
     private static final Logger logger = LogManager.getLogger(StudentListController.class.getName());
     @Autowired
     public StudentListController(MemberService memberService,
                                  CourseService courseService,
-                                 CourseSessionService courseSessionService,
-                                 MemberMonthlyRegistrationService memberMonthlyRegistrationService,
-                                 DAOFactory daoFactory){
+                                 MemberMonthlyRegistrationService memberMonthlyRegistrationService){
         this.memberService = memberService;
         this.courseService = courseService;
-        this.courseSessionService = courseSessionService;
         this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
-        this.daoFactory = daoFactory;
     }
 
     @RequestMapping
@@ -60,7 +52,7 @@ public class StudentListController {
         if(month != null && year != null)
             cycleStartDate = LocalDate.of(year, month ,1);
 
-        MemberListDTO memberListDTO = new MemberListDTOBuilder(daoFactory).setCycleStartDate(cycleStartDate).build();
+        MemberListDTO memberListDTO = new MemberListDTOBuilder().setCycleStartDate(cycleStartDate).build();
         List<LocalDate> monthsList = TemporalReference.getMonthList();
         Collections.reverse(monthsList);
 
@@ -185,7 +177,7 @@ public class StudentListController {
         List<LocalDate> monthsList = TemporalReference.getMonthList();
 
         for(LocalDate cycleStartDate : monthsList){
-            MemberCourseFinancesDTO memberCourseFinancesDTO = new MemberCourseFinancesDTOBuilder(daoFactory)
+            MemberCourseFinancesDTO memberCourseFinancesDTO = new MemberCourseFinancesDTOBuilder()
                                                                     .setCycleStartDate(cycleStartDate)
                                                                     .setMember(member)
                                                                     .build();

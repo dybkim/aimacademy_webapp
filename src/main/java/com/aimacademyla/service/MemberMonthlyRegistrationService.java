@@ -16,6 +16,6 @@ public interface MemberMonthlyRegistrationService extends GenericService<MemberM
     void addMemberMonthlyRegistration(MemberMonthlyRegistration memberMonthlyRegistration);
     void updateMemberMonthlyRegistration(MemberMonthlyRegistration memberMonthlyRegistration);
     void removeMemberMonthlyRegistration(MemberMonthlyRegistration memberMonthlyRegistration);
-
     void updateMemberMonthlyRegistrationList(MemberListDTO memberListDTO);
+    List<MemberMonthlyRegistration> getList(LocalDate cycleStartDate);
 }

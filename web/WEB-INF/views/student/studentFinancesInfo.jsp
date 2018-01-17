@@ -19,6 +19,30 @@
 
 <link href="<spring:url value="/resources/css/studentFinancesInfoElements.css"/>" rel="stylesheet">
 
+<script>
+    $(document).ready(function(){
+        $('#dateCharged').datepicker({
+            dateFormat: "mm/dd/yy",
+            maxDate: '0',
+            minDate: new Date(2016, 1, 1)
+        });
+
+        $('#dateCharged').keydown(function (e) {
+            // Allow: backspace, delete, tab
+            if ($.inArray(e.keyCode, [46, 8, 9]) !== -1 || (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40) || ((e.keyCode >= 48 && e.keyCode <= 57) || e.keyCode === 191)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode > 1 || e.keyCode < 200))) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+
 <html>
     <body>
         <div class="container-fluid" ng-app="studentFinancesControllerApp">
@@ -44,12 +68,15 @@
                             <input id="chargeDescription" class="form-control" ng-model="chargeDescription"/>
 
                             <label for="chargeAmount">Amount:</label>
-                            <input id="chargeAmount" class="form-control" ng-model="chargeAmount">
+                            <input id="chargeAmount" class="form-control" ng-model="chargeAmount"/>
 
                             <label for="chargeDiscount">Discount:</label>
-                            <input id="chargeDiscount" class="form-control" ng-model="chargeDiscount">
+                            <input id="chargeDiscount" class="form-control" ng-model="chargeDiscount"/>
 
-                            <input type="submit" value="Add Charge" class="btn btn=default" ng-click="addMiscCharge('${member.memberID}', chargeDescription, chargeAmount, chargeDiscount)"/>
+                            <label for="dateCharged">Date:</label>
+                            <input id="dateCharged" class="form-control" ng-model="dateCharged"/>
+
+                            <input type="submit" value="Add Charge" class="btn btn=default" ng-click="addMiscCharge('${member.memberID}', chargeDescription, chargeAmount, chargeDiscount, dateCharged)"/>
 
                             <br>
                         </form>

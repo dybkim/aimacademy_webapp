@@ -2,24 +2,21 @@ package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.CourseDAO;
 import com.aimacademyla.dao.CourseSessionDAO;
-import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.CourseSession;
 import com.aimacademyla.model.MemberCourseRegistration;
-import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by davidkim on 2/8/17.
@@ -56,7 +53,7 @@ public class CourseDAOImpl extends GenericDAOImpl<Course, Integer> implements Co
     @Override
     public Course loadCollections(Course course){
         Session session = currentSession();
-        course = session.get(Course.class, course.getCourseID());
+        course = get(course.getCourseID());
         Hibernate.initialize(course.getCourseSessionSet());
         Hibernate.initialize(course.getMemberCourseRegistrationSet());
         session.flush();
@@ -68,12 +65,12 @@ public class CourseDAOImpl extends GenericDAOImpl<Course, Integer> implements Co
         Session session = currentSession();
 
         if(classType == CourseSession.class){
-            course = session.get(Course.class, course.getCourseID());
+            course = get(course.getCourseID());
             Hibernate.initialize(course.getCourseSessionSet());
         }
 
         if(classType == MemberCourseRegistration.class){
-            course = session.get(Course.class, course.getCourseID());
+            course = get(course.getCourseID());
             Hibernate.initialize(course.getMemberCourseRegistrationSet());
         }
         session.flush();

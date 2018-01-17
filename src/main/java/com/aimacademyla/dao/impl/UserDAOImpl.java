@@ -1,10 +1,7 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.UserDAO;
-import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.User;
-import com.aimacademyla.model.enums.AIMEntityType;
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;

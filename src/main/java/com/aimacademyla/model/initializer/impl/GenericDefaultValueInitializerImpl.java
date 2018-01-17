@@ -2,6 +2,9 @@ package com.aimacademyla.model.initializer.impl;
 
 import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.initializer.DefaultValueInitializer;
+import com.aimacademyla.util.ApplicationContextProvider;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /*
  * GenericDefaultValueInitializers must use DAO's because the service classes use the genericDefaultValueInitializers to create entity instances.
@@ -10,15 +13,12 @@ public abstract class GenericDefaultValueInitializerImpl<T> implements DefaultVa
 
     private DAOFactory daoFactory;
 
-    GenericDefaultValueInitializerImpl(DAOFactory daoFactory){
-        this.daoFactory = daoFactory;
+    GenericDefaultValueInitializerImpl(){
+        ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+        daoFactory = (DAOFactory)context.getBean("daoFactory");
     }
 
-    public void setDAOFactory(DAOFactory daoFactory){
-        this.daoFactory = daoFactory;
-    }
-
-    DAOFactory getDAOFactory(){
+    protected DAOFactory getDAOFactory(){
         return daoFactory;
     }
 

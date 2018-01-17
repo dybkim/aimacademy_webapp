@@ -1,13 +1,10 @@
 package com.aimacademyla.model.initializer.impl;
 
-import com.aimacademyla.dao.CourseDAO;
-import com.aimacademyla.dao.MonthlyFinancesSummaryDAO;
-import com.aimacademyla.dao.SeasonDAO;
-import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.dao.flow.impl.MonthlyFinancesSummaryDAOAccessFlow;
 import com.aimacademyla.dao.flow.impl.PaymentDAOAccessFlow;
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.builder.entity.ChargeBuilder;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,23 +15,18 @@ import java.time.LocalDate;
 
 public class ChargeDefaultValueInitializer extends GenericDefaultValueInitializerImpl<Charge>{
 
-
     private Member member;
     private Course course;
     private LocalDate localDate;
 
-    public ChargeDefaultValueInitializer(DAOFactory daoFactory){
-        super(daoFactory);
-    }
-
     @Override
     public Charge initialize() {
         Charge charge = new Charge();
-        MonthlyFinancesSummary monthlyFinancesSummary = (MonthlyFinancesSummary) new MonthlyFinancesSummaryDAOAccessFlow(getDAOFactory())
+        MonthlyFinancesSummary monthlyFinancesSummary = (MonthlyFinancesSummary) new MonthlyFinancesSummaryDAOAccessFlow()
                                                                                     .addQueryParameter(localDate)
                                                                                     .get();
 
-        Payment payment = (Payment) new PaymentDAOAccessFlow(getDAOFactory())
+        Payment payment = (Payment) new PaymentDAOAccessFlow()
                                         .addQueryParameter(member)
                                         .addQueryParameter(LocalDate.of(localDate.getYear(), localDate.getMonthValue(), 1))
                                         .get();

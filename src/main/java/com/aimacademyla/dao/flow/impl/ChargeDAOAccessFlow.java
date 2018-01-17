@@ -1,32 +1,21 @@
 package com.aimacademyla.dao.flow.impl;
 
 import com.aimacademyla.dao.ChargeDAO;
-import com.aimacademyla.dao.factory.DAOFactory;
-import com.aimacademyla.model.*;
-import com.aimacademyla.model.enums.AIMEntityType;
+import com.aimacademyla.model.Charge;
+import com.aimacademyla.model.Course;
+import com.aimacademyla.model.Member;
 import com.aimacademyla.model.initializer.impl.ChargeDefaultValueInitializer;
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LocalDateType;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class ChargeDAOAccessFlow extends AbstractDAOAccessFlowImpl<Charge>{
 
     private ChargeDAO chargeDAO;
 
-    public ChargeDAOAccessFlow(DAOFactory daoFactory){
-        super(daoFactory);
-        this.chargeDAO = (ChargeDAO) getDaoFactory().getDAO(Charge.class);
+    public ChargeDAOAccessFlow(){
+        this.chargeDAO = (ChargeDAO) getDAOFactory().getDAO(Charge.class);
 
         dispatch.put(Member.class, super::handleMember);
         dispatch.put(Course.class, super::handleCourse);
@@ -46,7 +35,7 @@ public class ChargeDAOAccessFlow extends AbstractDAOAccessFlowImpl<Charge>{
         Charge charge = chargeDAO.get(criteria);
 
         if(charge == null) {
-            charge = new ChargeDefaultValueInitializer(getDaoFactory())
+            charge = new ChargeDefaultValueInitializer()
                     .setCourse(course)
                     .setMember(member)
                     .setLocalDate(cycleStartDate)

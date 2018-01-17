@@ -1,6 +1,5 @@
 package com.aimacademyla.controller.course;
 
-import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.builder.dto.CourseRegistrationDTOBuilder;
 import com.aimacademyla.model.enums.BillableUnitType;
@@ -28,15 +27,12 @@ import java.util.*;
 @RequestMapping("/admin/courseList")
 public class CourseHomeController {
 
-    private DAOFactory daoFactory;
     private CourseService courseService;
 
     private static final Logger logger = LogManager.getLogger(CourseHomeController.class);
 
     @Autowired
-    public CourseHomeController(DAOFactory daoFactory,
-                                CourseService courseService){
-        this.daoFactory = daoFactory;
+    public CourseHomeController(CourseService courseService){
         this.courseService = courseService;
     }
 
@@ -76,20 +72,23 @@ public class CourseHomeController {
 
     @RequestMapping("/editCourse/{courseID}")
     public String editCourse(@PathVariable("courseID") int courseID, Model model){
-        if(courseID == Course.OPEN_STUDY_ID || courseID == Course.OTHER_ID)
+        if(courseID == Course.OTHER_ID)
             return "/course/courseList";
 
         Course course = courseService.get(courseID);
         course = courseService.loadCollection(course, MemberCourseRegistration.class);
-        CourseRegistrationDTO courseRegistrationDTO = new CourseRegistrationDTOBuilder(daoFactory).setCourse(course).build();
+        CourseRegistrationDTO courseRegistrationDTO = new CourseRegistrationDTOBuilder().setCourse(course).build();
         model.addAttribute("courseRegistrationDTO", courseRegistrationDTO);
+
+        if(courseID == Course.OPEN_STUDY_ID)
+            return "/course/openstudy/editOpenStudy";
 
         return "/course/editCourse";
     }
 
     @RequestMapping(value="/editCourse/{courseID}", method = RequestMethod.POST)
     public String editCourse(@Valid @ModelAttribute("courseRegistrationDTO") CourseRegistrationDTO courseRegistrationDTO, BindingResult result, @PathVariable("courseID") int courseID, Model model){
-        if(courseID == Course.OPEN_STUDY_ID || courseID == Course.OTHER_ID)
+        if(courseID == Course.OTHER_ID)
             return "/course/courseList";
 
         List<FieldError> errorList = result.getFieldErrors();
@@ -99,7 +98,7 @@ public class CourseHomeController {
             addErrorMessages(errorList, model, course);
             logger.error("ERROR: CourseHomeController.addCourse - Formatting error!");
             model.addAttribute("course", course);
-            return "/course/editCourse";
+            return "/course/editCourse/" + course.getCourseID();
         }
 
         courseService.updateCourse(courseRegistrationDTO);

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 
 public class ChargeBuilder implements GenericBuilder<Charge>{
 
+    private int chargeID;
     private Member member;
     private Course course;
     private LocalDate cycleStartDate;
@@ -25,6 +26,7 @@ public class ChargeBuilder implements GenericBuilder<Charge>{
     @Override
     public Charge build() {
         Charge charge = new Charge();
+        charge.setChargeID(chargeID);
         charge.setMember(member);
         charge.setCourse(course);
         charge.setCycleStartDate(cycleStartDate);
@@ -41,6 +43,10 @@ public class ChargeBuilder implements GenericBuilder<Charge>{
         return charge;
     }
 
+    public ChargeBuilder setChargeID(int chargeID){
+        this.chargeID = chargeID;
+        return this;
+    }
     public ChargeBuilder setMember(Member member){
         this.member = member;
         return this;

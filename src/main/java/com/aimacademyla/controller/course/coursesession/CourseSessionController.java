@@ -4,8 +4,11 @@ import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.dto.CourseSessionDTO;
 import com.aimacademyla.model.initializer.impl.CourseSessionDTODefaultValueInitializer;
+import com.aimacademyla.model.reference.TemporalReference;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.CourseSessionService;
+import com.aimacademyla.service.MemberMonthlyRegistrationService;
+import com.aimacademyla.service.MemberService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 /**
@@ -32,7 +36,8 @@ public class CourseSessionController {
 
     private CourseSessionService courseSessionService;
     private CourseService courseService;
-    private DAOFactory daoFactory;
+    private MemberService memberService;
+    private MemberMonthlyRegistrationService memberMonthlyRegistrationService;
     private ConversionService conversionService;
 
     private static Logger logger = LogManager.getLogger(CourseSessionController.class);
@@ -41,10 +46,13 @@ public class CourseSessionController {
     public CourseSessionController(DAOFactory daoFactory,
                                    CourseSessionService courseSessionService,
                                    CourseService courseService,
+                                   MemberService memberService,
+                                   MemberMonthlyRegistrationService memberMonthlyRegistrationService,
                                    ConversionService conversionService){
-        this.daoFactory = daoFactory;
         this.courseSessionService = courseSessionService;
         this.courseService = courseService;
+        this.memberService = memberService;
+        this.memberMonthlyRegistrationService = memberMonthlyRegistrationService;
         this.conversionService = conversionService;
     }
 
@@ -58,7 +66,15 @@ public class CourseSessionController {
      * NOTE: courseInfo only shows member enrollment list only shows members who are enrolled and ACTIVE.
      */
     @RequestMapping("/{courseID}")
-    public String getCourseInfo(@PathVariable("courseID") int courseID, Model model){
+    public String getCourseInfo(@PathVariable("courseID") int courseID,
+                                @RequestParam(name="month", required = false) Integer month,
+                                @RequestParam(name="year", required = false) Integer year,
+                                Model model){
+        LocalDate cycleStartDate = LocalDate.now();
+
+        if(month != null && year != null)
+            cycleStartDate = LocalDate.of(year, month, 1);
+
         Course course = courseService.get(courseID);
         course = courseService.loadCollections(course);
 
@@ -66,25 +82,68 @@ public class CourseSessionController {
         Set<CourseSession> courseSessionSet = new HashSet<>(courseSessionService.loadCollections(course.getCourseSessionSet()));
         course.setCourseSessionSet(courseSessionSet);
 
-        List<Member> activeMemberList = course.getActiveMembers();
-        List<Member> inactiveMemberList = course.getInactiveMembers();
+        List<Member> activeMemberList;
+        List<Member> inactiveMemberList;
+        HashMap<Integer, Integer> memberAttendanceCountMap;
+        List<CourseSession> courseSessionList;
 
-        List<CourseSession> courseSessionList = new ArrayList<>(course.getCourseSessionSet());
-        HashMap<Integer, Integer> memberAttendanceCountMap = new HashMap<>(course.getMemberAttendanceCountHashMap());
+        if(courseID != Course.OPEN_STUDY_ID){
+            activeMemberList = course.getActiveMembers();
+            inactiveMemberList = course.getInactiveMembers();
+            memberAttendanceCountMap = new HashMap<>(course.getMemberAttendanceCountHashMap());
+            courseSessionList = new ArrayList<>(course.getCourseSessionSet());
+        }
+
+        else{
+            List<MemberMonthlyRegistration> memberMonthlyRegistrationList = memberMonthlyRegistrationService.getList(cycleStartDate);
+            activeMemberList = getActiveMemberList(memberMonthlyRegistrationList);
+            inactiveMemberList = getInactiveMemberList(memberMonthlyRegistrationList);
+            memberAttendanceCountMap = new HashMap<>(course.getOpenStudyMemberAttendanceCountHashMap(activeMemberList, cycleStartDate));
+            courseSessionList = new ArrayList<>(course.getCourseSessionSet(cycleStartDate));
+        }
 
         model.addAttribute("memberList", activeMemberList);
         model.addAttribute("inactiveMemberList", inactiveMemberList);
         model.addAttribute("memberAttendanceCountMap", memberAttendanceCountMap);
         model.addAttribute("course", course);
         model.addAttribute("courseSessionList", courseSessionList);
-        return "/course/courseInfo";
+
+        if(courseID != Course.OPEN_STUDY_ID)
+            return "/course/courseInfo";
+
+        List<LocalDate> monthsList = TemporalReference.getMonthList();
+        Collections.reverse(monthsList);
+
+        String cycleString = cycleStartDate.getMonth() + " " + cycleStartDate.getYear();
+        model.addAttribute("monthsList", monthsList);
+        model.addAttribute("cycleString", cycleString);
+        model.addAttribute("cycleStartDate", cycleStartDate);
+
+        return "/course/openstudy/openStudyCourseInfo";
     }
 
     @RequestMapping(value="/{courseID}/addCourseSession")
-    public String addCourseSession(@PathVariable("courseID") int courseID, Model model){
+    public String addCourseSession(@PathVariable("courseID") int courseID,
+                                   @RequestParam(name="month", required=false) Integer month,
+                                   @RequestParam(name="year", required=false) Integer year,
+                                   Model model){
+
+        LocalDate cycleStartDate = LocalDate.now();
+
+        if(month != null && year != null)
+            cycleStartDate = LocalDate.of(year, month, 1);
+
+        System.out.println("CycleStartDate is: " + month + " " + year);
+        String monthOffset = "-" + Long.toString(ChronoUnit.MONTHS.between(cycleStartDate, LocalDate.now())) + "m";
+
         Course course = courseService.get(courseID);
-        CourseSessionDTO courseSessionDTO = new CourseSessionDTODefaultValueInitializer(daoFactory).setCourse(course).initialize();
+        CourseSessionDTO courseSessionDTO = new CourseSessionDTODefaultValueInitializer()
+                                                    .setCourse(course)
+                                                    .setCycleStartDate(cycleStartDate)
+                                                    .initialize();
+
         model.addAttribute("courseSessionDTO", courseSessionDTO);
+        model.addAttribute("monthOffset", monthOffset);
 
         return "/course/addCourseSession";
     }
@@ -155,6 +214,29 @@ public class CourseSessionController {
         courseSessionService.removeCourseSession(courseSessionDTO);
 
         return "redirect:/admin/courseList/courseInfo/" + courseID;
+    }
+
+    private List<Member> getActiveMemberList(List<MemberMonthlyRegistration> memberMonthlyRegistrationList){
+        Map<Integer, Member> memberMap = new HashMap<>();
+        for(MemberMonthlyRegistration memberMonthlyRegistration : memberMonthlyRegistrationList)
+            if(memberMonthlyRegistration.getMember().getMemberID() > 1)
+                memberMap.put(memberMonthlyRegistration.getMember().getMemberID(), memberMonthlyRegistration.getMember());
+
+        return new ArrayList<>(memberMap.values());
+    }
+
+    private List<Member> getInactiveMemberList(List<MemberMonthlyRegistration> memberMonthlyRegistrationList){
+        Map<Integer, Member> memberMap = new HashMap<>();
+        List<Member> memberList = memberService.getList();
+
+        for(Member member : memberList)
+            if(member.getMemberID() > 1)
+                memberMap.put(member.getMemberID(), member);
+
+        for(MemberMonthlyRegistration memberMonthlyRegistration : memberMonthlyRegistrationList)
+            memberMap.remove(memberMonthlyRegistration.getMember().getMemberID());
+
+        return new ArrayList<>(memberMap.values());
     }
 
     private boolean hasErrors(BindingResult result, CourseSessionDTO courseSessionDTO){

@@ -1,23 +1,22 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.model.enums.AIMEntityType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @Entity
-public class Payment implements Serializable {
+public class Payment extends AIMEntity implements Serializable {
 
     private static final long serialVersionUID = -1976230001989419509L;
 
@@ -28,12 +27,11 @@ public class Payment implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="PaymentID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name="PaymentID")
     private int paymentID;
 
     @ManyToOne
-    @JoinColumn(name="MemberID")
+    @JoinColumn(name="MemberID", referencedColumnName = "MemberID")
     private Member member;
 
     @Column(name="CycleStartDate")
@@ -49,7 +47,7 @@ public class Payment implements Serializable {
     private LocalDate datePaymentReceived;
 
     @ManyToOne
-    @JoinColumn(name="MonthlyFinancesSummaryID")
+    @JoinColumn(name="MonthlyFinancesSummaryID", referencedColumnName = "MonthlyFinancesSummaryID")
     private MonthlyFinancesSummary monthlyFinancesSummary;
 
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy="payment")
@@ -89,6 +87,16 @@ public class Payment implements Serializable {
 
         balance = balance.subtract(paymentAmount);
         return balance;
+    }
+
+    @Override
+    public int getBusinessID() {
+        return paymentID;
+    }
+
+    @Override
+    public void setBusinessID(int paymentID){
+        this.paymentID = paymentID;
     }
 
     public int getPaymentID() {

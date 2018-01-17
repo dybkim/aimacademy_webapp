@@ -1,10 +1,12 @@
 package com.aimacademyla.dao.impl;
 
 import com.aimacademyla.dao.GenericDAO;
+import com.aimacademyla.model.id.IDGenerationStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,9 +78,15 @@ public abstract class GenericDAOImpl<T, K extends Serializable> implements Gener
     public abstract void removeList(List<T> entityList);
 
     @Override
+    @SuppressWarnings("unchecked")
     public T get(K key) {
         Session session = currentSession();
-        return session.get(entityClass, key);
+        Criteria criteria = session.createCriteria(entityClass);
+        char c[] = entityClass.getSimpleName().toCharArray();
+        c[0] = Character.toLowerCase(c[0]);
+        String propertyName = new String(c) + "ID";
+        criteria.add(Restrictions.eq(propertyName, key));
+        return (T) criteria.uniqueResult();
     }
 
     /*
@@ -111,7 +119,7 @@ public abstract class GenericDAOImpl<T, K extends Serializable> implements Gener
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<T> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
-        return session.createQuery(criteriaQuery).getResultList();
+        return session.createQuery(criteriaQuery).list();
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.aimacademyla.model;
 
-import com.aimacademyla.model.enums.AIMEntityType;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
