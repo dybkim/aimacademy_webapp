@@ -1,6 +1,7 @@
 package com.aimacademyla.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.NotFound;
@@ -10,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Created by davidkim on 3/2/17.
@@ -47,6 +49,12 @@ public class Attendance extends AIMEntity implements Serializable{
     @Column(name="WasPresent")
     private boolean wasPresent;
 
+    @Column(name="TimeIn")
+    private LocalDateTime timeIn;
+
+    @Column(name="TimeOut")
+    private LocalDateTime timeOut;
+
     /*
      * Have to override equals in order to implement a Set of Attendances
      */
@@ -57,6 +65,13 @@ public class Attendance extends AIMEntity implements Serializable{
 
         Attendance attendance = (Attendance) object;
         return attendance.getAttendanceID() == attendanceID;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(23, 43)
+                .append(attendanceID)
+                .toHashCode();
     }
 
     public int getAttendanceID() {
@@ -116,4 +131,20 @@ public class Attendance extends AIMEntity implements Serializable{
 
     @Override
     public void setBusinessID(int attendanceID){this.attendanceID = attendanceID;}
+
+    public LocalDateTime getTimeIn() {
+        return timeIn;
+    }
+
+    public void setTimeIn(LocalDateTime timeIn) {
+        this.timeIn = timeIn;
+    }
+
+    public LocalDateTime getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(LocalDateTime timeOut) {
+        this.timeOut = timeOut;
+    }
 }
