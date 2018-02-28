@@ -2,6 +2,7 @@ package com.aimacademyla.model.dto;
 
 import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Member;
+import com.aimacademyla.model.temporal.CyclePeriod;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ public class OutstandingChargesPaymentDTO implements Serializable{
 
     private static final long serialVersionUID = 8281548987324398595L;
 
-    private LocalDate cycleStartDate;
+    private CyclePeriod cyclePeriod;
     private List<Member> outstandingBalanceMemberList;
     private List<Member> paidBalanceMemberList;
     private HashMap<Integer, BigDecimal> paymentAmountHashMap;
@@ -21,12 +22,12 @@ public class OutstandingChargesPaymentDTO implements Serializable{
     private HashMap<Integer, BigDecimal> balanceAmountHashMap;
     private HashMap<Integer, List<Charge>> chargeListHashMap;
 
-    public LocalDate getCycleStartDate() {
-        return cycleStartDate;
+    public CyclePeriod getCyclePeriod() {
+        return cyclePeriod;
     }
 
-    public void setCycleStartDate(LocalDate cycleStartDate) {
-        this.cycleStartDate = cycleStartDate;
+    public void setCyclePeriod(CyclePeriod cyclePeriod) {
+        this.cyclePeriod = cyclePeriod;
     }
 
     public List<Member> getOutstandingBalanceMemberList() {
