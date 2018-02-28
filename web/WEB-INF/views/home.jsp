@@ -66,11 +66,6 @@
     }
 
     $(document).ready(function() {
-        jQuery.validator.setDefaults({
-            debug: true,
-            success: "valid"
-        });
-
         $('a[data-toggle="tabpanel"]').on('shown.bs.tab', function () {
             $.fn.dataTable.tables(true).columns.adjust();
         });
@@ -84,8 +79,6 @@
             "lengthMenu": [[50,-1], [50, "All"]],
             "order": [["1", "asc"]]
         });
-
-        $('.nav-tabs a[href="#tab-members"]').tab('show');
 
         $('#selectMonthBox').change(function(){
             window.location.replace('/admin/home' + $(this).val());
@@ -158,6 +151,8 @@
             var url = '${pageContext.request.contextPath}/admin/home/fetchPeriod?cycleStartDate=' + cycleStartDateString + '&cycleEndDate=' + cycleEndDateString;
             window.location.replace(url);
         });
+
+        $('.nav-tabs a[href="#tab-members"]').tab('show');
     });
 
     function parseDMY(value) {
@@ -179,7 +174,7 @@
                 <h1 class="page-header">Home</h1>
                 <h3>${cycleString}</h3>
 
-                <div class="container" style="float:left; border: thin solid black; padding: 10px; width:auto; margin-bottom: 50px;">
+                <div class="container" style="float:left; border: thin solid black; padding: 10px; width:auto; margin-bottom: 30px;">
                     <label for="selectMonthBox">Select Month:</label>
                     <form:select path="cycleStartDate" id="selectMonthBox">
                         <form:option selected="true" value="">Select Month</form:option>
@@ -200,6 +195,10 @@
                     <br>
                     <button type="button" class="btn btn-primary" id="fetchChargesButton" style="float:right">Fetch Charges</button>
                 </div>
+
+                <div class="space" style="margin-top: 250px"></div>
+
+                <a href="<spring:url value="/admin/resources/excel/generate/periodSummary/?cycleStartDate=${cycleStartDate.toString()}&cycleEndDate=${cycleEndDate.toString()}"/>"><span class="btn btn-primary" style="float:left; margin-bottom: 20px">Download Period Summary</span></a>
 
                 <div class="container" style="float: left">
                     <ul class="nav nav-tabs" role="tablist">
@@ -232,7 +231,7 @@
                                     <td>${outstandingChargesPaymentDTO.balanceAmountHashMap.get(member.memberID)}</td>
                                     <td>${outstandingChargesPaymentDTO.paymentAmountHashMap.get(member.memberID)} / ${outstandingChargesPaymentDTO.chargesAmountHashMap.get(member.memberID)}</td>
                                     <td><a href="<spring:url value="/admin/student/studentFinances/${member.memberID}?month=${cycleStartDate.monthValue}&year=${cycleStartDate.year}"/>"><span class="glyphicon glyphicon-usd"></span></a></td>
-                                    <td><a href="<spring:url value="/admin/resources/excel/generate/memberInvoice/${member.memberID}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
+                                    <td><a href="<spring:url value="/admin/resources/excel/generate/memberInvoice/${member.memberID}?cycleStartDate=${cycleStartDate.toString()}&cycleEndDate=${cycleEndDate.toString()}"/>"><span class="glyphicon glyphicon-info-sign"></span></a></td>
                                 </tr>
                             </c:forEach>
                             </tbody>
