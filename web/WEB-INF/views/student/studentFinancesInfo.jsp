@@ -98,7 +98,7 @@
                             <tbody>
                                 <tr ng-repeat = "charge in memberChargesFinancesDTO.chargeHashMap">
                                     <td>{{charge.description}}</td>
-                                    <td>{{memberChargesFinancesDTO.billableUnitsBilledHashMap[charge.chargeID]}} {{charge.billableUnitType}}</td>
+                                    <td>{{memberChargesFinancesDTO.billableUnitsBilledHashMap[charge.chargeID]}} {{charge.billableUnitType}}(s)</td>
                                     <td>{{charge.chargeAmount}}</td>
                                     <td><form ng-submit="addDiscountToCharge(charge.chargeID, charge.discountAmount)"><input ng-model="charge.discountAmount" style="text-align:center; width:50px;"/></form></td>
                                     <td>{{charge.chargeAmount - charge.discountAmount}}</td>
