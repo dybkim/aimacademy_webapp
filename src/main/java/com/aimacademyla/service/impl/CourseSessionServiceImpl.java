@@ -154,13 +154,12 @@ public class CourseSessionServiceImpl extends GenericServiceImpl<CourseSession, 
 
                     attendance.setChargeLine(chargeLine);
                     chargeLineService.addChargeLine(chargeLine);
-                    attendanceDAO.update(attendance);
-                } else {
-                    if (chargeLine != null) {
+                }
+                else if(!attendance.getWasPresent() && chargeLine != null){
                         attendance.setChargeLine(null);
+                        //Update Attendance with null ChargeLine first before removing ChargeLine
                         attendanceDAO.update(attendance);
                         chargeLineService.removeChargeLine(chargeLine);
-                    }
                 }
             }
 
