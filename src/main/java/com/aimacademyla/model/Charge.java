@@ -2,6 +2,7 @@ package com.aimacademyla.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Generated;
@@ -195,6 +196,13 @@ public class Charge extends AIMEntity implements Serializable{
 
         Charge charge = (Charge) object;
         return charge.getChargeID() == this.chargeID;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(17,37)
+                    .append(chargeID)
+                    .toHashCode();
     }
 
     @Override
