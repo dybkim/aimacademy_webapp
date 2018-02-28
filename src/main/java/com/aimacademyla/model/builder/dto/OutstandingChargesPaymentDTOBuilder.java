@@ -10,6 +10,7 @@ import com.aimacademyla.model.Member;
 import com.aimacademyla.model.Payment;
 import com.aimacademyla.model.builder.GenericBuilder;
 import com.aimacademyla.model.dto.OutstandingChargesPaymentDTO;
+import com.aimacademyla.model.temporal.CyclePeriod;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import java.util.List;
 
 public class OutstandingChargesPaymentDTOBuilder extends GenericDTOBuilderImpl<OutstandingChargesPaymentDTO> implements GenericBuilder<OutstandingChargesPaymentDTO>{
 
+    private CyclePeriod cyclePeriod;
     private LocalDate cycleStartDate;
     private LocalDate cycleEndDate;
     private ChargeDAO chargeDAO;
@@ -45,13 +47,10 @@ public class OutstandingChargesPaymentDTOBuilder extends GenericDTOBuilderImpl<O
         this.chargeListHashMap = new HashMap<>();
     }
 
-    public OutstandingChargesPaymentDTOBuilder setCycleStartDate(LocalDate cycleStartDate) {
-        this.cycleStartDate = cycleStartDate;
-        return this;
-    }
-
-    public OutstandingChargesPaymentDTOBuilder setCycleEndDate(LocalDate cycleEndDate){
-        this.cycleEndDate = cycleEndDate;
+    public OutstandingChargesPaymentDTOBuilder setCyclePeriod(CyclePeriod cyclePeriod){
+        this.cyclePeriod = cyclePeriod;
+        this.cycleStartDate = cyclePeriod.getCycleStartDate();
+        this.cycleEndDate = cyclePeriod.getCycleEndDate();
         return this;
     }
 
@@ -91,7 +90,7 @@ public class OutstandingChargesPaymentDTOBuilder extends GenericDTOBuilderImpl<O
         for(Charge charge : chargeList)
             chargeListHashMap.get(charge.getMember().getMemberID()).add(charge);
 
-        outstandingChargesPaymentDTO.setCycleStartDate(cycleStartDate);
+        outstandingChargesPaymentDTO.setCyclePeriod(cyclePeriod);
         outstandingChargesPaymentDTO.setPaidBalanceMemberList(paidBalanceMemberList);
         outstandingChargesPaymentDTO.setOutstandingBalanceMemberList(outstandingBalanceMemberList);
         outstandingChargesPaymentDTO.setChargesAmountHashMap(allMembersChargesHashMap);
@@ -104,8 +103,7 @@ public class OutstandingChargesPaymentDTOBuilder extends GenericDTOBuilderImpl<O
 
     @SuppressWarnings("unchecked")
     private List<Charge> fetchChargeList(){
-        AbstractDAOAccessFlowImpl.CyclePeriod cyclePeriod = new AbstractDAOAccessFlowImpl.CyclePeriod();
-        cyclePeriod.setCycleStartDate(LocalDate.of(cycleStartDate.getYear(), cycleStartDate.getMonthValue(), 1)).setCycleEndDate(cycleEndDate);
+        CyclePeriod cyclePeriod = new CyclePeriod(LocalDate.of(cycleStartDate.getYear(), cycleStartDate.getMonthValue(), 1),cycleEndDate);
 
         return new ChargeDAOAccessFlow()
                 .addQueryParameter(cyclePeriod)
