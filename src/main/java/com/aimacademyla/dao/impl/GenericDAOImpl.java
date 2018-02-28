@@ -57,13 +57,7 @@ public abstract class GenericDAOImpl<T, K extends Serializable> implements Gener
     @Override
     public void update(T entity){
         Session session= currentSession();
-        try{
-            session.saveOrUpdate(entity);
-        }catch(NonUniqueObjectException e){
-            logger.debug("update " + entity + " failed due to NonUniqueObjectException, attempting merge!");
-            session.merge(entity);
-            logger.debug("update " + entity + " via merge successful!");
-        }
+        session.saveOrUpdate(entity);
         session.flush();
     }
 
