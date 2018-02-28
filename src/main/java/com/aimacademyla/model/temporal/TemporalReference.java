@@ -1,4 +1,4 @@
-package com.aimacademyla.model.reference;
+package com.aimacademyla.model.temporal;
 
 import java.time.LocalDate;
 import java.time.Period;
