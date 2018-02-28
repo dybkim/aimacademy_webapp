@@ -10,7 +10,8 @@ import com.aimacademyla.model.Member;
 import com.aimacademyla.model.builder.GenericBuilder;
 import com.aimacademyla.model.dto.MemberChargesFinancesDTO;
 import com.aimacademyla.model.enums.BillableUnitType;
-import com.aimacademyla.model.reference.TemporalReference;
+import com.aimacademyla.model.temporal.CyclePeriod;
+import com.aimacademyla.model.temporal.TemporalReference;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -70,9 +71,7 @@ public class MemberChargesFinancesDTOBuilder extends GenericDTOBuilderImpl<Membe
 
     @SuppressWarnings("unchecked")
     private void populateValues(){
-        AbstractDAOAccessFlowImpl.CyclePeriod cyclePeriod = new AbstractDAOAccessFlowImpl.CyclePeriod()
-                                                                    .setCycleStartDate(cycleStartDate)
-                                                                    .setCycleEndDate(cycleEndDate);
+        CyclePeriod cyclePeriod = new CyclePeriod(cycleStartDate, cycleEndDate);
 
         List<Charge> chargeList = new ChargeDAOAccessFlow()
                 .addQueryParameter(member)
