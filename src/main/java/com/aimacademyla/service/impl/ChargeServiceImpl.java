@@ -93,8 +93,8 @@ public class ChargeServiceImpl extends GenericServiceImpl<Charge, Integer> imple
         }
 
         /*
-         * Some kind of race condition or inconsistent is occurring in this method
-//         */
+         * Something wrong with hashCode implementation
+         */
 //        for(Charge charge : chargeMap.values())
 //            charge.sortChargeLineSetByDate();
 
