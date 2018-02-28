@@ -4,7 +4,7 @@ import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.model.*;
 import com.aimacademyla.model.dto.CourseSessionDTO;
 import com.aimacademyla.model.initializer.impl.CourseSessionDTODefaultValueInitializer;
-import com.aimacademyla.model.reference.TemporalReference;
+import com.aimacademyla.model.temporal.TemporalReference;
 import com.aimacademyla.service.CourseService;
 import com.aimacademyla.service.CourseSessionService;
 import com.aimacademyla.service.MemberMonthlyRegistrationService;
