@@ -5,6 +5,7 @@ import com.aimacademyla.model.Charge;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
 import com.aimacademyla.model.initializer.impl.ChargeDefaultValueInitializer;
+import com.aimacademyla.model.temporal.CyclePeriod;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +21,7 @@ public class ChargeDAOAccessFlow extends AbstractDAOAccessFlowImpl<Charge>{
         dispatch.put(Member.class, super::handleMember);
         dispatch.put(Course.class, super::handleCourse);
         dispatch.put(LocalDate.class, super::handleLocalDate);
-        dispatch.put(AbstractDAOAccessFlowImpl.CyclePeriod.class, super::handleCyclePeriod);
+        dispatch.put(CyclePeriod.class, super::handleCyclePeriod);
     }
 
     @Override
