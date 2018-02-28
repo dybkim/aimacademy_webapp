@@ -1,16 +1,9 @@
 package com.aimacademyla.controller;
 
-import com.aimacademyla.controller.resources.HomeResources;
-import com.aimacademyla.dao.ChargeLineDAO;
-import com.aimacademyla.dao.MemberDAO;
-import com.aimacademyla.dao.PaymentDAO;
-import com.aimacademyla.model.ChargeLine;
-import com.aimacademyla.model.Member;
-import com.aimacademyla.model.Payment;
 import com.aimacademyla.model.builder.dto.OutstandingChargesPaymentDTOBuilder;
 import com.aimacademyla.model.dto.OutstandingChargesPaymentDTO;
-import com.aimacademyla.model.reference.TemporalReference;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.aimacademyla.model.temporal.CyclePeriod;
+import com.aimacademyla.model.temporal.TemporalReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,9 +35,10 @@ public class HomeController {
             cycleEndDate = LocalDate.of(year, month, cycleStartDate.getMonth().length(cycleStartDate.isLeapYear()));
         }
 
+        CyclePeriod cyclePeriod = new CyclePeriod(cycleStartDate, cycleEndDate);
+
         OutstandingChargesPaymentDTO outstandingChargesPaymentDTO = new OutstandingChargesPaymentDTOBuilder()
-                                                                        .setCycleStartDate(cycleStartDate)
-                                                                        .setCycleEndDate(cycleEndDate)
+                                                                        .setCyclePeriod(cyclePeriod)
                                                                         .build();
 
         List<LocalDate> monthsList = TemporalReference.getMonthList();
@@ -67,10 +61,10 @@ public class HomeController {
 
         LocalDate cycleStartDate = LocalDate.parse(cycleStartDateString, dateTimeFormatter);
         LocalDate cycleEndDate = LocalDate.parse(cycleEndDateString, dateTimeFormatter);
+        CyclePeriod cyclePeriod = new CyclePeriod(cycleStartDate, cycleEndDate);
 
         OutstandingChargesPaymentDTO outstandingChargesPaymentDTO = new OutstandingChargesPaymentDTOBuilder()
-                                                                            .setCycleStartDate(cycleStartDate)
-                                                                            .setCycleEndDate(cycleEndDate)
+                                                                            .setCyclePeriod(cyclePeriod)
                                                                             .build();
 
         List<LocalDate> monthsList = TemporalReference.getMonthList();
