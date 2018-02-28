@@ -16,7 +16,7 @@ public class CourseSessionDTO implements Serializable{
 
     private static final long serialVersionUID = -4873233226709888099L;
 
-    private Integer courseSessionID;
+    private int courseSessionID;
     private List<Attendance> attendanceList;
     private Course course;
 
@@ -27,11 +27,11 @@ public class CourseSessionDTO implements Serializable{
     @DateTimeFormat(pattern="MM/dd/yyyy")
     private LocalDate courseSessionDate;
 
-    public Integer getCourseSessionID() {
+    public int getCourseSessionID() {
         return courseSessionID;
     }
 
-    public void setCourseSessionID(Integer courseSessionID) {
+    public void setCourseSessionID(int courseSessionID) {
         this.courseSessionID = courseSessionID;
     }
 
@@ -61,6 +61,7 @@ public class CourseSessionDTO implements Serializable{
 
     public CourseSession getCourseSession(){
         CourseSession courseSession = new CourseSession();
+        courseSession.setCourseSessionID(courseSessionID);
         courseSession.setCourse(course);
         courseSession.setCourseSessionDate(courseSessionDate);
         return courseSession;
