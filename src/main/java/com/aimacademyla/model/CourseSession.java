@@ -3,6 +3,7 @@ package com.aimacademyla.model;
 import com.aimacademyla.model.dto.CourseSessionDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Generated;
@@ -98,7 +99,7 @@ public class CourseSession extends AIMEntity implements Serializable{
 
     boolean memberWasPresent(Member member){
         for(Attendance attendance : attendanceMap.values()){
-            if(attendance.getMember().equals(member) && attendance.getWasPresent())
+            if(attendance.getMember().getMemberID() == member.getMemberID() && attendance.getWasPresent())
                 return true;
         }
         return false;
@@ -135,6 +136,13 @@ public class CourseSession extends AIMEntity implements Serializable{
 
         CourseSession courseSession = (CourseSession) object;
         return courseSession.getCourseSessionID() == courseSessionID;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(19, 41)
+                .append(courseSessionID)
+                .toHashCode();
     }
 
     @Override

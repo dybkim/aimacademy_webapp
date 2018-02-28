@@ -2,6 +2,7 @@ package com.aimacademyla.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.NotFound;
@@ -62,6 +63,13 @@ public class ChargeLine extends AIMEntity implements Serializable{
 
         ChargeLine chargeLine = (ChargeLine) object;
         return chargeLineID == chargeLine.getChargeLineID();
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(29, 47)
+                .append(chargeLineID)
+                .toHashCode();
     }
 
     @Override

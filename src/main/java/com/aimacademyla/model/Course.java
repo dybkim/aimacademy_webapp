@@ -3,6 +3,7 @@ package com.aimacademyla.model;
 import com.aimacademyla.model.enums.BillableUnitType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.Generated;
@@ -172,7 +173,15 @@ public class Course extends AIMEntity implements Serializable{
             return;
 
        logger.debug("Removing CourseSession, current numSessions: " + totalNumSessions);
-       courseSessionSet.remove(courseSession);
+
+       Iterator it = courseSessionSet.iterator();
+       while(it.hasNext()){
+           CourseSession iteratedCourseSession = (CourseSession) it.next();
+           if(iteratedCourseSession.getCourseSessionID() == courseSession.getCourseSessionID()){
+               it.remove();
+               break;
+           }
+       }
 
         if(totalNumSessions > 0)
             totalNumSessions--;
@@ -224,7 +233,7 @@ public class Course extends AIMEntity implements Serializable{
     }
 
     @JsonIgnore
-    public int getNumAttendanceForMember(Member member, LocalDate cycleStartDate){
+    private int getNumAttendanceForMember(Member member, LocalDate cycleStartDate){
         int numAttendance = 0;
         for(CourseSession courseSession : courseSessionSet){
             LocalDate courseSessionDate = courseSession.getCourseSessionDate();
@@ -273,6 +282,13 @@ public class Course extends AIMEntity implements Serializable{
 
         Course course = (Course) object;
         return course.getCourseID() == courseID;
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(31, 53)
+                .append(courseID)
+                .toHashCode();
     }
 
     @Override
