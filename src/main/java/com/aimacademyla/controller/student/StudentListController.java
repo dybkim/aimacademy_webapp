@@ -5,7 +5,7 @@ import com.aimacademyla.model.builder.dto.MemberCourseFinancesDTOBuilder;
 import com.aimacademyla.model.builder.dto.MemberListDTOBuilder;
 import com.aimacademyla.model.dto.MemberCourseFinancesDTO;
 import com.aimacademyla.model.dto.MemberListDTO;
-import com.aimacademyla.model.reference.TemporalReference;
+import com.aimacademyla.model.temporal.TemporalReference;
 import com.aimacademyla.service.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
