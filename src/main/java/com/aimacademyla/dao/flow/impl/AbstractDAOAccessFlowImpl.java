@@ -4,6 +4,7 @@ import com.aimacademyla.dao.factory.DAOFactory;
 import com.aimacademyla.dao.flow.DAOAccessFlow;
 import com.aimacademyla.model.Course;
 import com.aimacademyla.model.Member;
+import com.aimacademyla.model.temporal.CyclePeriod;
 import com.aimacademyla.util.ApplicationContextProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +13,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LocalDateType;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -122,26 +122,4 @@ public abstract class AbstractDAOAccessFlowImpl<T> implements DAOAccessFlow<T> {
         criteria.add(Restrictions.and(startCriterion, endCriterion));
     }
 
-    public static class CyclePeriod{
-        private LocalDate cycleStartDate;
-        private LocalDate cycleEndDate;
-
-        public LocalDate getCycleStartDate() {
-            return cycleStartDate;
-        }
-
-        public CyclePeriod setCycleStartDate(LocalDate cycleStartDate) {
-            this.cycleStartDate = cycleStartDate;
-            return this;
-        }
-
-        public LocalDate getCycleEndDate() {
-            return cycleEndDate;
-        }
-
-        public CyclePeriod setCycleEndDate(LocalDate cycleEndDate) {
-            this.cycleEndDate = cycleEndDate;
-            return this;
-        }
-    }
 }
