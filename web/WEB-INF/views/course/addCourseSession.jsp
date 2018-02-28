@@ -61,7 +61,7 @@
                         <tr>
                             <th>Student ID#</th>
                             <th>Student Name</th>
-                            <th>Attendance</tH>
+                            <th>Attendance</th>
                         </tr>
                     </thead>
                     <tbody>
