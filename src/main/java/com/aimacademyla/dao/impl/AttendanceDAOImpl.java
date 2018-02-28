@@ -32,7 +32,7 @@ public class AttendanceDAOImpl extends GenericDAOImpl<Attendance,Integer> implem
         List<Integer> attendanceIDList = new ArrayList<>();
         for(Attendance attendance : attendanceList)
             attendanceIDList.add(attendance.getAttendanceID());
-        Query query = session.createQuery("DELETE FROM Attendance A WHERE A.attendanceID in :attendanceIDList");
+        Query query = session.createQuery("DELETE FROM Attendance A WHERE A.attendanceID IN :attendanceIDList");
         query.setParameterList("attendanceIDList", attendanceIDList);
         query.executeUpdate();
     }
