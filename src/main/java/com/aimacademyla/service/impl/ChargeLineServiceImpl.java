@@ -69,12 +69,12 @@ public class ChargeLineServiceImpl extends GenericServiceImpl<ChargeLine,Integer
 
         charge.removeChargeLine(chargeLine);
 
+        //Have to update chargeLine to cascade updates to associated Attendance entity
+        chargeLineDAO.update(chargeLine);
+
         if(charge.getNumChargeLines() > 0){
             logger.debug("Updating Charge: " + charge.getChargeID() + " after removing chargeLine");
             chargeService.updateCharge(charge);
-
-            //Have to update chargeLine to cascade updates to associated Attendance entity
-            chargeLineDAO.update(chargeLine);
             return;
         }
 
