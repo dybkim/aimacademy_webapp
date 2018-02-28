@@ -125,6 +125,7 @@ public class StudentFinancesResources {
         logger.debug("cycleStartDate: " + cycleStartDate + ", cycleEndDate: " + cycleEndDate);
         Member member = memberService.get(memberID);
         List<Charge> chargeList =  chargeService.getTransientChargeList(member, cycleStartDate, cycleEndDate);
+
         return chargeList;
     }
 }

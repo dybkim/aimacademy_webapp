@@ -77,6 +77,7 @@
           <element id="library" level="project" name="Maven: org.glassfish.tyrus.bundles:tyrus-standalone-client:1.13.1" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.9.3" />
           <element id="library" level="project" name="Maven: javax.transaction:jta:1.1" />
+          <element id="library" level="project" name="Maven: commons-lang:commons-lang:2.6" />
         </element>
       </element>
       <element id="directory" name="META-INF">
