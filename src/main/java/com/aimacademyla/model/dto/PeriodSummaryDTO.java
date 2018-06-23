@@ -47,6 +47,10 @@ public class PeriodSummaryDTO implements Serializable {
         this.courseSessionListHashMap = courseSessionListHashMap;
     }
 
+    /**
+     * Inner static class MemberSummary is to be used to represent Member information for a certain CyclePeriod
+     * PeriodSummaryDTO stores a hashmap of MemberSummary instance inside the memberSummaryHashMap
+     */
     public static class MemberSummary{
         private Member member;
         private List<Charge> chargeList;

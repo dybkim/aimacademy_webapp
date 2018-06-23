@@ -21,17 +21,9 @@ public class AttendanceStatisticsCalculator {
 
     private static class CourseStatisticsFactory{
         private static CourseStatistics getStatistics(PeriodSummaryDTO periodSummaryDTO, String courseType){
-            List<CourseSession> courseSessionList = new ArrayList<>();
             List<Attendance> attendanceList = new ArrayList<>();
 
-            for(List<CourseSession> courseSessions: periodSummaryDTO.getCourseSessionListHashMap().values()) {
-                if (!courseSessions.isEmpty()) {
-                    for(CourseSession courseSession : courseSessions){
-                        if(courseSession.getCourse().getCourseType().equals(courseType))
-                            courseSessionList.add(courseSession);
-                    }
-                }
-            }
+            List<CourseSession> courseSessionList = getCourseSessionList(periodSummaryDTO, courseType);
 
             for(CourseSession courseSession : courseSessionList) {
                 System.out.println("CourseSession is: " + courseSession.getCourse().getCourseType() + " on date: " + courseSession.getCourseSessionDate());
@@ -53,6 +45,18 @@ public class AttendanceStatisticsCalculator {
             return courseStatistics;
         }
 
+        private static List<CourseSession> getCourseSessionList(PeriodSummaryDTO periodSummaryDTO, String courseType){
+            List<CourseSession> courseSessionList = new ArrayList<>();
+            for(List<CourseSession> courseSessions: periodSummaryDTO.getCourseSessionListHashMap().values()) {
+                if (!courseSessions.isEmpty()) {
+                    for(CourseSession courseSession : courseSessions){
+                        if(courseSession.getCourse().getCourseType().equals(courseType))
+                            courseSessionList.add(courseSession);
+                    }
+                }
+            }
+            return courseSessionList;
+        }
     }
 
     public static class CourseStatistics {
@@ -176,6 +180,7 @@ public class AttendanceStatisticsCalculator {
             int memberID = attendance.getMember().getMemberID();
             Integer attendanceCount = memberAttendanceCountHashMap.get(memberID);
 
+            //Initializes value of attendanceCount in attendanceCountHashMap to 0 or 1 depending on whether the student was present or not
             if(attendanceCount == null) {
                 if (!attendance.getWasPresent()) {
                     memberAttendanceCountHashMap.put(memberID, 0);

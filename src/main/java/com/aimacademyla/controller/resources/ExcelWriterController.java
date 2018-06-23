@@ -184,9 +184,9 @@ public class ExcelWriterController {
         OPCPackage opcPackage = OPCPackage.open(inputStream);
         Workbook workbook = new XSSFWorkbook(opcPackage);
 
-        workbook = new PeriodSummaryExcelWriter(workbook)
-                        .setPeriodSummaryDTO(periodSummaryDTO)
-                        .writeToWorkbook();
+        PeriodSummaryExcelWriter periodSummaryExcelWriter = new PeriodSummaryExcelWriter(workbook);
+        periodSummaryExcelWriter.setPeriodSummaryDTO(periodSummaryDTO);
+        workbook = periodSummaryExcelWriter.writeToWorkbook();
 
         workbook.write(servletOutputStream);
 

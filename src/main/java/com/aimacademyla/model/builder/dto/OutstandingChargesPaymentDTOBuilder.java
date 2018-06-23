@@ -60,31 +60,7 @@ public class OutstandingChargesPaymentDTOBuilder extends GenericDTOBuilderImpl<O
 
         List<Charge> chargeList = fetchChargeList();
 
-        /*
-         * Create separate method for this
-         */
-        Iterator it = chargeList.iterator();
-        while(it.hasNext()){
-            Charge charge = (Charge) it.next();
-            Member member = charge.getMember();
-            allMemberHashMap.put(member.getMemberID(), member);
-            balanceAmountHashMap.put(member.getMemberID(), BigDecimal.ZERO);
-
-            /*
-             * Remove ChargeLines in Charge.ChargeLineSet if ChargeLine's dateCharged is not within the cycle period date range
-             * If Charge has no more ChargeLines, then remove Charge from list
-             */
-            charge = chargeDAO.loadCollections(charge);
-            removeInvalidChargeLines(charge);
-
-            if(charge.getChargeLineSet().isEmpty()) {
-                it.remove();
-                continue;
-            }
-
-            populateFinancesHashMaps(charge);
-        }
-
+        populateFinancesHashMaps(chargeList);
         populateBalancesCollections();
 
         for(Charge charge : chargeList)
@@ -110,9 +86,31 @@ public class OutstandingChargesPaymentDTOBuilder extends GenericDTOBuilderImpl<O
                 .getList();
     }
 
-    private void populateFinancesHashMaps(Charge charge){
-        addCharge(charge);
-        addPayment(charge);
+    private void populateFinancesHashMaps(List<Charge> chargeList){
+        /*
+         * Create separate method for this
+         */
+        Iterator it = chargeList.iterator();
+        while(it.hasNext()){
+            Charge charge = (Charge) it.next();
+            Member member = charge.getMember();
+            allMemberHashMap.put(member.getMemberID(), member);
+            balanceAmountHashMap.put(member.getMemberID(), BigDecimal.ZERO);
+
+            /*
+             * Remove ChargeLines in Charge.ChargeLineSet if ChargeLine's dateCharged is not within the cycle period date range
+             * If Charge has no more ChargeLines, then remove Charge from list
+             */
+            charge = chargeDAO.loadCollections(charge);
+            removeInvalidChargeLines(charge);
+
+            if(charge.getChargeLineSet().isEmpty()) {
+                it.remove();
+                continue;
+            }
+            addCharge(charge);
+            addPayment(charge);
+        }
     }
 
     private void addCharge(Charge charge){
