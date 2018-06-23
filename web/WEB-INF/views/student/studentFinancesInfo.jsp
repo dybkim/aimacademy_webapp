@@ -71,7 +71,7 @@
                             <input id="chargeAmount" class="form-control" ng-model="chargeAmount"/>
 
                             <label for="chargeDiscount">Discount:</label>
-                            <input id="chargeDiscount" class="form-control" ng-model="chargeDiscount"/>
+                            <input id="chargeDiscount" class=rrayLi"form-control" ng-model="chargeDiscount"/>
 
                             <label for="dateCharged">Date:</label>
                             <input id="dateCharged" class="form-control" ng-model="dateCharged"/>
