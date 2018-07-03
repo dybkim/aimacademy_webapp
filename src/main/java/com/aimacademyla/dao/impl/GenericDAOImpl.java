@@ -104,7 +104,6 @@ public abstract class GenericDAOImpl<T, K extends Serializable> implements Gener
 
     /**
      * getList() uses criteriaQuery instead of HQL due to the generic entity type of GenericDAO (HQL requires the actual entity type)
-     * @return
      */
     @Override
     public List<T> getList(){
