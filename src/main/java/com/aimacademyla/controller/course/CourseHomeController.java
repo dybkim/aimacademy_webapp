@@ -103,7 +103,7 @@ public class CourseHomeController {
 
         courseService.updateCourse(courseRegistrationDTO);
         logger.info("INFO: CourseHomeController.addCourse - Successfully edited course: " + course.getCourseName());
-        return "redirect:/admin/courseList/courseInfo/" + courseID;
+        return "/course/courseList";
     }
 
     @RequestMapping("/editCourse/{courseID}/addStudentToCourse")
