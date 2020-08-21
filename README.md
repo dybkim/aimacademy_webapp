@@ -1,6 +1,5 @@
-# aimacademy_webportal
+# aimacademy_webapp
 
-**INTRO:**
 AIM Academy webportal is a web application for managing AIM Academy's records.
 
 Frameworks and services used:
